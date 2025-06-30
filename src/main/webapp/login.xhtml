@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Login - Citycare General Hospital</title>
+    <h:outputStylesheet name="css/styles.css"/>
+</h:head>
+<h:body styleClass="login-body">
+    <h:form id="loginForm">
+        <p:panel styleClass="login-panel" header="Citycare General Hospital">
+            <h:outputText value="Login into your account" styleClass="sub-header"/>
+
+            <p:messages id="messages" showDetail="true" autoUpdate="true"/>
+
+            <p:outputLabel for="email" value="Email address" />
+            <p:inputText id="email" value="#{loginBean.email}" required="true" styleClass="input-full">
+                <f:facet name="prepend">
+                    <i class="pi pi-envelope"></i>
+                </f:facet>
+            </p:inputText>
+
+            <p:outputLabel for="password" value="Password" />
+            <p:password id="password" value="#{loginBean.password}" required="true" feedback="false" styleClass="input-full">
+                <f:facet name="prepend">
+                    <i class="pi pi-lock"></i>
+                </f:facet>
+            </p:password>
+
+            <h:panelGroup styleClass="forgot-password">
+                <h:outputLink value="#" onclick="PF('dlg').show(); return false;">Forgot password?</h:outputLink>
+            </h:panelGroup>
+
+            <p:commandButton value="Log in" action="#{loginBean.login}" styleClass="login-btn" ajax="false"/>
+            <div class="or-divider">OR</div>
+            <p:button value="Register" outcome="register" styleClass="register-btn"/>
+        </p:panel>
+    </h:form>
+</h:body>
+</html>
