@@ -1,0 +1,162 @@
+<ui:composition template="template/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h:form>
+            <!-- Stat Cards Row (Pure Bootstrap + Custom CSS for circles) -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card-bs">
+                        <div class="card-body">
+                            <div class="stat-info">
+                                <h6 class="text-muted">Today's Appointments</h6>
+                                <span class="stat-number">#{dashboardBean.todaysAppointments}</span>
+                            </div>
+                            <div class="circular-progress blue">
+                                <span class="progress-value">#{dashboardBean.todaysAppointments}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card-bs">
+                        <div class="card-body">
+                            <div class="stat-info">
+                                <h6 class="text-muted">Completed</h6>
+                                <span class="stat-number">#{dashboardBean.completed}</span>
+                            </div>
+                            <div class="circular-progress green">
+                                <span class="progress-value">#{dashboardBean.completed}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card-bs">
+                        <div class="card-body">
+                            <div class="stat-info">
+                                <h6 class="text-muted">Canceled</h6>
+                                <span class="stat-number">#{dashboardBean.canceled}</span>
+                            </div>
+                            <div class="circular-progress red">
+                                <span class="progress-value">#{dashboardBean.canceled}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card-bs">
+                        <div class="card-body">
+                            <div class="stat-info">
+                                <h6 class="text-muted">Confirmed</h6>
+                                <span class="stat-number">#{dashboardBean.confirmed}</span>
+                            </div>
+                            <div class="circular-progress orange">
+                                <span class="progress-value">#{dashboardBean.confirmed}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-8">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Patient Visit</h5>
+                            <!-- Canvas for Chart.js -->
+                            <canvas id="patientVisitChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Gender</h5>
+                            <!-- Canvas for Chart.js -->
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admit Patient List Table (HTML Table + ui:repeat) -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Admit Patient List</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Name</th>
+                            <th>Assigned Doctor</th>
+                            <th>Date of Admit</th>
+                            <th>Diseases</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Use ui:repeat to iterate over the list from the bean -->
+                        <ui:repeat var="patient" value="#{dashboardBean.admittedPatients}">
+                            <tr>
+                                <td>#{patient.id}</td>
+                                <td>#{patient.fullname}</td>
+                                <td>#{patient.doctor}</td>
+                                <td>#{patient.admitDate}</td>
+                                <td>
+                                    <span class="badge #{patient.diseaseStyle}">#{patient.disease}</span>
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </h:form>
+
+        <!-- SCRIPT to initialize the charts. Ensure Chart.js is included in your template.xhtml -->
+        <h:outputScript>
+            document.addEventListener('DOMContentLoaded', function () {
+            // Patient Visit Line Chart
+            const visitData =#{dashboardBean.patientVisitDataJson};
+            const ctxVisit = document.getElementById('patientVisitChart').getContext('2d');
+            new Chart(ctxVisit, {
+            type: 'line',
+            data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+            label: 'Patient Visits',
+            data: visitData,
+            fill: true,
+            backgroundColor: 'rgba(93, 135, 255, 0.2)',
+            borderColor: 'rgba(93, 135, 255, 1)',
+            tension: 0.4
+            }]
+            },
+            options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+
+            // Gender Donut Chart
+            const genderData =#{dashboardBean.genderDataJson};
+            const ctxGender = document.getElementById('genderChart').getContext('2d');
+            new Chart(ctxGender, {
+            type: 'doughnut',
+            data: {
+            labels: ['Female', 'Male', 'Child'],
+            datasets: [{
+            data: genderData,
+            backgroundColor: ['rgb(32, 201, 151)', 'rgb(255, 159, 64)', 'rgb(93, 135, 255)'],
+            hoverOffset: 4
+            }]
+            },
+            options: { responsive: true, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+            });
+            });
+        </h:outputScript>
+    </ui:define>
+</ui:composition>

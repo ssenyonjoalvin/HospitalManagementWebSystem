@@ -28,13 +28,11 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <!-- Entities -->
-        <mapping class="models.User"/>
-        <mapping class="models.Doctor"/>
-        <mapping class="models.Pharmacist"/>
-        <mapping class="models.Patient"/>
-        <mapping class="models.MedicalHistory"/>
-        <mapping class="models.Receptionist"/>
-        <mapping class="models.Appointment"/>
+        <mapping class="org.pahappa.systems.models.User"/>
+        <mapping class="org.pahappa.systems.models.Doctor"/>
+        <mapping class="org.pahappa.systems.models.Pharmacist"/>
+        <mapping class="org.pahappa.systems.models.Patient"/>
+        <mapping class="org.pahappa.systems.models.Receptionist"/>
 
     </session-factory>
 </hibernate-configuration>
