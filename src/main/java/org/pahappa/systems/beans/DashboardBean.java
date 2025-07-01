@@ -92,9 +92,9 @@ public class DashboardBean implements Serializable {
 
     private void loadPatientData() {
         admittedPatients = new ArrayList<>();
-        admittedPatients.add(new Patient(1, "Jana Brincker", "Dr. Kenny Josh", "27/05/2016", "INFLUENZA", "bg-success"));
-        admittedPatients.add(new Patient(2, "Mark Hay", "Dr. Mark", "26/05/2017", "CHOLERA", "bg-warning text-dark"));
-        admittedPatients.add(new Patient(3, "Anthony Davia", "Dr. Cinnabar", "21/05/2016", "AMOEBASIS", "bg-info text-dark"));
+//        admittedPatients.add(new Patient(1, "Jana Brincker", "Dr. Kenny Josh", "27/05/2016", "INFLUENZA", "bg-success"));
+//        admittedPatients.add(new Patient(2, "Mark Hay", "Dr. Mark", "26/05/2017", "CHOLERA", "bg-warning text-dark"));
+//        admittedPatients.add(new Patient(3, "Anthony Davia", "Dr. Cinnabar", "21/05/2016", "AMOEBASIS", "bg-info text-dark"));
     }
 
     // --- GETTERS ---

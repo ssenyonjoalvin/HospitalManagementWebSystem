@@ -1,14 +1,20 @@
 package org.pahappa.systems.models;
 
 import jakarta.persistence.Entity;
+import org.pahappa.systems.enums.PatientType;
 
 @Entity
 public class Patient extends User{
-private PatientType  patientType;
+private PatientType patientType;
 private  String medicalHistory;
 private String insuranceNumber;
 
-    public Patient(int i, String janaBrincker, String s, String s1, String influenza, String s2) {
+    public PatientType getPatientType() {
+        return patientType;
+    }
+
+    public void setPatientType(PatientType patientType) {
+        this.patientType = patientType;
     }
 
     public Patient() {
