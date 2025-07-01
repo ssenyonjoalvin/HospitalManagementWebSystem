@@ -7,9 +7,11 @@ import org.pahappa.systems.models.User;
 import org.pahappa.systems.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 
+@ApplicationScoped
 public class UserDAO {
     public void saveRecord(User user) {
         Transaction transaction = null;
@@ -75,7 +77,7 @@ public class UserDAO {
             User user = session.get(User.class, id);
             if (user != null) {
                 session.delete(user);
-            //    System.out.println("Student is deleted");
+                // System.out.println("Student is deleted");
             }
             transaction.commit();
         } catch (Exception e) {
@@ -111,6 +113,16 @@ public class UserDAO {
                     .setParameter("specialization", specialization)
                     .setParameter("status", status)
                     .list();
+        }
+    }
+
+    public List<Doctor> findDoctorsBySpecialty(Specialty specialty) {
+        return getDoctorsBySpecializationAndStatus(specialty, Status.ACTIVE);
+    }
+
+    public Doctor findById(long id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.get(Doctor.class, id);
         }
     }
 }

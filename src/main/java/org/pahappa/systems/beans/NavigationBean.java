@@ -30,4 +30,11 @@ public class NavigationBean {
     public String toEmployees() {
         return "/employees.xhtml?faces-redirect=true";
     }
+
+    public String toNewAppointment() {
+        return "/new-appointment.xhtml?faces-redirect=true";
+    }
+    public String cancelNew(){
+        return "/appointments.xhtml?faces-redirect=true";
+    }
 }

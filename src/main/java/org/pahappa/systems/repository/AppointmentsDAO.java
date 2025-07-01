@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-public class AppointmentDao {
+public class AppointmentsDAO {
 
     /**
      * Saves a new appointment to the database.
@@ -91,12 +91,14 @@ public class AppointmentDao {
     }
 
     /**
-     * Checks if a specific time slot is already booked for a given doctor on a given date.
+     * Checks if a specific time slot is already booked for a given doctor on a
+     * given date.
      */
     public boolean isSlotTaken(Doctor doctor, LocalDate date, TimeSlot timeSlot) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Long> query = session.createQuery(
-                    "SELECT COUNT(a) FROM Appointment a WHERE a.doctor = :doctor AND a.appointmentDate = :date AND a.timeSlot = :slot", Long.class);
+                    "SELECT COUNT(a) FROM Appointment a WHERE a.doctor = :doctor AND a.appointmentDate = :date AND a.timeSlot = :slot",
+                    Long.class);
 
             query.setParameter("doctor", doctor);
             query.setParameter("date", date);
@@ -106,8 +108,26 @@ public class AppointmentDao {
             return count != null && count > 0;
         } catch (Exception e) {
             e.printStackTrace();
-            // In case of error, it's safer to assume the slot is taken to prevent double booking.
+            // In case of error, it's safer to assume the slot is taken to prevent double
+            // booking.
             return true;
+        }
+    }
+
+    /**
+     * Finds all appointments for a given doctor and date.
+     */
+    public List<Appointment> findByDoctorAndDate(Doctor doctor, LocalDate date) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery(
+                    "FROM Appointment a WHERE a.doctor = :doctor AND a.appointmentDate = :date",
+                    Appointment.class)
+                    .setParameter("doctor", doctor)
+                    .setParameter("date", date)
+                    .list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
         }
     }
 }

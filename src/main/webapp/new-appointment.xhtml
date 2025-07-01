@@ -1,0 +1,68 @@
+<ui:composition template="/template/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3>Schedule New Appointment</h3>
+                </div>
+                <div class="card-body">
+                    <h:form id="newAppointmentForm">
+                        <!-- Use p:growl for better user feedback -->
+                        <p:growl id="messages" showDetail="true" />
+
+                        <!-- The entire form is wrapped in a panelGrid for layout -->
+                        <p:panelGrid columns="2" columnClasses="ui-g-4,ui-g-8" styleClass="ui-panelgrid-blank" style="width:100%;">
+
+                            <p:outputLabel for="patient" value="Select Patient:" />
+                            <p:autoComplete id="patient" value="#{appointmentBean.selectedPatient}"
+                                            completeMethod="#{appointmentBean.searchPatients}"
+                                            var="p" itemLabel="#{p.fullName}" itemValue="#{p}"
+                                            forceSelection="true" dropdown="true"
+                                            required="true" requiredMessage="Patient is required.">
+                                <p:column>#{p.fullName} (ID: #{p.id})</p:column>
+                            </p:autoComplete>
+
+                            <p:outputLabel for="specialty" value="Select Specialty:" />
+                            <p:selectOneMenu id="specialty" value="#{appointmentBean.selectedSpecialty}">
+                                <f:selectItem itemLabel="-- Select --" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{appointmentBean.specialties}" />
+                                <p:ajax listener="#{appointmentBean.onSpecialtyChange}" update="doctor" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="doctor" value="Select Doctor:" />
+                            <p:selectOneMenu id="doctor" value="#{appointmentBean.newAppointment.doctor}" converter="doctorConverter">
+                                <f:selectItem itemLabel="-- Select --" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{appointmentBean.doctors}" var="doc" itemLabel="#{doc.fullName}" itemValue="#{doc}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="date" value="Select Date:" />
+                            <p:datePicker id="date" value="#{appointmentBean.newAppointment.appointmentDate}" showIcon="true" mindate="#{appointmentBean.today}"/>
+
+                            <p:outputLabel for="timeSlot" value="Select Time Slot:" />
+                            <p:selectOneMenu id="timeSlot" value="#{appointmentBean.newAppointment.timeSlot}">
+                                <f:selectItem itemLabel="-- Select --" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{appointmentBean.allTimeSlots}" />
+                            </p:selectOneMenu>
+
+                        </p:panelGrid>
+
+                        <div class="mt-4">
+                            <p:commandButton value="Save Appointment" actionListener="#{appointmentBean.saveAppointment}"
+                                             styleClass="btn btn-success me-2"
+                                             update=":newAppointmentForm:messages @form" />
+
+                            <!-- This button uses the navigation bean to go back -->
+                            <p:button value="Cancel" outcome="#{navigationBean.toAppointments()}" styleClass="btn btn-secondary" />
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

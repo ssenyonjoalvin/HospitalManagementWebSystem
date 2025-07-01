@@ -20,7 +20,7 @@ import java.util.List;
 
 // Modern Jakarta EE / CDI annotations
 @Named("dashboardBean") // Makes the bean available as #{dashboardBean} in XHTML
-@ViewScoped           // Scope is now from jakarta.faces.view
+@ViewScoped // Scope is now from jakarta.faces.view
 public class DashboardBean implements Serializable {
 
     // Properties for Stat Cards and Knobs
@@ -59,7 +59,8 @@ public class DashboardBean implements Serializable {
         dataSet.setTension(0.4);
         data.addChartDataSet(dataSet);
 
-        List<String> labels = Arrays.asList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+        List<String> labels = Arrays.asList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
+                "Dec");
         data.setLabels(labels);
 
         LineChartOptions options = new LineChartOptions();
@@ -77,7 +78,8 @@ public class DashboardBean implements Serializable {
         ChartData data = new ChartData();
 
         List<Number> values = new ArrayList<>(Arrays.asList(30, 45, 25));
-        List<String> bgColors = new ArrayList<>(Arrays.asList("rgb(32, 201, 151)", "rgb(255, 159, 64)", "rgb(93, 135, 255)"));
+        List<String> bgColors = new ArrayList<>(
+                Arrays.asList("rgb(32, 201, 151)", "rgb(255, 159, 64)", "rgb(93, 135, 255)"));
 
         org.primefaces.model.charts.donut.DonutChartDataSet dataSet = new org.primefaces.model.charts.donut.DonutChartDataSet();
         dataSet.setData(values);
@@ -92,17 +94,50 @@ public class DashboardBean implements Serializable {
 
     private void loadPatientData() {
         admittedPatients = new ArrayList<>();
-//        admittedPatients.add(new Patient(1, "Jana Brincker", "Dr. Kenny Josh", "27/05/2016", "INFLUENZA", "bg-success"));
-//        admittedPatients.add(new Patient(2, "Mark Hay", "Dr. Mark", "26/05/2017", "CHOLERA", "bg-warning text-dark"));
-//        admittedPatients.add(new Patient(3, "Anthony Davia", "Dr. Cinnabar", "21/05/2016", "AMOEBASIS", "bg-info text-dark"));
+        // admittedPatients.add(new Patient(1, "Jana Brincker", "Dr. Kenny Josh",
+        // "27/05/2016", "INFLUENZA", "bg-success"));
+        // admittedPatients.add(new Patient(2, "Mark Hay", "Dr. Mark", "26/05/2017",
+        // "CHOLERA", "bg-warning text-dark"));
+        // admittedPatients.add(new Patient(3, "Anthony Davia", "Dr. Cinnabar",
+        // "21/05/2016", "AMOEBASIS", "bg-info text-dark"));
     }
 
     // --- GETTERS ---
-    public int getTodaysAppointments() { return todaysAppointments; }
-    public int getCompleted() { return completed; }
-    public int getCanceled() { return canceled; }
-    public int getConfirmed() { return confirmed; }
-    public LineChartModel getLineModel() { return lineModel; }
-    public DonutChartModel getDonutModel() { return donutModel; }
-    public List<Patient> getAdmittedPatients() { return admittedPatients; }
+    public int getTodaysAppointments() {
+        return todaysAppointments;
+    }
+
+    public int getCompleted() {
+        return completed;
+    }
+
+    public int getCanceled() {
+        return canceled;
+    }
+
+    public int getConfirmed() {
+        return confirmed;
+    }
+
+    public LineChartModel getLineModel() {
+        return lineModel;
+    }
+
+    public DonutChartModel getDonutModel() {
+        return donutModel;
+    }
+
+    public List<Patient> getAdmittedPatients() {
+        return admittedPatients;
+    }
+
+    public String getPatientVisitDataJson() {
+        // Example data for Chart.js line chart
+        return "[65, 140, 80, 45, 56, 40, 100, 145, 90, 105, 150, 60]";
+    }
+
+    public String getGenderDataJson() {
+        // Example data for Chart.js donut chart
+        return "[30, 45, 25]";
+    }
 }

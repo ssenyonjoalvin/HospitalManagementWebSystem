@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,7 +22,7 @@
         <!-- ===== 1. SIDEBAR ===== -->
         <div class="sidebar-container" id="sidebar-wrapper">
             <div class="sidebar-heading">
-                <i class="fa-solid fa-filter"></i> Citycare General Hopital
+                <i class="fa-solid fa-filter"></i> Citycare General Hospital
             </div>
             <div class="list-group list-group-flush">
                 <!-- 'active' class highlights the current page -->
@@ -36,7 +35,7 @@
                 <a href="#" class="list-group-item list-group-item-action">
                     <i class="fa-solid fa-hospital-user"></i> Patients
                 </a>
-                <a href="#" class="list-group-item list-group-item-action">
+                <a href="appointments.xhtml" class="list-group-item list-group-item-action">
                     <i class="fa-solid fa-file-medical"></i> Appointments
                 </a>
                 <a href="#" class="list-group-item list-group-item-action">
@@ -61,14 +60,18 @@
                     </h:form>
 
                     <ul class="navbar-nav ms-auto mt-2 mt-lg-0 align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="#!"><i class="fa-solid fa-comment-medical fs-5"></i></a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!"><i class="fa-solid fa-bell fs-5"></i></a></li>
+                        <li class="nav-item"><a class="nav-link" href="#!"><i
+                                    class="fa-solid fa-comment-medical fs-5"></i></a></li>
+                        <li class="nav-item"><a class="nav-link" href="#!"><i class="fa-solid fa-bell fs-5"></i></a>
+                        </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="https://i.pravatar.cc/40?u=shelia" class="rounded-circle me-2" alt="user" />
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" id="navbarDropdown" href="#"
+                                role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img src="https://i.pravatar.cc/40?u=#{loginBean.loggedInUser.email}"
+                                    class="rounded-circle me-2" alt="user" />
                                 <div>
-                                    <span class="fw-bold">Shelia Mugisha</span><br/>
-                                    <small class="text-muted">Receptionist</small>
+                                    <span class="fw-bold">#{loginBean.loggedInUser.fullName}</span><br />
+                                    <small class="text-muted">#{loginBean.loggedInUser.role}</small>
                                 </div>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -96,4 +99,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </h:body>
+
 </html>

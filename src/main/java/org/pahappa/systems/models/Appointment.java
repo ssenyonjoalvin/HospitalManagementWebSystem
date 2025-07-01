@@ -16,6 +16,9 @@ public class Appointment {
     @Column(name = "appointment_date", nullable = false)
     private LocalDate appointmentDate;
 
+    @Column(name = "rescheduled_date")
+    private LocalDate rescheduledDate;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "time_slot", nullable = false)
     private TimeSlot timeSlot;
@@ -36,6 +39,14 @@ public class Appointment {
 
     // --- Getters and Setters ---
     // (The redundant fields and their getters/setters have been removed)
+
+    public LocalDate getRescheduledDate() {
+        return rescheduledDate;
+    }
+
+    public void setRescheduledDate(LocalDate rescheduledDate) {
+        this.rescheduledDate = rescheduledDate;
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
