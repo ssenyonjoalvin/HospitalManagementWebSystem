@@ -33,6 +33,7 @@
         <mapping class="org.pahappa.systems.models.Pharmacist"/>
         <mapping class="org.pahappa.systems.models.Patient"/>
         <mapping class="org.pahappa.systems.models.Receptionist"/>
+        <mapping class="org.pahappa.systems.models.Appointment"/>
 
     </session-factory>
 </hibernate-configuration>
