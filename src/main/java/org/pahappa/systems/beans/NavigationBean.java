@@ -37,4 +37,8 @@ public class NavigationBean {
     public String cancelNew(){
         return "/appointments.xhtml?faces-redirect=true";
     }
+    public String  toEditPatient(){
+        return "/edit-patient.xhtml?faces-redirect=true";
+
+    }
 }

@@ -7,10 +7,9 @@ import jakarta.inject.Named;
 import org.pahappa.systems.enums.PatientType;
 import org.pahappa.systems.models.Patient;
 import org.pahappa.systems.services.PatientService;
-import org.pahappa.systems.services.impl.PatientServiceImpl;
-import org.pahappa.systems.repository.UserDAO;
 import jakarta.inject.Inject;
 import org.pahappa.systems.enums.Gender;
+import jakarta.enterprise.context.SessionScoped;
 
 import java.io.Serializable;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 import java.util.Map;
 
 @Named("patientBean")
-@ViewScoped // Use ViewScoped for pages with filtering and state
+@SessionScoped // Use SessionScoped for reliable state across dialogs and AJAX
 public class PatientBean implements Serializable {
 
     // Data lists for the view
@@ -33,26 +32,26 @@ public class PatientBean implements Serializable {
     private String message;
 
     private Patient selectedPatient = new Patient();
+    private Patient patientToDelete;
 
     @Inject
     private PatientService patientService;
 
+    @Inject
+    private NavigationBean navigationBean;
+
     @PostConstruct
     public void init() {
-        PatientService patientService = new PatientServiceImpl();
-
+        // Use the injected patientService, do not create a new one here
         // Load all patient data once
         allPatients = patientService.getAllPatients();
-
         // Pre-filter the lists for the tabs
         hospitalizedPatients = allPatients.stream()
                 .filter(p -> p.getPatientType() == PatientType.INPATIENT)
                 .collect(Collectors.toList());
-
         outpatients = allPatients.stream()
                 .filter(p -> p.getPatientType() == PatientType.OUTPATIENT)
                 .collect(Collectors.toList());
-
         // Initially, the filtered list is the same as the full list
         filteredPatients = allPatients;
     }
@@ -72,7 +71,7 @@ public class PatientBean implements Serializable {
         }
     }
 
-    public void savePatient() {
+    public String savePatient() {
         try {
             // Create a Patient from the current newPatient (as User)
             Patient patientToSave = new Patient(newPatient);
@@ -86,9 +85,57 @@ public class PatientBean implements Serializable {
             outpatients = lists.get("outpatients");
             filteredPatients = allPatients;
             message = "Patient added successfully!";
-            newPatient = new Patient();
+            return navigationBean.toPatients();
+            // newPatient = new Patient();
         } catch (Exception e) {
             message = "Error adding patient: " + e.getMessage();
+            return null;
+        }
+    }
+
+    // Called when Edit button is pressed, sets selected patient and navigates to
+    // edit page
+    public String editPatient(Patient patient) {
+        this.selectedPatient = patient;
+        return navigationBean.toEditPatient();
+    }
+
+    // Called from edit-patient.xhtml to update patient info
+    public String updatePatient() {
+        try {
+            patientService.updatePatient(selectedPatient);
+            // Refresh lists
+            Map<String, List<Patient>> lists = patientService.getPatientLists();
+            allPatients = lists.get("all");
+            hospitalizedPatients = lists.get("hospitalized");
+            outpatients = lists.get("outpatients");
+            filteredPatients = allPatients;
+            message = "Patient updated successfully!";
+            return navigationBean.toPatients();
+        } catch (Exception e) {
+            message = "Error updating patient: " + e.getMessage();
+            return null;
+        }
+    }
+
+    // Called when Delete button is pressed, sets patient to delete and shows modal
+    public void confirmDelete(Patient patient) {
+        this.patientToDelete = patient;
+    }
+
+    // Called when delete is confirmed in modal
+    public void deletePatient() {
+        try {
+            patientService.deletePatient(patientToDelete);
+            // Refresh lists
+            Map<String, List<Patient>> lists = patientService.getPatientLists();
+            allPatients = lists.get("all");
+            hospitalizedPatients = lists.get("hospitalized");
+            outpatients = lists.get("outpatients");
+            filteredPatients = allPatients;
+            message = "Patient deleted successfully!";
+        } catch (Exception e) {
+            message = "Error deleting patient: " + e.getMessage();
         }
     }
 
@@ -150,5 +197,15 @@ public class PatientBean implements Serializable {
         this.selectedPatient = selectedPatient;
     }
 
-  
+    public Patient getPatientToDelete() {
+        return patientToDelete;
+    }
+
+    public void setPatientToDelete(Patient patientToDelete) {
+        this.patientToDelete = patientToDelete;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

@@ -78,4 +78,16 @@ public class PatientServiceImpl implements PatientService {
         result.put("outpatients", outpatients);
         return result;
     }
+
+    @Override
+    public void updatePatient(Patient patient) {
+        // Update the patient record in the DAO
+        userDAO.updateRecord(patient);
+    }
+
+    @Override
+    public void deletePatient(Patient patient) {
+        // Soft-delete: you could set a status, or for now, remove from DAO
+        userDAO.deleteRecord(patient.getId());
+    }
 }
