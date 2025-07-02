@@ -1,0 +1,50 @@
+<ui:composition template="/template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <h:form id="employeeForm">
+            <p:messages id="msg" autoUpdate="true" closable="true" />
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0">Employees</h4>
+                        <p:commandButton value="Add Employee" icon="fa fa-plus" styleClass="ui-button-info rounded-pill"
+                            action="#{navigationBean.toRegisterEmployee}" ajax="false" />
+                    </div>
+                    <div class="mb-3">
+                        <p:selectOneMenu id="roleFilter" value="#{employeeBean.roleFilter}" styleClass="w-auto">
+                            <f:selectItem itemLabel="All Roles" itemValue="#{null}" />
+                            <f:selectItems value="#{rolenameBean.roles}" />
+                            <p:ajax listener="#{employeeBean.filterByRole}" update="employeeTable" />
+                        </p:selectOneMenu>
+                    </div>
+                    <p:dataTable id="employeeTable" var="emp" value="#{employeeBean.filteredEmployees}" paginator="true"
+                        rows="10" paginatorPosition="bottom" emptyMessage="No employees found.">
+                        <p:column headerText="Name">
+                            <h:outputText value="#{emp.fullName}" />
+                        </p:column>
+                        <p:column headerText="Role">
+                            <h:outputText value="#{emp.role}" />
+                        </p:column>
+                        <p:column headerText="Email">
+                            <h:outputText value="#{emp.email}" />
+                        </p:column>
+                        <p:column headerText="Phone">
+                            <h:outputText value="#{emp.phoneNumber}" />
+                        </p:column>
+                        <p:column headerText="Action">
+                            <p:commandButton icon="fa fa-pencil"
+                                styleClass="ui-button-secondary ui-button-flat rounded-circle" title="Edit"
+                                action="#{employeeBean.editEmployee(emp)}" ajax="false" />
+                            <p:commandButton icon="fa fa-trash"
+                                styleClass="ui-button-danger ui-button-flat rounded-circle ms-2" title="Delete"
+                                action="#{employeeBean.deleteEmployee(emp)}"
+                                update="employeeForm:msg employeeForm:employeeTable" />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
