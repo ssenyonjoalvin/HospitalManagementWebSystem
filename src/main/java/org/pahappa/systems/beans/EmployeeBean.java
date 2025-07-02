@@ -21,6 +21,7 @@ public class EmployeeBean implements Serializable {
     private User newEmployee = new User();
     private User selectedEmployee;
     private String message;
+    private User employeeToDelete;
 
     @Inject
     private UserService userService;
@@ -67,6 +68,18 @@ public class EmployeeBean implements Serializable {
         userService.deleteEmployee(employee);
         loadEmployees();
         message = "Employee deleted successfully!";
+    }
+
+    public void confirmDelete(User employee) {
+        this.employeeToDelete = employee;
+    }
+
+    public User getEmployeeToDelete() {
+        return employeeToDelete;
+    }
+
+    public void setEmployeeToDelete(User employeeToDelete) {
+        this.employeeToDelete = employeeToDelete;
     }
 
     // Getters and setters
