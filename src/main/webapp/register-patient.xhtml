@@ -1,0 +1,59 @@
+<ui:composition template="/template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <h:form id="registerForm">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="mb-3">Register New Patient</h4>
+                    <p:messages id="addPatientMessages" />
+                    <p:panelGrid columns="2" columnClasses="ui-g-6,ui-g-6">
+                        <p:outputLabel for="fullName" value="Full Name:" />
+                        <p:inputText id="fullName" value="#{patientBean.newPatient.fullName}" required="true" />
+
+                        <p:outputLabel for="email" value="Email:" />
+                        <p:inputText id="email" value="#{patientBean.newPatient.email}" required="true" />
+
+                        <p:outputLabel for="password" value="Password:" />
+                        <p:password id="password" value="#{patientBean.newPatient.password}" required="true"
+                            feedback="true" toggleMask="true" />
+
+                        <p:outputLabel for="phone" value="Phone Number:" />
+                        <p:inputText id="phone" value="#{patientBean.newPatient.phoneNumber}" required="true" />
+
+                        <p:outputLabel for="dateOfBirth" value="Date of Birth:" />
+                        <p:datePicker id="dateOfBirth" value="#{patientBean.newPatient.dateOfBirth}" showIcon="true"
+                            required="true" />
+
+                        <p:outputLabel for="address" value="Address:" />
+                        <p:inputText id="address" value="#{patientBean.newPatient.address}" required="true" />
+
+                        <p:outputLabel for="nextOfKin" value="Next of Kin:" />
+                        <p:inputText id="nextOfKin" value="#{patientBean.newPatient.nextOfKin}" />
+
+                        <p:outputLabel for="gender" value="Gender:" />
+                        <p:selectOneMenu id="gender" value="#{patientBean.newPatient.gender}" required="true">
+                            <f:selectItem itemLabel="-- Select --" itemValue="#{null}" />
+                            <f:selectItems value="#{patientBean.genders}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="patientType" value="Patient Type:" />
+                        <p:selectOneMenu id="patientType" value="#{patientBean.newPatient.patientType}">
+                            <f:selectItem itemLabel="-- Select --" itemValue="#{null}" />
+                            <f:selectItems value="#{patientBean.patientTypes}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="insuranceNumber" value="Insurance Number:" />
+                        <p:inputText id="insuranceNumber" value="#{patientBean.newPatient.insuranceNumber}" />
+                    </p:panelGrid>
+                    <div class="mt-3">
+                        <p:commandButton value="Save" action="#{patientBean.savePatient}"
+                            update="addPatientMessages @form" ajax="false" />
+                        <h:link outcome="patient.xhtml" styleClass="ui-button ui-button-secondary ms-2">Cancel</h:link>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

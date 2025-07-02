@@ -21,20 +21,19 @@
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 
         <!-- Echo all executed SQL to stdout -->
-        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
 
         <!-- Drop and re-create the database schema on startup -->
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <!-- Entities -->
-        <mapping class="models.User"/>
-        <mapping class="models.Doctor"/>
-        <mapping class="models.Pharmacist"/>
-        <mapping class="models.Patient"/>
-        <mapping class="models.MedicalHistory"/>
-        <mapping class="models.Receptionist"/>
-        <mapping class="models.Appointment"/>
+        <mapping class="org.pahappa.systems.models.User"/>
+        <mapping class="org.pahappa.systems.models.Doctor"/>
+        <mapping class="org.pahappa.systems.models.Pharmacist"/>
+        <mapping class="org.pahappa.systems.models.Patient"/>
+        <mapping class="org.pahappa.systems.models.Receptionist"/>
+        <mapping class="org.pahappa.systems.models.Appointment"/>
 
     </session-factory>
 </hibernate-configuration>
