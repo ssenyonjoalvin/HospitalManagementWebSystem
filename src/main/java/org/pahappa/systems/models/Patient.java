@@ -4,11 +4,12 @@ import jakarta.persistence.Entity;
 import org.pahappa.systems.enums.PatientType;
 
 @Entity
-public class Patient extends User{
-private PatientType patientType;
-private  String medicalHistory;
-private String insuranceNumber;
 
+public class Patient extends User {
+    private PatientType patientType;
+    private String insuranceNumber;
+
+    
     public PatientType getPatientType() {
         return patientType;
     }
@@ -29,17 +30,24 @@ private String insuranceNumber;
         this.insuranceNumber = insuranceNumber;
     }
 
-    public String getMedicalHistory() {
-        return medicalHistory;
+  
+
+    public Patient(User user) {
+        this.setFullName(user.getFullName());
+        this.setPhoneNumber(user.getPhoneNumber());
+        this.setEmail(user.getEmail());
+        this.setDateOfBirth(user.getDateOfBirth());
+        this.setAddress(user.getAddress());
+        this.setNextOfKin(user.getNextOfKin());
+        this.setPassword(user.getPassword());
+        this.setRole(user.getRole());
+        this.setGender(user.getGender());
+        this.setDeleted(user.isDeleted());
     }
 
-    public void setMedicalHistory(String medicalHistory) {
-        this.medicalHistory = medicalHistory;
-    }
     @Override
     public String toString() {
-        return 
-              "ID: " + getId() + "\n"
+        return "ID: " + getId() + "\n"
                 + "Name: " + getFullName() + "\n"
                 + "Phone Number: " + getPhoneNumber() + "\n"
                 + "Email: " + getEmail() + "\n"
@@ -48,8 +56,6 @@ private String insuranceNumber;
                 + "Next of Kin: " + getNextOfKin() + "\n"
                 + "Role: " + getRole() + "\n"
                 + "Gender: " + getGender() + "\n"
-                + "Medical History: " + medicalHistory + "\n"
-                + "Insurance Number: " + insuranceNumber + "\n"
-                ;
+                + "Insurance Number: " + insuranceNumber + "\n";
     }
 }

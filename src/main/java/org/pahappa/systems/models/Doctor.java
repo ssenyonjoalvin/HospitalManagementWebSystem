@@ -20,7 +20,6 @@ public class Doctor extends User {
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private Status staffStatus;
-
     private int yearsOfExperience;
 
 

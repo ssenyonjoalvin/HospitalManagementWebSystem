@@ -18,6 +18,7 @@ public class User {
     private LocalDate dateOfBirth;
     private String address;
     private String nextOfKin;
+
     private String password;
     @Enumerated(EnumType.STRING)
     private Rolename role;

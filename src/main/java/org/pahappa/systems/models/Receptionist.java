@@ -12,6 +12,7 @@ public class Receptionist extends User {
     private String deskNumber;
     private Shift shift;
 
+
     public Receptionist() {
     }
 

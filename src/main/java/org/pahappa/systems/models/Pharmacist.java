@@ -10,6 +10,7 @@ public class Pharmacist extends User {
     private String licenseNumber;
     private Shift shift;
 
+
     public Pharmacist() {
 
     }
