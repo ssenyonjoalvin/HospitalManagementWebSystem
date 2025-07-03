@@ -205,7 +205,5 @@ public class PatientBean implements Serializable {
         this.patientToDelete = patientToDelete;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+
 }
