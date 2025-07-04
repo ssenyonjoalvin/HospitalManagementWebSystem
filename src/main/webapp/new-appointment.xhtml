@@ -6,7 +6,12 @@
         <div class="container-fluid">
             <div class="card mt-4">
                 <div class="card-header">
-                    <h3>Schedule New Appointment</h3>
+                    <h3>
+                        <h:panelGroup rendered="#{not empty appointmentBean.appointmentToEdit}">Edit Appointment
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{empty appointmentBean.appointmentToEdit}">Schedule New Appointment
+                        </h:panelGroup>
+                    </h3>
                 </div>
                 <div class="card-body">
                     <h:form id="newAppointmentForm">
@@ -53,9 +58,10 @@
                         </p:panelGrid>
 
                         <div class="mt-4">
-                            <p:commandButton value="Save Appointment" action="#{appointmentBean.saveNewAppointment}"
-                                ajax="false" styleClass="btn btn-success me-2"
-                                update=":newAppointmentForm:messages @form" />
+                            <p:commandButton
+                                value="#{not empty appointmentBean.appointmentToEdit ? 'Update Appointment' : 'Save Appointment'}"
+                                action="#{appointmentBean.saveNewAppointment}" ajax="false"
+                                styleClass="btn btn-success me-2" update=":newAppointmentForm:messages @form" />
 
                             <!-- This button uses the navigation bean to go back -->
                             <p:button value="Cancel" outcome="#{navigationBean.toAppointments()}"

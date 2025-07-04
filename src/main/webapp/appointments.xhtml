@@ -67,7 +67,7 @@
                                 <td>
                                     <h:outputText value="#{appt.reason}" rendered="#{appt.status eq 'CANCELED'}" />
                                 </td>
-                                <td>
+                                <td rendered="#{appt.status ne 'CANCELED'}">
                                     <p:commandButton icon="pi pi-eye" title="View"
                                         styleClass="ui-button-secondary ui-button-flat rounded-circle me-1"
                                         action="#{appointmentBean.view(appt)}" />
@@ -91,12 +91,12 @@
                 <h:form id="cancelDialogForm">
                     <h:outputText value="Please enter a reason for cancellation:" />
                     <h:inputTextarea value="#{appointmentBean.cancelReason}" required="true" style="width:100%" />
-                    <div class="mt-3">
-                        <p:commandButton value="Save"
-                            actionListener="#{appointmentBean.confirmCancel}" oncomplete="PF('cancelDialog').hide()"
-                            update=":appointmentsForm :cancelDialogForm" />
-                        <p:commandButton value="Back" onclick="PF('cancelDialog').hide();return false;"
-                            type="button" styleClass="btn btn-secondary" />
+                    <div class="mt-3 d-flex flex-column gap-2">
+                        <p:commandButton value="Save" actionListener="#{appointmentBean.confirmCancel}"
+                            oncomplete="PF('cancelDialog').hide()" update=":appointmentsForm :cancelDialogForm"
+                            styleClass="ui-button-success w-100" />
+                        <p:commandButton value="Back" onclick="PF('cancelDialog').hide();return false;" type="button"
+                            styleClass="ui-button-secondary w-100" />
                     </div>
                 </h:form>
             </p:dialog>

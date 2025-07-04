@@ -72,6 +72,9 @@ public class AppointmentBean implements Serializable {
     private Appointment appointmentToCancel;
     private String cancelReason;
 
+    // --- Edit Appointment State ---
+    private Appointment appointmentToEdit;
+
     /**
      * The PostConstruct method is called once after the bean is created.
      * It loads the data needed for the main appointments list.
@@ -353,9 +356,14 @@ public class AppointmentBean implements Serializable {
     public void confirmCancel() {
         if (appointmentToCancel != null && cancelReason != null && !cancelReason.trim().isEmpty()) {
             try {
+                // Set the new values
                 appointmentToCancel.setReason(cancelReason);
                 appointmentToCancel.setStatus(AppointmentStatus.CANCELED);
-                appointmentsService.createAppointmentFromObject(appointmentToCancel); // update
+
+                // Persist the changes to the database
+                appointmentsService.updateAppointment(appointmentToCancel);
+
+                // Feedback and refresh
                 addMessage(FacesMessage.SEVERITY_INFO, "Appointment canceled", "Reason: " + cancelReason);
                 this.appointments = appointmentsService.getAllAppointments();
             } catch (Exception e) {
@@ -380,5 +388,22 @@ public class AppointmentBean implements Serializable {
 
     public void setCancelReason(String cancelReason) {
         this.cancelReason = cancelReason;
+    }
+
+    public String edit(Appointment appt) {
+        this.appointmentToEdit = appt;
+        this.appointmentToCreate = appt; // reuse the same object for the form
+        this.selectedPatient = appt.getPatient();
+        this.selectedSpecialty = appt.getDoctor() != null ? appt.getDoctor().getSpecialization() : null;
+        this.availableDoctors = appointmentsService.getDoctorsBySpecialty(selectedSpecialty);
+        return navigationBean.toNewAppointment();
+    }
+
+    public Appointment getAppointmentToEdit() {
+        return appointmentToEdit;
+    }
+
+    public void setAppointmentToEdit(Appointment appointmentToEdit) {
+        this.appointmentToEdit = appointmentToEdit;
     }
 }
