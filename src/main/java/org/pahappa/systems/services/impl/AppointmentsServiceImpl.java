@@ -126,16 +126,30 @@ public class AppointmentsServiceImpl implements AppointmentsService {
     @Override
     public void createAppointmentFromObject(Appointment appointment) throws ValidationException {
         // Validate the incoming object
-        if (appointment == null || appointment.getDoctor() == null || appointment.getAppointmentDate() == null || appointment.getTimeSlot() == null) {
+        if (appointment == null || appointment.getDoctor() == null || appointment.getAppointmentDate() == null
+                || appointment.getTimeSlot() == null) {
             throw new ValidationException("Doctor, date, and timeslot are all required.");
         }
 
-        // Call your existing business logic
-        this.createAppointment(
-                appointment.getDoctor().getId(),
-                appointment.getAppointmentDate(),
-                appointment.getTimeSlot()
-        );
-        // Note: The original createAppointment already handles saving the patient now, so no need to save again.
+        // New logic: Only allow booking for the next day or later
+        LocalDate today = LocalDate.now();
+        if (!appointment.getAppointmentDate().isAfter(today)) {
+            throw new ValidationException("Appointments can only be booked for the next day or later.");
+        }
+
+        // Check if the slot is already taken for the doctor on that day
+        if (appointmentsDAO.isSlotTaken(appointment.getDoctor(), appointment.getAppointmentDate(),
+                appointment.getTimeSlot())) {
+            throw new ValidationException("This time slot is already booked for the selected doctor on "
+                    + appointment.getAppointmentDate() + ". Please choose another.");
+        }
+
+        // Set default status if not set
+        if (appointment.getStatus() == null) {
+            appointment.setStatus(AppointmentStatus.SCHEDULED);
+        }
+
+        // Save the appointment with the patient set
+        appointmentsDAO.save(appointment);
     }
 }
