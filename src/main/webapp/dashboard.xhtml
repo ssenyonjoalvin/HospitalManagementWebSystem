@@ -84,39 +84,7 @@
                 </div>
             </div>
 
-            <!-- Admit Patient List Table (HTML Table + ui:repeat) -->
-            <div class="card">
-                <div class="card-header">
-                    <h5>Admit Patient List</h5>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Name</th>
-                            <th>Assigned Doctor</th>
-                            <th>Date of Admit</th>
-                            <th>Diseases</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <!-- Use ui:repeat to iterate over the list from the bean -->
-                        <ui:repeat var="patient" value="#{dashboardBean.admittedPatients}">
-                            <tr>
-                                <td>#{patient.id}</td>
-                                <td>#{patient.fullname}</td>
-                                <td>#{patient.doctor}</td>
-                                <td>#{patient.admitDate}</td>
-                                <td>
-                                    <span class="badge #{patient.diseaseStyle}">#{patient.disease}</span>
-                                </td>
-                            </tr>
-                        </ui:repeat>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+          
         </h:form>
 
         <!-- SCRIPT to initialize the charts. Ensure Chart.js is included in your template.xhtml -->

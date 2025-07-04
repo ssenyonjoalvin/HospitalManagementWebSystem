@@ -39,7 +39,7 @@
                 </div>
             </h:form>
             <!-- Appointments Table -->
-            <h:form>
+            <h:form id="appointmentsForm">
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -49,6 +49,7 @@
                             <th>Doctor</th>
                             <th>Date</th>
                             <th>Status</th>
+                            <th>Reason</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -64,6 +65,9 @@
                                     <span class="badge bg-secondary">#{appt.status}</span>
                                 </td>
                                 <td>
+                                    <h:outputText value="#{appt.reason}" rendered="#{appt.status eq 'CANCELED'}" />
+                                </td>
+                                <td rendered="#{appt.status ne 'CANCELED'}">
                                     <p:commandButton icon="pi pi-eye" title="View"
                                         styleClass="ui-button-secondary ui-button-flat rounded-circle me-1"
                                         action="#{appointmentBean.view(appt)}" />
@@ -72,14 +76,30 @@
                                         action="#{appointmentBean.edit(appt)}" />
                                     <p:commandButton icon="pi pi-times" title="Cancel"
                                         styleClass="ui-button-danger ui-button-flat rounded-circle"
-                                        action="#{appointmentBean.cancel(appt)}"
-                                        rendered="#{appt.status != 'CANCELED'}" />
+                                        actionListener="#{appointmentBean.openCancelDialog(appt)}"
+                                        oncomplete="PF('cancelDialog').show()" process="@this"
+                                        update=":cancelDialogForm" rendered="#{appt.status != 'CANCELED'}" />
                                 </td>
                             </tr>
                         </ui:repeat>
                     </tbody>
                 </table>
             </h:form>
+            <!-- Cancel Reason Dialog -->
+            <p:dialog header="Cancel Appointment" widgetVar="cancelDialog" modal="true" id="cancelDialog"
+                resizable="false">
+                <h:form id="cancelDialogForm">
+                    <h:outputText value="Please enter a reason for cancellation:" />
+                    <h:inputTextarea value="#{appointmentBean.cancelReason}" required="true" style="width:100%" />
+                    <div class="mt-3 d-flex flex-column gap-2">
+                        <p:commandButton value="Save" actionListener="#{appointmentBean.confirmCancel}"
+                            oncomplete="PF('cancelDialog').hide()" update=":appointmentsForm :cancelDialogForm"
+                            styleClass="ui-button-success w-100" />
+                        <p:commandButton value="Back" onclick="PF('cancelDialog').hide();return false;" type="button"
+                            styleClass="ui-button-secondary w-100" />
+                    </div>
+                </h:form>
+            </p:dialog>
         </div>
     </ui:define>
 </ui:composition>
