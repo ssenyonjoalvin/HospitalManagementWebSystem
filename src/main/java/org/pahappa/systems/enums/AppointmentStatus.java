@@ -1,6 +1,6 @@
 package org.pahappa.systems.enums;
 
-public  enum AppointmentStatus {
+public enum AppointmentStatus {
     SCHEDULED,
     RESCHEDULED,
     COMPLETED,

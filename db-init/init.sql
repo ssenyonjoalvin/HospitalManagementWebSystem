@@ -28,3 +28,6 @@ VALUES (
     'MALE',                                 -- gender (must match the exact string value of your Gender enum)
     false                                   -- deleted (boolean value: false, 0, or 'false' usually works)
 );
+
+-- Add a nullable reason column to appointments table for cancellation reasons
+ALTER TABLE appointments ADD COLUMN reason VARCHAR(255);
