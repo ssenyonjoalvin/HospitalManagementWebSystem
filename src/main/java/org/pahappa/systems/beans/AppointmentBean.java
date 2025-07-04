@@ -115,34 +115,38 @@ public class AppointmentBean implements Serializable {
      * 'new-appointment.xhtml' page.
      * It handles validation and gives user feedback.
      */
-    public void saveNewAppointment() {
+    public String saveNewAppointment() {
+        System.out.println("[DEBUG] saveNewAppointment called. selectedSpecialty: " + selectedSpecialty
+                + ", availableDoctors: " + availableDoctors);
         try {
+            if ((availableDoctors == null || availableDoctors.isEmpty()) && selectedSpecialty != null) {
+                availableDoctors = appointmentsService.getDoctorsBySpecialty(selectedSpecialty);
+                System.out.println("[DEBUG] Repopulated availableDoctors in saveNewAppointment: " + availableDoctors);
+            }
             // 1. Final validation and state assembly before calling the service
             if (selectedPatient == null) {
                 throw new ValidationException("A patient must be selected for the appointment.");
             }
             appointmentToCreate.setPatient(selectedPatient);
-
+            System.out.println("[DEBUG] About to save appointment. Patient: " + selectedPatient + ", Patient ID: "
+                    + selectedPatient.getId());
             // 2. Delegate ALL business logic and persistence to the service layer
             appointmentsService.createAppointmentFromObject(appointmentToCreate);
-
-            // 3. On success, provide feedback to the user and reset the form for another
-            // entry
+            // 3. On success, provide feedback to the user
             addMessage(FacesMessage.SEVERITY_INFO, "Success",
                     "Appointment for " + selectedPatient.getFullName() + " has been scheduled.");
-
-            // Re-initialize the form for a new entry without leaving the page
-            goToNewAppointment();
-
+            // 4. Refresh the appointments list so the new appointment appears
+            this.appointments = appointmentsService.getAllAppointments();
+            // 5. Redirect to the appointments page
+            return navigationBean.toAppointments();
         } catch (ValidationException e) {
-            // If the service finds a business rule violation (e.g., slot taken), show a
-            // specific error
             addMessage(FacesMessage.SEVERITY_ERROR, "Validation Error", e.getMessage());
+            return null;
         } catch (Exception e) {
-            // For any other unexpected errors
             e.printStackTrace();
             addMessage(FacesMessage.SEVERITY_FATAL, "System Error",
                     "An unexpected error occurred. Please contact support.");
+            return null;
         }
     }
 
@@ -224,6 +228,11 @@ public class AppointmentBean implements Serializable {
     }
 
     public List<Doctor> getAvailableDoctors() {
+        if ((availableDoctors == null || availableDoctors.isEmpty()) && selectedSpecialty != null) {
+            availableDoctors = appointmentsService.getDoctorsBySpecialty(selectedSpecialty);
+        }
+        System.out.println("[DEBUG] getAvailableDoctors called. selectedSpecialty: " + selectedSpecialty
+                + ", availableDoctors: " + availableDoctors);
         return availableDoctors;
     }
 
