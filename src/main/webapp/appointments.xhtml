@@ -1,13 +1,15 @@
 <ui:composition template="template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
     xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core">
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
         <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center my-3">
                 <h2>Appointments</h2>
-                <h:commandButton value="New Appointment" action="#{appointmentBean.goToNewAppointment}"
-                    styleClass="btn btn-primary" />
+                <h:form>
+                    <h:commandButton value="New Appointment" action="#{appointmentBean.goToNewAppointment}"
+                        styleClass="btn btn-primary" />
+                </h:form>
             </div>
             <!-- Filters -->
             <h:form styleClass="mb-3">
@@ -62,9 +64,15 @@
                                     <span class="badge bg-secondary">#{appt.status}</span>
                                 </td>
                                 <td>
-                                    <h:commandLink value="View" action="#{appointmentBean.view(appt)}" />
-                                    <h:commandLink value="Edit" action="#{appointmentBean.edit(appt)}" />
-                                    <h:commandLink value="Cancel" action="#{appointmentBean.cancel(appt)}"
+                                    <p:commandButton icon="pi pi-eye" title="View"
+                                        styleClass="ui-button-secondary ui-button-flat rounded-circle me-1"
+                                        action="#{appointmentBean.view(appt)}" />
+                                    <p:commandButton icon="pi pi-pencil" title="Edit"
+                                        styleClass="ui-button-info ui-button-flat rounded-circle me-1"
+                                        action="#{appointmentBean.edit(appt)}" />
+                                    <p:commandButton icon="pi pi-times" title="Cancel"
+                                        styleClass="ui-button-danger ui-button-flat rounded-circle"
+                                        action="#{appointmentBean.cancel(appt)}"
                                         rendered="#{appt.status != 'CANCELED'}" />
                                 </td>
                             </tr>
