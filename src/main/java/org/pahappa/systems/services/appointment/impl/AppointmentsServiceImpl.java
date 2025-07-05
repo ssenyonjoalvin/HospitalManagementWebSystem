@@ -1,4 +1,4 @@
-package org.pahappa.systems.services.impl;
+package org.pahappa.systems.services.appointment.impl;
 
 import org.pahappa.systems.core.services.exceptions.ValidationException;
 import org.pahappa.systems.enums.AppointmentStatus;
@@ -8,7 +8,7 @@ import org.pahappa.systems.models.Appointment;
 import org.pahappa.systems.models.Doctor;
 import org.pahappa.systems.repository.AppointmentsDAO;
 import org.pahappa.systems.repository.UserDAO; // Assuming you have a DoctorDAO
-import org.pahappa.systems.services.AppointmentsService;
+import org.pahappa.systems.services.appointment.AppointmentsService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
 

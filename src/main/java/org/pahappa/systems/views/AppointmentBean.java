@@ -1,4 +1,4 @@
-package org.pahappa.systems.beans;
+package org.pahappa.systems.views;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
@@ -14,8 +14,9 @@ import org.pahappa.systems.enums.TimeSlot;
 import org.pahappa.systems.models.Appointment;
 import org.pahappa.systems.models.Doctor;
 import org.pahappa.systems.models.Patient;
+import org.pahappa.systems.navigation.NavigationBean;
 import org.pahappa.systems.repository.UserDAO;
-import org.pahappa.systems.services.AppointmentsService;
+import org.pahappa.systems.services.appointment.AppointmentsService;
 
 import java.io.Serializable;
 import java.time.LocalDate;

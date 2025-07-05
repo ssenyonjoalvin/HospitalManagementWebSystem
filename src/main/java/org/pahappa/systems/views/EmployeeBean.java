@@ -1,4 +1,4 @@
-package org.pahappa.systems.beans;
+package org.pahappa.systems.views;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
@@ -6,7 +6,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.pahappa.systems.enums.Rolename;
 import org.pahappa.systems.models.User;
-import org.pahappa.systems.services.UserService;
+import org.pahappa.systems.services.user.UserService;
 
 import java.io.Serializable;
 import java.util.List;

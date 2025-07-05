@@ -1,12 +1,11 @@
-package org.pahappa.systems.beans;
+package org.pahappa.systems.views;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.el.MethodExpression;
-import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import org.pahappa.systems.enums.PatientType;
 import org.pahappa.systems.models.Patient;
-import org.pahappa.systems.services.PatientService;
+import org.pahappa.systems.navigation.NavigationBean;
+import org.pahappa.systems.services.patient.PatientService;
 import jakarta.inject.Inject;
 import org.pahappa.systems.enums.Gender;
 import jakarta.enterprise.context.SessionScoped;

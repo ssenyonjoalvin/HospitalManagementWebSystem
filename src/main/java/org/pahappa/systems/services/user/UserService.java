@@ -1,4 +1,4 @@
-package org.pahappa.systems.services;
+package org.pahappa.systems.services.user;
 
 import org.pahappa.systems.models.User;
 import org.pahappa.systems.enums.Rolename;

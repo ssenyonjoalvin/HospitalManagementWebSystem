@@ -1,10 +1,10 @@
-package org.pahappa.systems.services.impl;
+package org.pahappa.systems.services.patient.impl;
 
 import org.pahappa.systems.enums.PatientType;
 import org.pahappa.systems.enums.Rolename;
 import org.pahappa.systems.models.Patient;
 import org.pahappa.systems.repository.UserDAO;
-import org.pahappa.systems.services.PatientService;
+import org.pahappa.systems.services.patient.PatientService;
 
 import java.util.List;
 import java.util.stream.Collectors;

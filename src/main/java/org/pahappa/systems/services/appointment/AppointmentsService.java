@@ -1,8 +1,8 @@
-package org.pahappa.systems.services;
+package org.pahappa.systems.services.appointment;
 
 import org.pahappa.systems.core.services.exceptions.ValidationException;
-import org.pahappa.systems.enums.AppointmentStatus;
 import org.pahappa.systems.enums.TimeSlot;
+import org.pahappa.systems.enums.Specialty;
 import org.pahappa.systems.models.Appointment;
 import org.pahappa.systems.models.Doctor;
 
@@ -44,12 +44,12 @@ public interface AppointmentsService {
         Appointment rescheduleAppointment(long appointmentId, LocalDate newDate, TimeSlot newTimeSlot)
                         throws ValidationException;
 
-        List<Doctor> getDoctorsBySpecialty(org.pahappa.systems.enums.Specialty specialty);
+        List<Doctor> getDoctorsBySpecialty(Specialty specialty);
 
-        List<org.pahappa.systems.enums.TimeSlot> getAvailableTimeSlots(long doctorId, java.time.LocalDate date)
+        List<TimeSlot> getAvailableTimeSlots(long doctorId, java.time.LocalDate date)
                         throws ValidationException;
 
         void createAppointmentFromObject(Appointment appointment) throws ValidationException;
 
-        void updateAppointment(org.pahappa.systems.models.Appointment appointment) throws ValidationException;
+        void updateAppointment(Appointment appointment) throws ValidationException;
 }

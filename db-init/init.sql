@@ -31,3 +31,18 @@ VALUES (
 
 -- Add a nullable reason column to appointments table for cancellation reasons
 ALTER TABLE appointments ADD COLUMN reason VARCHAR(255);
+
+-- Create user_activities table for session tracking
+CREATE TABLE IF NOT EXISTS user_activities (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    action VARCHAR(255) NOT NULL,
+    description VARCHAR(500) NOT NULL,
+    ip_address VARCHAR(45),
+    user_agent VARCHAR(500),
+    page_url VARCHAR(255),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    session_id VARCHAR(255),
+    activity_type VARCHAR(50),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);

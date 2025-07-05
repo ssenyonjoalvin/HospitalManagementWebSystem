@@ -1,4 +1,4 @@
-package org.pahappa.systems.beans;
+package org.pahappa.systems.views;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;

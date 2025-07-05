@@ -1,4 +1,4 @@
-package org.pahappa.systems.beans;
+package org.pahappa.systems.views;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
@@ -9,10 +9,7 @@ import jakarta.faces.context.FacesContext;
 
 import org.pahappa.systems.enums.*;
 import org.pahappa.systems.models.User;
-import org.pahappa.systems.models.Doctor;
-import org.pahappa.systems.models.Pharmacist;
-import org.pahappa.systems.models.Receptionist;
-import org.pahappa.systems.services.UserService;
+import org.pahappa.systems.services.user.UserService;
 
 import java.io.Serializable;
 import java.util.Arrays;
