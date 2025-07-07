@@ -1,0 +1,72 @@
+<ui:composition template="/template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <f:viewParam name="appointmentId" value="#{checkupBean.selectedAppointmentId}" />
+        <f:event type="preRenderView" listener="#{checkupBean.loadAppointmentData}" />
+    </f:metadata>
+
+    <ui:define name="content">
+        <div class="container mt-4">
+            <h2>Patient Checkup</h2>
+            <h:form id="checkupForm">
+                <p:growl id="growlMsg" showDetail="true" />
+                <div class="card p-4 mb-4">
+                    <div class="mb-3">
+                        <h5 class="text-primary">
+                            <i class="fa fa-user"></i>
+                            Patient: #{checkupBean.selectedPatient.fullName}
+                        </h5>
+                        <h6 class="text-secondary">
+                            <i class="fa fa-user-md"></i>
+                            Doctor: #{checkupBean.selectedDoctor.fullName}
+                        </h6>
+                        <h6 class="text-secondary">
+                            <i class="fa fa-calendar"></i>
+                            Appointment: #{checkupBean.selectedAppointment.appointmentDate} -
+                            #{checkupBean.selectedAppointment.timeSlot.displayValue}
+                        </h6>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p:outputLabel for="signsSymptoms" value="Signs &amp; Symptoms" />
+                            <p:inputTextarea id="signsSymptoms" value="#{checkupBean.signsAndSymptoms}" rows="4"
+                                styleClass="form-control" placeholder="Describe the patient's signs and symptoms..." />
+                        </div>
+                        <div class="col-md-6">
+                            <p:outputLabel for="conclusion" value="Clinical Conclusion" />
+                            <p:inputTextarea id="conclusion" value="#{checkupBean.conclusion}" rows="4"
+                                styleClass="form-control" placeholder="Provide clinical conclusion..." />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p:outputLabel for="medicines" value="Prescribed Medications" />
+                            <p:autoComplete id="medicines" value="#{checkupBean.selectedMedicines}"
+                                completeMethod="#{checkupBean.completeMedicine}" var="medicine"
+                                itemLabel="#{medicine.name}" itemValue="#{medicine}" multiple="true"
+                                forceSelection="true" dropdown="true" converter="medicineConverter"
+                                placeholder="Type to search medicines..." styleClass="form-control" />
+                            <small class="form-text text-muted">Select one or more medications</small>
+                        </div>
+                        <div class="col-md-6">
+                            <p:outputLabel for="services" value="Hospital Services" />
+                            <p:autoComplete id="services" value="#{checkupBean.selectedServices}"
+                                completeMethod="#{checkupBean.completeService}" var="service"
+                                itemLabel="#{service.name}" itemValue="#{service}" multiple="true" forceSelection="true"
+                                dropdown="true" converter="serviceConverter" placeholder="Type to search services..."
+                                styleClass="form-control" />
+                            <small class="form-text text-muted">Select one or more services</small>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <p:commandButton value="Submit &amp; Generate" action="#{checkupBean.submitCheckup}"
+                            update="checkupForm growlMsg" styleClass="btn btn-primary me-2" />
+                        <h:button value="Cancel" outcome="appointments" styleClass="btn btn-secondary" />
+                    </div>
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>
