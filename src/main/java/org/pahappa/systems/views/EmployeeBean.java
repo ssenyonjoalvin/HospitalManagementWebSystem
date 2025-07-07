@@ -1,7 +1,7 @@
 package org.pahappa.systems.views;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.pahappa.systems.enums.Rolename;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Named("employeeBean")
-@SessionScoped
+@ViewScoped
 public class EmployeeBean implements Serializable {
     private List<User> allEmployees;
     private List<User> filteredEmployees;
@@ -22,6 +22,7 @@ public class EmployeeBean implements Serializable {
     private User selectedEmployee;
     private String message;
     private User employeeToDelete;
+    private Long employeeId;
 
     @Inject
     private UserService userService;
@@ -33,7 +34,9 @@ public class EmployeeBean implements Serializable {
 
     public void loadEmployees() {
         // This should fetch all users who are employees (not patients)
-        allEmployees = userService.getAllEmployees();
+        allEmployees = userService.getAllEmployees().stream()
+                .filter(e -> !e.isDeleted())
+                .collect(Collectors.toList());
         filteredEmployees = allEmployees;
     }
 
@@ -65,7 +68,8 @@ public class EmployeeBean implements Serializable {
     }
 
     public void deleteEmployee(User employee) {
-        userService.deleteEmployee(employee);
+        employee.setDeleted(true);
+        userService.updateEmployee(employee); // Soft delete
         loadEmployees();
         message = "Employee deleted successfully!";
     }
@@ -80,6 +84,17 @@ public class EmployeeBean implements Serializable {
 
     public void setEmployeeToDelete(User employeeToDelete) {
         this.employeeToDelete = employeeToDelete;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+        if (employeeId != null) {
+            this.selectedEmployee = userService.getEmployeeById(employeeId);
+        }
+    }
+
+    public Long getEmployeeId() {
+        return employeeId;
     }
 
     // Getters and setters
