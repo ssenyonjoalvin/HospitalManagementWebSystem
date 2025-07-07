@@ -25,26 +25,33 @@
                 <i class="fa-solid fa-filter"> </i> Citycare General Hospital
             </div>
             <div class="list-group list-group-flush">
-                <!-- 'active' class highlights the current page -->
-                <a href="dashboard.xhtml" class="list-group-item list-group-item-action active">
+                <!-- Dynamic navigation with active state -->
+                <h:link outcome="dashboard"
+                    styleClass="list-group-item list-group-item-action #{view.viewId == '/dashboard.xhtml' ? 'active' : ''}">
                     <i class="fa-solid fa-table-columns"> </i> Dashboard
-                </a>
+                </h:link>
+                <h:link outcome="appointments"
+                    styleClass="list-group-item list-group-item-action #{view.viewId == '/appointments.xhtml' ? 'active' : ''}">
+                    <i class="fa-solid fa-file-medical"> </i> Appointments
+                </h:link>
+                <h:link outcome="patient"
+                    styleClass="list-group-item list-group-item-action #{view.viewId == '/patient.xhtml' ? 'active' : ''}">
+                    <i class="fa-solid fa-hospital-user"> </i> Patients
+                </h:link>
+                <h:link outcome="employee"
+                    styleClass="list-group-item list-group-item-action #{view.viewId == '/employee.xhtml' ? 'active' : ''}">
+                    <i class="fa-solid fa-users"> </i> Employees
+                </h:link>
                 <a href="#" class="list-group-item list-group-item-action">
                     <i class="fa-solid fa-calendar-days"> </i> Calendar
-                </a>
-                <a href="employee.xhtml" class="list-group-item list-group-item-action">
-                    <i class="fa-solid fa-users"> </i> Employees
-                </a>
-                <a href="patient.xhtml" class="list-group-item list-group-item-action">
-                    <i class="fa-solid fa-hospital-user"> </i> Patients
-                </a>
-                <a href="appointments.xhtml" class="list-group-item list-group-item-action">
-                    <i class="fa-solid fa-file-medical"> </i> Appointments
                 </a>
                 <a href="#" class="list-group-item list-group-item-action">
                     <i class="fa-solid fa-credit-card"> </i> Payments
                 </a>
-
+                <h:link outcome="session-info"
+                    styleClass="list-group-item list-group-item-action #{view.viewId == '/session-info.xhtml' ? 'active' : ''}">
+                    <i class="fa-solid fa-user-clock"> </i> Session Info
+                </h:link>
             </div>
         </div>
 
@@ -54,12 +61,6 @@
             <!-- Top Navigation Bar -->
             <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
                 <div class="container-fluid">
-                    <h:form>
-                        <div class="input-group">
-                            <h:inputText styleClass="form-control" placeholder="Search here..." />
-                        </div>
-                    </h:form>
-
                     <ul class="navbar-nav ms-auto mt-2 mt-lg-0 align-items-center">
                         <li class="nav-item"><a class="nav-link" href="#!"><i
                                     class="fa-solid fa-comment-medical fs-5"></i></a></li>
@@ -79,7 +80,12 @@
                                 <a class="dropdown-item" href="#!">Profile</a>
                                 <a class="dropdown-item" href="#!">Settings</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#!">Logout</a>
+                                <h:form>
+                                    <h:commandLink action="#{loginBean.logout}" styleClass="dropdown-item"
+                                        value="Logout">
+                                        <f:ajax execute="@this" render="@none" />
+                                    </h:commandLink>
+                                </h:form>
                             </div>
                         </li>
                     </ul>

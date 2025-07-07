@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="template/template.xhtml">
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4">
+                        <i class="fa-solid fa-user-clock"></i> Session Information
+                    </h2>
+                </div>
+            </div>
+
+            <!-- Current User Information -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fa-solid fa-user"></i> Current User
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <strong>Name:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    #{sessionDashboardBean.currentUser.fullName}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <strong>Email:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    #{sessionDashboardBean.currentUser.email}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <strong>Role:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <span class="badge bg-primary">#{sessionDashboardBean.currentUser.role}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fa-solid fa-clock"></i> Session Details
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <strong>Session ID:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <code>#{sessionDashboardBean.currentSessionId}</code>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <strong>Login Time:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    #{sessionDashboardBean.loginTime}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <strong>Duration:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    #{sessionDashboardBean.sessionDuration}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <strong>Last Activity:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    #{sessionDashboardBean.lastActivity}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <strong>IP Address:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <code>#{sessionDashboardBean.ipAddress}</code>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <strong>Requests:</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <span class="badge bg-info">#{sessionDashboardBean.requestCount}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Information -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fa-solid fa-server"></i> System Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h3 class="text-primary">#{sessionDashboardBean.activeSessionCount}</h3>
+                                        <p class="text-muted">Active Sessions</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h3 class="text-success">#{sessionDashboardBean.isUserLoggedIn() ? 'Online' :
+                                            'Offline'}</h3>
+                                        <p class="text-muted">Status</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h3 class="text-info">#{sessionDashboardBean.hasRole('ADMIN') ? 'Admin' :
+                                            'User'}</h3>
+                                        <p class="text-muted">Access Level</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h:form>
+                                            <h:commandButton value="Refresh"
+                                                action="#{sessionDashboardBean.cleanupExpiredSessions()}"
+                                                styleClass="btn btn-warning btn-sm">
+                                                <f:ajax execute="@this" render="@none" />
+                                            </h:commandButton>
+                                        </h:form>
+                                        <p class="text-muted">Cleanup Sessions</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Logging Example -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fa-solid fa-list"></i> Log Activity
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <h:form>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Action:</label>
+                                        <h:inputText styleClass="form-control" value="#{sessionDashboardBean.action}" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Description:</label>
+                                        <h:inputText styleClass="form-control"
+                                            value="#{sessionDashboardBean.description}" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Type:</label>
+                                        <h:selectOneMenu styleClass="form-select"
+                                            value="#{sessionDashboardBean.activityType}">
+                                            <f:selectItem itemValue="VIEW" itemLabel="View" />
+                                            <f:selectItem itemValue="CREATE" itemLabel="Create" />
+                                            <f:selectItem itemValue="UPDATE" itemLabel="Update" />
+                                            <f:selectItem itemValue="DELETE" itemLabel="Delete" />
+                                            <f:selectItem itemValue="SEARCH" itemLabel="Search" />
+                                            <f:selectItem itemValue="SYSTEM" itemLabel="System" />
+                                        </h:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <h:commandButton value="Log Activity"
+                                            action="#{sessionDashboardBean.logActivity(sessionDashboardBean.action, sessionDashboardBean.description, sessionDashboardBean.activityType)}"
+                                            styleClass="btn btn-primary">
+                                            <f:ajax execute="@this" render="@none" />
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+
+</html>

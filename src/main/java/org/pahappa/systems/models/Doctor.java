@@ -24,9 +24,9 @@ public class Doctor extends User {
 
     // Constructor must include staffStatus too if you use it
     public Doctor(Rolename role, String password, String nextOfKin, String address, Gender gender,
-            LocalDate dateOfBirth,
-            String email, String phoneNumber, String fullName, Specialty specialization,
-            Qualification qualification, Department department, int yearsOfExperience, Status staffStatus) {
+                  LocalDate dateOfBirth,
+                  String email, String phoneNumber, String fullName, Specialty specialization,
+                  Qualification qualification, Department department, int yearsOfExperience, Status staffStatus) {
         super(role, password, nextOfKin, address, gender, dateOfBirth, email, phoneNumber, fullName);
         this.specialization = specialization;
         this.qualification = qualification;

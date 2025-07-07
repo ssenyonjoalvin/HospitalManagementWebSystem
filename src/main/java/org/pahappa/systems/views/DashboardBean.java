@@ -1,4 +1,4 @@
-package org.pahappa.systems.beans;
+package org.pahappa.systems.views;
 
 // Note the updated "jakarta.*" imports
 import jakarta.annotation.PostConstruct;

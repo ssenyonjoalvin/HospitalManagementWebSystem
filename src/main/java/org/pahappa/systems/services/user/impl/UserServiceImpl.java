@@ -1,4 +1,4 @@
-package org.pahappa.systems.services.impl;
+package org.pahappa.systems.services.user.impl;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import org.pahappa.systems.enums.Rolename;
@@ -12,7 +12,7 @@ import org.pahappa.systems.models.Doctor;
 import org.pahappa.systems.models.Pharmacist;
 import org.pahappa.systems.models.Receptionist;
 import org.pahappa.systems.repository.UserDAO;
-import org.pahappa.systems.services.UserService;
+import org.pahappa.systems.services.user.UserService;
 
 import java.util.List;
 import java.util.stream.Collectors;

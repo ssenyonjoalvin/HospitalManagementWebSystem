@@ -1,4 +1,4 @@
-package org.pahappa.systems.beans;
+package org.pahappa.systems.navigation;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
@@ -34,10 +34,12 @@ public class NavigationBean {
     public String toNewAppointment() {
         return "/new-appointment.xhtml?faces-redirect=true";
     }
-    public String cancelNew(){
+
+    public String cancelNew() {
         return "/appointments.xhtml?faces-redirect=true";
     }
-    public String  toEditPatient(){
+
+    public String toEditPatient() {
         return "/edit-patient.xhtml?faces-redirect=true";
 
     }

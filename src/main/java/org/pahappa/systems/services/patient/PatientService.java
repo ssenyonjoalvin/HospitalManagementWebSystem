@@ -1,4 +1,4 @@
-package org.pahappa.systems.services;
+package org.pahappa.systems.services.patient;
 
 import org.pahappa.systems.enums.PatientType;
 import org.pahappa.systems.models.Patient;
