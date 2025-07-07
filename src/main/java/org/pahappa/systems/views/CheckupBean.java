@@ -10,6 +10,7 @@ import org.pahappa.systems.models.Doctor;
 import org.pahappa.systems.models.Medicine;
 import org.pahappa.systems.models.Patient;
 import org.pahappa.systems.models.Service;
+import org.pahappa.systems.repository.AppointmentsDAO;
 import org.pahappa.systems.services.billing.BillingAndReportingService;
 import org.pahappa.systems.services.session.SessionManager;
 import org.primefaces.PrimeFaces;
@@ -52,7 +53,15 @@ public class CheckupBean implements Serializable {
     private Appointment selectedAppointment;
     private Doctor selectedDoctor;
 
+    private Long selectedAppointmentId;
+
+    public String goToCheckupPage(Appointment appointment) {
+        return "/checkup.xhtml?faces-redirect=true&amp;appointmentId=" + appointment.getId();
+    }
+
+    @Deprecated
     public void prepareCheckup(Appointment appointment) {
+        // Deprecated: use goToCheckupPage for navigation
         this.selectedAppointment = appointment;
         this.selectedPatient = appointment.getPatient();
         this.selectedDoctor = appointment.getDoctor();
@@ -216,5 +225,55 @@ public class CheckupBean implements Serializable {
 
     public void setSelectedDoctor(Doctor selectedDoctor) {
         this.selectedDoctor = selectedDoctor;
+    }
+
+    public Long getSelectedAppointmentId() {
+        return selectedAppointmentId;
+    }
+
+    public void setSelectedAppointmentId(Long id) {
+        this.selectedAppointmentId = id;
+    }
+
+    public void loadAppointmentData() {
+        if (selectedAppointmentId != null
+                && (selectedAppointment == null || !selectedAppointment.getId().equals(selectedAppointmentId))) {
+            // Load appointment from DB using selectedAppointmentId
+            // You may need to inject AppointmentsDAO or similar here
+            AppointmentsDAO appointmentsDAO = new AppointmentsDAO(); // Or inject if possible
+            this.selectedAppointment = appointmentsDAO.findById(selectedAppointmentId);
+            if (this.selectedAppointment != null) {
+                this.selectedPatient = selectedAppointment.getPatient();
+                this.selectedDoctor = selectedAppointment.getDoctor();
+                this.signsAndSymptoms = "";
+                this.conclusion = "";
+                this.diagnosis = "";
+                this.treatmentPlan = "";
+                this.selectedMedicines = new ArrayList<>();
+                this.selectedServices = new ArrayList<>();
+                this.availableMedicines = billingService.getAllMedicines();
+                this.availableServices = billingService.getAllServices();
+            }
+        }
+    }
+
+    public List<Medicine> completeMedicine(String query) {
+        if (availableMedicines == null) {
+            availableMedicines = billingService.getAllMedicines();
+        }
+        String lowerQuery = query == null ? "" : query.toLowerCase();
+        return availableMedicines.stream()
+                .filter(med -> med.getName().toLowerCase().contains(lowerQuery))
+                .collect(Collectors.toList());
+    }
+
+    public List<Service> completeService(String query) {
+        if (availableServices == null) {
+            availableServices = billingService.getAllServices();
+        }
+        String lowerQuery = query == null ? "" : query.toLowerCase();
+        return availableServices.stream()
+                .filter(svc -> svc.getName().toLowerCase().contains(lowerQuery))
+                .collect(Collectors.toList());
     }
 }
