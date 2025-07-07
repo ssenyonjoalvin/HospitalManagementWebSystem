@@ -41,7 +41,7 @@ public class UserDAO {
         }
     }
 
-    public User getRecordById(int id) {
+    public User getRecordById(long id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.get(User.class, id);
         }
@@ -70,7 +70,7 @@ public class UserDAO {
         }
     }
 
-    public void deleteRecord(int id) {
+    public void deleteRecord(long id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
