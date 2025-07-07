@@ -1,7 +1,9 @@
 package org.pahappa.systems.models;
 
-import org.pahappa.systems.enums.*;
 import jakarta.persistence.Entity;
+import org.pahappa.systems.enums.Gender;
+import org.pahappa.systems.enums.Rolename;
+import org.pahappa.systems.enums.Shift;
 
 import java.time.LocalDate;
 
@@ -32,8 +34,8 @@ public class Pharmacist extends User {
     }
 
     public Pharmacist(Rolename role, String password, String nextOfKin, String address, Gender gender,
-            LocalDate dateOfBirth,
-            String email, String phoneNumber, String fullName, String licenseNumber, Shift shift) {
+                      LocalDate dateOfBirth,
+                      String email, String phoneNumber, String fullName, String licenseNumber, Shift shift) {
         super(role, password, nextOfKin, address, gender, dateOfBirth, email, phoneNumber, fullName);
         this.licenseNumber = licenseNumber;
         this.shift = shift;

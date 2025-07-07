@@ -1,0 +1,174 @@
+<ui:composition template="/template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="content">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-3">Register Employee</h4>
+                <h:form>
+                    <h:messages style="color:red;" />
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <h:inputText id="fullName" value="#{userRegistrationBean.user.fullName}"
+                                styleClass="form-control" pt:placeholder="Enter full name" required="true" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number</label>
+                            <h:inputText id="phoneNumber" value="#{userRegistrationBean.user.phoneNumber}"
+                                styleClass="form-control" pt:placeholder="Enter phone number" required="true" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <h:inputText id="email" value="#{userRegistrationBean.user.email}" styleClass="form-control"
+                                pt:placeholder="Enter email" required="true" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="dateOfBirth" class="form-label">Date of Birth</label>
+                            <p:datePicker id="dateOfBirth" value="#{userRegistrationBean.user.dateOfBirth}"
+                                showIcon="true" required="true" styleClass="form-control"
+                                maxdate="#{userRegistrationBean.now}" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <h:inputText id="address" value="#{userRegistrationBean.user.address}"
+                                styleClass="form-control" pt:placeholder="Enter address" required="true" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="nextOfKin" class="form-label">Next of Kin</label>
+                            <h:inputText id="nextOfKin" value="#{userRegistrationBean.user.nextOfKin}"
+                                styleClass="form-control" pt:placeholder="Enter next of kin" required="true" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <h:inputSecret id="password" value="#{userRegistrationBean.user.password}"
+                                styleClass="form-control" pt:placeholder="Enter password" required="true" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <h:selectOneMenu id="role" value="#{userRegistrationBean.selectedRole}"
+                                styleClass="form-select" required="true">
+                                <f:selectItem itemLabel="Select role" itemValue="" />
+                                <f:selectItems value="#{userRegistrationBean.roles}" var="role" itemLabel="#{role}"
+                                    itemValue="#{role}" />
+                                <f:ajax render="roleFields" execute="@this" />
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <label for="gender" class="form-label">Gender</label>
+                            <h:selectOneMenu id="gender" value="#{userRegistrationBean.user.gender}"
+                                styleClass="form-select" required="true">
+                                <f:selectItem itemLabel="Select gender" itemValue="" />
+                                <f:selectItems value="#{userRegistrationBean.genders}" var="gender"
+                                    itemLabel="#{gender}" itemValue="#{gender}" />
+                            </h:selectOneMenu>
+                        </div>
+                    </div>
+                    <h:panelGroup id="roleFields">
+                        <h:panelGroup rendered="#{userRegistrationBean.selectedRole eq 'DOCTOR'}">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="specialization" class="form-label">Specialization</label>
+                                    <h:selectOneMenu id="specialization" value="#{userRegistrationBean.specialization}"
+                                        styleClass="form-select" required="true">
+                                        <f:selectItem itemLabel="Select specialization" itemValue="" />
+                                        <f:selectItems value="#{userRegistrationBean.specialties}" var="spec"
+                                            itemLabel="#{spec}" itemValue="#{spec}" />
+                                    </h:selectOneMenu>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="qualification" class="form-label">Qualification</label>
+                                    <h:selectOneMenu id="qualification" value="#{userRegistrationBean.qualification}"
+                                        styleClass="form-select" required="true">
+                                        <f:selectItem itemLabel="Select qualification" itemValue="" />
+                                        <f:selectItems value="#{userRegistrationBean.qualifications}" var="qual"
+                                            itemLabel="#{qual}" itemValue="#{qual}" />
+                                    </h:selectOneMenu>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="department" class="form-label">Department</label>
+                                    <h:selectOneMenu id="department" value="#{userRegistrationBean.department}"
+                                        styleClass="form-select" required="true">
+                                        <f:selectItem itemLabel="Select department" itemValue="" />
+                                        <f:selectItems value="#{userRegistrationBean.departments}" var="dept"
+                                            itemLabel="#{dept}" itemValue="#{dept}" />
+                                    </h:selectOneMenu>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="staffStatus" class="form-label">Staff Status</label>
+                                    <h:selectOneMenu id="staffStatus" value="#{userRegistrationBean.staffStatus}"
+                                        styleClass="form-select" required="true">
+                                        <f:selectItem itemLabel="Select status" itemValue="" />
+                                        <f:selectItems value="#{userRegistrationBean.statuses}" var="stat"
+                                            itemLabel="#{stat}" itemValue="#{stat}" />
+                                    </h:selectOneMenu>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="yearsOfExperience" class="form-label">Experience</label>
+                                    <h:inputText id="yearsOfExperience"
+                                        value="#{userRegistrationBean.yearsOfExperience}" styleClass="form-control"
+                                        required="true" pt:placeholder="Enter years of experience" />
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{userRegistrationBean.selectedRole eq 'RECEPTIONIST'}">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="deskNumber" class="form-label">Desk Number</label>
+                                    <h:inputText id="deskNumber" value="#{userRegistrationBean.deskNumber}"
+                                        styleClass="form-control" pt:placeholder="Enter desk number" required="true" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="receptionistShift" class="form-label">Shift</label>
+                                    <h:selectOneMenu id="receptionistShift"
+                                        value="#{userRegistrationBean.receptionistShift}" styleClass="form-select"
+                                        required="true">
+                                        <f:selectItem itemLabel="Select shift" itemValue="" />
+                                        <f:selectItems value="#{userRegistrationBean.shifts}" var="shift"
+                                            itemLabel="#{shift}" itemValue="#{shift}" />
+                                    </h:selectOneMenu>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{userRegistrationBean.selectedRole eq 'PHARMACIST'}">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="licenseNumber" class="form-label">License Number</label>
+                                    <h:inputText id="licenseNumber" value="#{userRegistrationBean.licenseNumber}"
+                                        styleClass="form-control" pt:placeholder="Enter license number"
+                                        required="true" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="pharmacistShift" class="form-label">Shift</label>
+                                    <h:selectOneMenu id="pharmacistShift"
+                                        value="#{userRegistrationBean.pharmacistShift}" styleClass="form-select"
+                                        required="true">
+                                        <f:selectItem itemLabel="Select shift" itemValue="" />
+                                        <f:selectItems value="#{userRegistrationBean.shifts}" var="shift"
+                                            itemLabel="#{shift}" itemValue="#{shift}" />
+                                    </h:selectOneMenu>
+                                </div>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <div class="d-flex justify-content-end">
+                        <h:commandButton value="Register" action="#{userRegistrationBean.register}"
+                            styleClass="btn btn-primary btn-lg px-4" oncomplete="hideGrowl()" ajax="false" />
+                        <h:link outcome="employee.xhtml" styleClass="btn btn-secondary btn-lg px-4 ms-2">Cancel</h:link>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+        <h:outputScript>
+            function hideGrowl() {
+            setTimeout(function() {
+            if (PF('msg')) {
+            PF('msg').clear();
+            }
+            }, 4000);
+            }
+        </h:outputScript>
+    </ui:define>
+</ui:composition>

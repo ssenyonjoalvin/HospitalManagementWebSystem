@@ -1,4 +1,4 @@
-package org.pahappa.systems.beans;
+package org.pahappa.systems.views;
 
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -6,7 +6,9 @@ import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.pahappa.systems.models.User;
-import org.pahappa.systems.services.UserService;
+import org.pahappa.systems.navigation.NavigationBean;
+import org.pahappa.systems.services.session.SessionManager;
+import org.pahappa.systems.services.user.UserService;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,7 +20,6 @@ public class LoginBean implements Serializable {
     private static final long serialVersionUID = 1L;
     private String email;
     private String password;
-    private User loggedInUser;
 
     @Inject
     private UserService userService;
@@ -26,10 +27,18 @@ public class LoginBean implements Serializable {
     @Inject
     private NavigationBean navigationBean;
 
+    @Inject
+    private SessionManager sessionManager;
+
     public String login() {
         User user = userService.login(email, password);
         if (user != null) {
-            this.loggedInUser = user;
+            // Create session and log activity
+            sessionManager.createSession(user);
+
+            // Clear sensitive data
+            this.password = null;
+
             // Use NavigationBean for navigation
             return navigationBean.toDashboard();
         } else {
@@ -39,12 +48,21 @@ public class LoginBean implements Serializable {
         }
     }
 
-    public User getLoggedInUser() {
-        return loggedInUser;
+    public String logout() {
+        // Log activity and destroy session
+        sessionManager.logUserActivity("LOGOUT", "User logged out",
+                org.pahappa.systems.models.UserActivity.ActivityType.LOGOUT);
+        sessionManager.destroySession();
+
+        // Clear form data
+        this.email = null;
+        this.password = null;
+
+        return "/login.xhtml?faces-redirect=true";
     }
 
-    public void setLoggedInUser(User user) {
-        this.loggedInUser = user;
+    public User getLoggedInUser() {
+        return sessionManager.getCurrentUser();
     }
 
     public String getEmail() {

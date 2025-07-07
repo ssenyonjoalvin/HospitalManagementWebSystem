@@ -1,10 +1,10 @@
-package org.pahappa.systems.services.impl;
+package org.pahappa.systems.services.patient.impl;
 
 import org.pahappa.systems.enums.PatientType;
 import org.pahappa.systems.enums.Rolename;
 import org.pahappa.systems.models.Patient;
 import org.pahappa.systems.repository.UserDAO;
-import org.pahappa.systems.services.PatientService;
+import org.pahappa.systems.services.patient.PatientService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +39,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void savePatient(Patient patient) {
-        System.out.println("savePatient called");
+        //System.out.println("savePatient called");
         patient.setRole(Rolename.PATIENT);
         if (patient.getPassword() != null && !patient.getPassword().isEmpty()) {
             patient.setPassword(hashPassword(patient.getPassword()));

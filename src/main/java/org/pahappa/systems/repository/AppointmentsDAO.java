@@ -52,9 +52,19 @@ public class AppointmentsDAO {
      * Retrieves all appointments from the database.
      */
     public List<Appointment> findAll() {
+        System.out.println("[DEBUG] AppointmentsDAO.findAll() called");
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Appointment", Appointment.class).list();
+            List<Appointment> appointments = session.createQuery("from Appointment", Appointment.class).list();
+            System.out.println("[DEBUG] Found " + appointments.size() + " appointments in database");
+            for (Appointment appt : appointments) {
+                System.out.println("[DEBUG] Appointment: ID=" + appt.getId() +
+                        ", Patient=" + (appt.getPatient() != null ? appt.getPatient().getFullName() : "null") +
+                        ", Doctor=" + (appt.getDoctor() != null ? appt.getDoctor().getFullName() : "null") +
+                        ", Date=" + appt.getAppointmentDate() + ", Status=" + appt.getStatus());
+            }
+            return appointments;
         } catch (Exception e) {
+            System.err.println("[ERROR] Error in AppointmentsDAO.findAll(): " + e.getMessage());
             e.printStackTrace();
             return Collections.emptyList(); // Return an empty list on error
         }

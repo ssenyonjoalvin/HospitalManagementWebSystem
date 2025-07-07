@@ -1,4 +1,4 @@
-package org.pahappa.systems.beans;
+package org.pahappa.systems.views;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
@@ -14,14 +14,16 @@ import org.pahappa.systems.enums.TimeSlot;
 import org.pahappa.systems.models.Appointment;
 import org.pahappa.systems.models.Doctor;
 import org.pahappa.systems.models.Patient;
+import org.pahappa.systems.navigation.NavigationBean;
 import org.pahappa.systems.repository.UserDAO;
-import org.pahappa.systems.services.AppointmentsService;
+import org.pahappa.systems.services.appointment.AppointmentsService;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -68,23 +70,45 @@ public class AppointmentBean implements Serializable {
     private TimeSlot selectedTimeSlot;
     private String message;
 
+    // --- Cancel with Reason Dialog State ---
+    private Appointment appointmentToCancel;
+    private String cancelReason;
+
+    // --- Edit Appointment State ---
+    private Appointment appointmentToEdit;
+
     /**
      * The PostConstruct method is called once after the bean is created.
      * It loads the data needed for the main appointments list.
      */
     @PostConstruct
     public void init() {
-        // Load the main list of appointments
-        this.appointments = appointmentsService.getAllAppointments();
+        System.out.println("[DEBUG] AppointmentBean init() called");
+        try {
+            // Load the main list of appointments
+            this.appointments = appointmentsService.getAllAppointments();
+            System.out.println("[DEBUG] Loaded " + this.appointments.size() + " appointments");
 
-        // Load the list of all patients once for the autocomplete feature
-        this.allPatients = userDAO.getAllRecords().stream()
-                .filter(user -> user.getRole() == Rolename.PATIENT && user instanceof Patient)
-                .map(user -> (Patient) user)
-                .collect(Collectors.toList());
+            // Load the list of all patients once for the autocomplete feature
+            this.allPatients = userDAO.getAllRecords().stream()
+                    .filter(user -> user.getRole() == Rolename.PATIENT && user instanceof Patient)
+                    .map(user -> (Patient) user)
+                    .collect(Collectors.toList());
+            System.out.println("[DEBUG] Loaded " + this.allPatients.size() + " patients");
 
-        if (newAppointment == null) {
-            newAppointment = new Appointment();
+            // Load the list of all doctors for the filter dropdown
+            this.doctors = userDAO.getAllRecords().stream()
+                    .filter(user -> user.getRole() == Rolename.DOCTOR && user instanceof Doctor)
+                    .map(user -> (Doctor) user)
+                    .collect(Collectors.toList());
+            System.out.println("[DEBUG] Loaded " + this.doctors.size() + " doctors");
+
+            if (newAppointment == null) {
+                newAppointment = new Appointment();
+            }
+        } catch (Exception e) {
+            System.err.println("[ERROR] Error in AppointmentBean init(): " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -115,34 +139,38 @@ public class AppointmentBean implements Serializable {
      * 'new-appointment.xhtml' page.
      * It handles validation and gives user feedback.
      */
-    public void saveNewAppointment() {
+    public String saveNewAppointment() {
+        System.out.println("[DEBUG] saveNewAppointment called. selectedSpecialty: " + selectedSpecialty
+                + ", availableDoctors: " + availableDoctors);
         try {
+            if ((availableDoctors == null || availableDoctors.isEmpty()) && selectedSpecialty != null) {
+                availableDoctors = appointmentsService.getDoctorsBySpecialty(selectedSpecialty);
+                System.out.println("[DEBUG] Repopulated availableDoctors in saveNewAppointment: " + availableDoctors);
+            }
             // 1. Final validation and state assembly before calling the service
             if (selectedPatient == null) {
                 throw new ValidationException("A patient must be selected for the appointment.");
             }
             appointmentToCreate.setPatient(selectedPatient);
-
+            System.out.println("[DEBUG] About to save appointment. Patient: " + selectedPatient + ", Patient ID: "
+                    + selectedPatient.getId());
             // 2. Delegate ALL business logic and persistence to the service layer
             appointmentsService.createAppointmentFromObject(appointmentToCreate);
-
-            // 3. On success, provide feedback to the user and reset the form for another
-            // entry
+            // 3. On success, provide feedback to the user
             addMessage(FacesMessage.SEVERITY_INFO, "Success",
                     "Appointment for " + selectedPatient.getFullName() + " has been scheduled.");
-
-            // Re-initialize the form for a new entry without leaving the page
-            goToNewAppointment();
-
+            // 4. Refresh the appointments list so the new appointment appears
+            this.appointments = appointmentsService.getAllAppointments();
+            // 5. Redirect to the appointments page
+            return navigationBean.toAppointments();
         } catch (ValidationException e) {
-            // If the service finds a business rule violation (e.g., slot taken), show a
-            // specific error
             addMessage(FacesMessage.SEVERITY_ERROR, "Validation Error", e.getMessage());
+            return null;
         } catch (Exception e) {
-            // For any other unexpected errors
             e.printStackTrace();
             addMessage(FacesMessage.SEVERITY_FATAL, "System Error",
                     "An unexpected error occurred. Please contact support.");
+            return null;
         }
     }
 
@@ -224,6 +252,11 @@ public class AppointmentBean implements Serializable {
     }
 
     public List<Doctor> getAvailableDoctors() {
+        if ((availableDoctors == null || availableDoctors.isEmpty()) && selectedSpecialty != null) {
+            availableDoctors = appointmentsService.getDoctorsBySpecialty(selectedSpecialty);
+        }
+        System.out.println("[DEBUG] getAvailableDoctors called. selectedSpecialty: " + selectedSpecialty
+                + ", availableDoctors: " + availableDoctors);
         return availableDoctors;
     }
 
@@ -329,5 +362,122 @@ public class AppointmentBean implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    // --- Cancel with Reason Methods ---
+    public void openCancelDialog(Appointment appt) {
+        this.appointmentToCancel = appt;
+        this.cancelReason = null;
+    }
+
+    public void confirmCancel() {
+        if (appointmentToCancel != null && cancelReason != null && !cancelReason.trim().isEmpty()) {
+            try {
+                // Set the new values
+                appointmentToCancel.setReason(cancelReason);
+                appointmentToCancel.setStatus(AppointmentStatus.CANCELED);
+
+                // Persist the changes to the database
+                appointmentsService.updateAppointment(appointmentToCancel);
+
+                // Feedback and refresh
+                addMessage(FacesMessage.SEVERITY_INFO, "Appointment canceled", "Reason: " + cancelReason);
+                this.appointments = appointmentsService.getAllAppointments();
+            } catch (Exception e) {
+                addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Could not cancel appointment: " + e.getMessage());
+            }
+        } else {
+            addMessage(FacesMessage.SEVERITY_WARN, "Reason required", "Please enter a reason for cancellation.");
+        }
+    }
+
+    public Appointment getAppointmentToCancel() {
+        return appointmentToCancel;
+    }
+
+    public void setAppointmentToCancel(Appointment appointmentToCancel) {
+        this.appointmentToCancel = appointmentToCancel;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
+    }
+
+    public String edit(Appointment appt) {
+        this.appointmentToEdit = appt;
+        this.appointmentToCreate = appt; // reuse the same object for the form
+        this.selectedPatient = appt.getPatient();
+        this.selectedSpecialty = appt.getDoctor() != null ? appt.getDoctor().getSpecialization() : null;
+        this.availableDoctors = appointmentsService.getDoctorsBySpecialty(selectedSpecialty);
+        return navigationBean.toNewAppointment();
+    }
+
+    public Appointment getAppointmentToEdit() {
+        return appointmentToEdit;
+    }
+
+    public void setAppointmentToEdit(Appointment appointmentToEdit) {
+        this.appointmentToEdit = appointmentToEdit;
+    }
+
+    // --- View and Filter Methods ---
+
+    public String view(Appointment appt) {
+        // For now, just return to the same page
+        // In a real application, you might navigate to a detailed view page
+        addMessage(FacesMessage.SEVERITY_INFO, "View Appointment",
+                "Viewing appointment for " + appt.getPatient().getFullName());
+        return null;
+    }
+
+    public void filter() {
+        try {
+            System.out.println("[DEBUG] Filter method called");
+            System.out.println("[DEBUG] selectedDoctor: " + selectedDoctor);
+            System.out.println("[DEBUG] selectedStatus: " + selectedStatus);
+            System.out.println("[DEBUG] selectedDate: " + selectedDate);
+
+            // Apply filters based on selected criteria
+            this.appointments = appointmentsService.getAllAppointments();
+            System.out.println("[DEBUG] Total appointments loaded: " + this.appointments.size());
+
+            // Filter by doctor if selected
+            if (selectedDoctor != null) {
+                this.appointments = this.appointments.stream()
+                        .filter(appt -> appt.getDoctor() != null &&
+                                Objects.equals(appt.getDoctor().getId(), selectedDoctor.getId()))
+                        .collect(Collectors.toList());
+                System.out.println("[DEBUG] After doctor filter: " + this.appointments.size());
+            }
+
+            // Filter by status if selected
+            if (selectedStatus != null) {
+                this.appointments = this.appointments.stream()
+                        .filter(appt -> appt.getStatus() == selectedStatus)
+                        .collect(Collectors.toList());
+                System.out.println("[DEBUG] After status filter: " + this.appointments.size());
+            }
+
+            // Filter by date if selected
+            if (selectedDate != null) {
+                this.appointments = this.appointments.stream()
+                        .filter(appt -> appt.getAppointmentDate() != null &&
+                                appt.getAppointmentDate().equals(selectedDate))
+                        .collect(Collectors.toList());
+                System.out.println("[DEBUG] After date filter: " + this.appointments.size());
+            }
+
+            addMessage(FacesMessage.SEVERITY_INFO, "Filter Applied",
+                    "Found " + this.appointments.size() + " appointments matching your criteria.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            addMessage(FacesMessage.SEVERITY_ERROR, "Filter Error",
+                    "Error applying filters: " + e.getMessage());
+        }
     }
 }

@@ -1,4 +1,4 @@
-package org.pahappa.systems.services.impl;
+package org.pahappa.systems.services.appointment.impl;
 
 import org.pahappa.systems.core.services.exceptions.ValidationException;
 import org.pahappa.systems.enums.AppointmentStatus;
@@ -8,7 +8,7 @@ import org.pahappa.systems.models.Appointment;
 import org.pahappa.systems.models.Doctor;
 import org.pahappa.systems.repository.AppointmentsDAO;
 import org.pahappa.systems.repository.UserDAO; // Assuming you have a DoctorDAO
-import org.pahappa.systems.services.AppointmentsService;
+import org.pahappa.systems.services.appointment.AppointmentsService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
 
@@ -27,7 +27,10 @@ public class AppointmentsServiceImpl implements AppointmentsService {
 
     @Override
     public List<Appointment> getAllAppointments() {
-        return appointmentsDAO.findAll();
+        System.out.println("[DEBUG] AppointmentsServiceImpl.getAllAppointments() called");
+        List<Appointment> appointments = appointmentsDAO.findAll();
+        System.out.println("[DEBUG] Found " + appointments.size() + " appointments in database");
+        return appointments;
     }
 
     @Override
@@ -85,6 +88,11 @@ public class AppointmentsServiceImpl implements AppointmentsService {
         if (appointment == null) {
             throw new ValidationException("Appointment not found.");
         }
+        // Prevent rescheduling of cancelled or completed appointments
+        if (appointment.getStatus() == AppointmentStatus.CANCELED
+                || appointment.getStatus() == AppointmentStatus.COMPLETED) {
+            throw new ValidationException("Cannot reschedule a cancelled or completed appointment.");
+        }
 
         // 2. Check Business Rule: Is the new slot taken?
         List<Appointment> appointmentsInSlot = appointmentsDAO.findByDoctorAndDate(appointment.getDoctor(), newDate);
@@ -126,16 +134,53 @@ public class AppointmentsServiceImpl implements AppointmentsService {
     @Override
     public void createAppointmentFromObject(Appointment appointment) throws ValidationException {
         // Validate the incoming object
-        if (appointment == null || appointment.getDoctor() == null || appointment.getAppointmentDate() == null || appointment.getTimeSlot() == null) {
+        if (appointment == null || appointment.getDoctor() == null || appointment.getAppointmentDate() == null
+                || appointment.getTimeSlot() == null) {
             throw new ValidationException("Doctor, date, and timeslot are all required.");
         }
 
-        // Call your existing business logic
-        this.createAppointment(
-                appointment.getDoctor().getId(),
-                appointment.getAppointmentDate(),
-                appointment.getTimeSlot()
-        );
-        // Note: The original createAppointment already handles saving the patient now, so no need to save again.
+        // Only allow booking for the next day or later
+        LocalDate today = LocalDate.now();
+        if (!appointment.getAppointmentDate().isAfter(today)) {
+            throw new ValidationException("Appointments can only be booked for the next day or later.");
+        }
+
+        // Check if the slot is already taken for the doctor on that day
+        if (appointmentsDAO.isSlotTaken(appointment.getDoctor(), appointment.getAppointmentDate(),
+                appointment.getTimeSlot())) {
+            throw new ValidationException("This time slot is already booked for the selected doctor on "
+                    + appointment.getAppointmentDate() + ". Please choose another.");
+        }
+
+        // Set default status if not set
+        if (appointment.getStatus() == null) {
+            appointment.setStatus(AppointmentStatus.SCHEDULED);
+        }
+
+        // If the appointment has an ID, update it; otherwise, save as new
+        if (appointment.getId() != null) {
+            appointmentsDAO.update(appointment);
+        } else {
+            appointmentsDAO.save(appointment);
+        }
+    }
+
+    @Override
+    public void updateAppointment(Appointment appointment) throws ValidationException {
+        if (appointment == null || appointment.getId() == null) {
+            throw new ValidationException("Appointment or ID must not be null for update.");
+        }
+        Appointment existing = appointmentsDAO.findById(appointment.getId());
+        if (existing != null) {
+            // If already cancelled or completed, only allow update if status is CANCELED
+            // (i.e., this is the cancellation action)
+            if ((existing.getStatus() == AppointmentStatus.CANCELED
+                    || existing.getStatus() == AppointmentStatus.COMPLETED)
+                    && appointment.getStatus() != AppointmentStatus.CANCELED) {
+                throw new ValidationException(
+                        "No further actions can be performed on a cancelled or completed appointment.");
+            }
+        }
+        appointmentsDAO.update(appointment);
     }
 }

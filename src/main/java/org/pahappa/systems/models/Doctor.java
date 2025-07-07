@@ -22,12 +22,11 @@ public class Doctor extends User {
     private Status staffStatus;
     private int yearsOfExperience;
 
-
     // Constructor must include staffStatus too if you use it
     public Doctor(Rolename role, String password, String nextOfKin, String address, Gender gender,
-            LocalDate dateOfBirth,
-            String email, String phoneNumber, String fullName, Specialty specialization,
-            Qualification qualification, Department department, int yearsOfExperience, Status staffStatus) {
+                  LocalDate dateOfBirth,
+                  String email, String phoneNumber, String fullName, Specialty specialization,
+                  Qualification qualification, Department department, int yearsOfExperience, Status staffStatus) {
         super(role, password, nextOfKin, address, gender, dateOfBirth, email, phoneNumber, fullName);
         this.specialization = specialization;
         this.qualification = qualification;
@@ -104,5 +103,19 @@ public class Doctor extends User {
                 + "Years of Experience: " + yearsOfExperience + "\n";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Doctor doctor = (Doctor) o;
+        return this.getId() == doctor.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(getId());
+    }
 
 }

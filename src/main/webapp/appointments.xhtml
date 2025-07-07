@@ -1,13 +1,15 @@
-<ui:composition template="template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"    xmlns:p="http://primefaces.org/ui"   >
 
     <ui:define name="content">
         <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center my-3">
                 <h2>Appointments</h2>
-                <h:commandButton value="New Appointment" action="#{appointmentBean.goToNewAppointment}"
-                    styleClass="btn btn-primary" />
+                <h:form>
+                    <h:commandButton value="New Appointment" action="#{appointmentBean.goToNewAppointment}"
+                        styleClass="btn btn-primary" />
+                </h:form>
             </div>
             <!-- Filters -->
             <h:form styleClass="mb-3">
@@ -28,7 +30,9 @@
                     </div>
                     <div class="col-md-3">
                         <h:inputText value="#{appointmentBean.selectedDate}" styleClass="form-control"
-                            placeholder="Date" />
+                            placeholder="Date (yyyy-MM-dd)">
+                            <f:convertDateTime pattern="yyyy-MM-dd" timeZone="GMT" />
+                        </h:inputText>
                     </div>
                     <div class="col-md-3">
                         <h:commandButton value="Filter" action="#{appointmentBean.filter}"
@@ -37,7 +41,8 @@
                 </div>
             </h:form>
             <!-- Appointments Table -->
-            <h:form>
+            <h:form id="appointmentsForm">
+
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -47,6 +52,7 @@
                             <th>Doctor</th>
                             <th>Date</th>
                             <th>Status</th>
+                            <th>Reason</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -62,16 +68,112 @@
                                     <span class="badge bg-secondary">#{appt.status}</span>
                                 </td>
                                 <td>
-                                    <h:commandLink value="View" action="#{appointmentBean.view(appt)}" />
-                                    <h:commandLink value="Edit" action="#{appointmentBean.edit(appt)}" />
-                                    <h:commandLink value="Cancel" action="#{appointmentBean.cancel(appt)}"
-                                        rendered="#{appt.status != 'CANCELED'}" />
+                                    <h:outputText value="#{appt.reason}" rendered="#{appt.status eq 'CANCELED'}" />
+                                </td>
+                                <td>
+                                    <h:panelGroup rendered="#{appt.status ne 'CANCELED'}" layout="block"
+                                        styleClass="d-flex gap-1 align-items-center">
+                                        <h:commandButton value="Edit" styleClass="btn btn-outline-info btn-sm me-1"
+                                            action="#{appointmentBean.edit(appt)}" />
+                                        <h:commandButton value="Cancel" styleClass="btn btn-outline-danger btn-sm"
+                                            actionListener="#{appointmentBean.openCancelDialog(appt)}"
+                                            onclick="new bootstrap.Modal(document.getElementById('cancelDialog')).show();return false;" />
+                                        <p:commandButton value="Checkup"
+                                            styleClass="btn btn-outline-success btn-sm ms-2"
+                                            action="#{checkupBean.prepareCheckup(appt)}" update=":checkupForm"
+                                            oncomplete="PF('checkupDialogWV').show()" />
+                                    </h:panelGroup>
                                 </td>
                             </tr>
                         </ui:repeat>
                     </tbody>
                 </table>
             </h:form>
+            <!-- Cancel Reason Dialog -->
+            <div id="cancelDialog" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Cancel Appointment</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <h:form id="cancelDialogForm">
+                            <div class="modal-body">
+                                <h:outputText value="Please enter a reason for cancellation:" />
+                                <h:inputTextarea value="#{appointmentBean.cancelReason}" required="true"
+                                    style="width:100%" />
+                            </div>
+                            <div class="modal-footer">
+                                <h:commandButton value="Save" actionListener="#{appointmentBean.confirmCancel}"
+                                    styleClass="btn btn-success" />
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+            <!-- Checkup Dialog -->
+            <p:dialog id="checkupDialog" header="Patient Checkup" widgetVar="checkupDialogWV" modal="true"
+                resizable="false" width="800">
+                <h:form id="checkupForm">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <h5 class="text-primary">
+                                <i class="fa fa-user"></i>
+                                Patient: #{checkupBean.selectedPatient.fullName}
+                            </h5>
+                            <h6 class="text-secondary">
+                                <i class="fa fa-user-md"></i>
+                                Doctor: #{checkupBean.selectedDoctor.fullName}
+                            </h6>
+                            <h6 class="text-secondary">
+                                <i class="fa fa-calendar"></i>
+                                Appointment: #{checkupBean.selectedAppointment.appointmentDate} -
+                                #{checkupBean.selectedAppointment.timeSlot.displayValue}
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p:outputLabel for="signsSymptoms" value="Signs &amp; Symptoms" />
+                            <p:inputTextarea id="signsSymptoms" value="#{checkupBean.signsAndSymptoms}" rows="4"
+                                styleClass="form-control" placeholder="Describe the patient's signs and symptoms..." />
+                        </div>
+                        <div class="col-md-6">
+                            <p:outputLabel for="conclusion" value="Clinical Conclusion" />
+                            <p:inputTextarea id="conclusion" value="#{checkupBean.conclusion}" rows="4"
+                                styleClass="form-control" placeholder="Provide clinical conclusion..." />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p:outputLabel for="medicines" value="Prescribed Medications" />
+                            <p:selectManyCheckbox id="medicines" value="#{checkupBean.selectedMedicines}"
+                                converter="medicineConverter" layout="pageDirection">
+                                <f:selectItems value="#{checkupBean.availableMedicines}" var="medicine"
+                                    itemValue="#{medicine}" itemLabel="#{medicine.name} - $#{medicine.price}" />
+                            </p:selectManyCheckbox>
+                            <small class="form-text text-muted">Select one or more medications</small>
+                        </div>
+                        <div class="col-md-6">
+                            <p:outputLabel for="services" value="Hospital Services" />
+                            <p:selectManyCheckbox id="services" value="#{checkupBean.selectedServices}"
+                                converter="serviceConverter" layout="pageDirection">
+                                <f:selectItems value="#{checkupBean.availableServices}" var="service"
+                                    itemValue="#{service}" itemLabel="#{service.name} - $#{service.price}" />
+                            </p:selectManyCheckbox>
+                            <small class="form-text text-muted">Select one or more services</small>
+                        </div>
+                    </div>
+                    <f:facet name="footer">
+                        <p:commandButton value="Submit &amp; Generate" action="#{checkupBean.submitCheckup}"
+                            update="checkupForm" oncomplete="PF('checkupDialogWV').hide()"
+                            styleClass="btn btn-primary me-2" />
+                        <p:commandButton value="Cancel" onclick="PF('checkupDialogWV').hide();return false;"
+                            styleClass="btn btn-secondary" type="button" />
+                    </f:facet>
+                </h:form>
+            </p:dialog>
         </div>
     </ui:define>
 </ui:composition>
