@@ -1,6 +1,7 @@
 package org.pahappa.systems.models;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "hospital_services")
@@ -9,13 +10,28 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
-    private double price;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
 
-    // Getters and setters
+    @Column(length = 500)
+    private String description;
+
+    @Column(nullable = false)
+    private boolean active = true;
+
+    public Service() {
+    }
+
+    public Service(String name, BigDecimal price, String description) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -32,11 +48,47 @@ public class Service {
         this.name = name;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public String toString() {
+        return name + " - $" + price;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Service service = (Service) obj;
+        return id != null && id.equals(service.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }
