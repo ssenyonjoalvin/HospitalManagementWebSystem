@@ -117,4 +117,9 @@ public class UserServiceImpl implements UserService {
     public void deleteEmployee(User user) {
         userDAO.deleteRecord(user.getId());
     }
+
+    @Override
+    public User getEmployeeById(Long id) {
+        return userDAO.getRecordById(id);
+    }
 }

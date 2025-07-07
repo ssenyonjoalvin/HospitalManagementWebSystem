@@ -1,31 +1,58 @@
 package org.pahappa.systems.models;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "medical-report")
+@Table(name = "medical_reports")
 public class MedicalReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
+    @JoinColumn(name = "patient_id", referencedColumnName = "id", nullable = false)
     private Patient patient;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
+    @JoinColumn(name = "doctor_id", referencedColumnName = "id", nullable = false)
     private Doctor doctor;
 
-    @Column(nullable = false)
-    private LocalDate reportDate;
+    @Column(name = "report_date", nullable = false)
+    private LocalDateTime reportDate;
 
-    @Lob
+    @Column(name = "signs_and_symptoms", columnDefinition = "TEXT")
     private String signsAndSymptoms;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String conclusion;
 
-    // Getters and setters
+    @Column(name = "diagnosis", columnDefinition = "TEXT")
+    private String diagnosis;
+
+    @Column(name = "treatment_plan", columnDefinition = "TEXT")
+    private String treatmentPlan;
+
+    @Column(name = "follow_up_date")
+    private LocalDateTime followUpDate;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    public MedicalReport() {
+        this.reportDate = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public MedicalReport(Patient patient, Doctor doctor, String signsAndSymptoms, String conclusion) {
+        this();
+        this.patient = patient;
+        this.doctor = doctor;
+        this.signsAndSymptoms = signsAndSymptoms;
+        this.conclusion = conclusion;
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -50,11 +77,11 @@ public class MedicalReport {
         this.doctor = doctor;
     }
 
-    public LocalDate getReportDate() {
+    public LocalDateTime getReportDate() {
         return reportDate;
     }
 
-    public void setReportDate(LocalDate reportDate) {
+    public void setReportDate(LocalDateTime reportDate) {
         this.reportDate = reportDate;
     }
 
@@ -72,5 +99,37 @@ public class MedicalReport {
 
     public void setConclusion(String conclusion) {
         this.conclusion = conclusion;
+    }
+
+    public String getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
+    }
+
+    public String getTreatmentPlan() {
+        return treatmentPlan;
+    }
+
+    public void setTreatmentPlan(String treatmentPlan) {
+        this.treatmentPlan = treatmentPlan;
+    }
+
+    public LocalDateTime getFollowUpDate() {
+        return followUpDate;
+    }
+
+    public void setFollowUpDate(LocalDateTime followUpDate) {
+        this.followUpDate = followUpDate;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

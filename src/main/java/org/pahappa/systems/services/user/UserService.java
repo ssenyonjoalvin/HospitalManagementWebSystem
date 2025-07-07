@@ -38,4 +38,6 @@ public interface UserService {
     void updateEmployee(User user);
 
     void deleteEmployee(User user);
+
+    User getEmployeeById(Long id);
 }
