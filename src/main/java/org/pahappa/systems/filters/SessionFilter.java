@@ -10,7 +10,7 @@ import org.pahappa.systems.services.session.SessionManager;
 
 import java.io.IOException;
 
-@WebFilter("*.xhtml")
+//@WebFilter("*.xhtml")
 public class SessionFilter implements Filter {
 
     @Inject
@@ -47,6 +47,7 @@ public class SessionFilter implements Filter {
 
     private boolean isPublicResource(String requestURI) {
         return requestURI.contains("/login.xhtml") ||
+                requestURI.endsWith("/login.xhtml") ||
                 requestURI.contains("/resources/") ||
                 requestURI.contains("/css/") ||
                 requestURI.contains("/js/") ||
