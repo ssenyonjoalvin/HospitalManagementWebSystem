@@ -1,6 +1,6 @@
 <ui:composition template="/template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"    xmlns:p="http://primefaces.org/ui"   >
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
         <div class="container-fluid">
@@ -149,7 +149,7 @@
                         <div class="col-md-6">
                             <p:outputLabel for="medicines" value="Prescribed Medications" />
                             <p:selectManyCheckbox id="medicines" value="#{checkupBean.selectedMedicines}"
-                                converter="medicineConverter" layout="pageDirection">
+                                converter="medicineConverter" layout="responsive" columns="1">
                                 <f:selectItems value="#{checkupBean.availableMedicines}" var="medicine"
                                     itemValue="#{medicine}" itemLabel="#{medicine.name} - $#{medicine.price}" />
                             </p:selectManyCheckbox>
@@ -158,7 +158,7 @@
                         <div class="col-md-6">
                             <p:outputLabel for="services" value="Hospital Services" />
                             <p:selectManyCheckbox id="services" value="#{checkupBean.selectedServices}"
-                                converter="serviceConverter" layout="pageDirection">
+                                converter="serviceConverter" layout="responsive" columns="1">
                                 <f:selectItems value="#{checkupBean.availableServices}" var="service"
                                     itemValue="#{service}" itemLabel="#{service.name} - $#{service.price}" />
                             </p:selectManyCheckbox>
