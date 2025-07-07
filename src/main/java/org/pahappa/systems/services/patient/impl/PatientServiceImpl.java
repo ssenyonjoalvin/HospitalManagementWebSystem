@@ -39,7 +39,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void savePatient(Patient patient) {
-        System.out.println("savePatient called");
+        //System.out.println("savePatient called");
         patient.setRole(Rolename.PATIENT);
         if (patient.getPassword() != null && !patient.getPassword().isEmpty()) {
             patient.setPassword(hashPassword(patient.getPassword()));

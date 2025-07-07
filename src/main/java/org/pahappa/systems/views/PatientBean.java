@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
+import java.time.LocalDate;
 
 @Named("patientBean")
 @SessionScoped // Use SessionScoped for reliable state across dialogs and AJAX
@@ -43,7 +44,7 @@ public class PatientBean implements Serializable {
     public void init() {
         // Use the injected patientService, do not create a new one here
         // Load all patient data once
-        allPatients = patientService.getAllPatients();
+        allPatients = patientService.getAllPatients().stream().filter(p -> !p.isDeleted()).collect(Collectors.toList());
         // Pre-filter the lists for the tabs
         hospitalizedPatients = allPatients.stream()
                 .filter(p -> p.getPatientType() == PatientType.INPATIENT)
@@ -79,13 +80,14 @@ public class PatientBean implements Serializable {
             patientService.savePatient(patientToSave);
             // Refresh lists using service method
             Map<String, List<Patient>> lists = patientService.getPatientLists();
-            allPatients = lists.get("all");
-            hospitalizedPatients = lists.get("hospitalized");
-            outpatients = lists.get("outpatients");
+            allPatients = lists.get("all").stream().filter(p -> !p.isDeleted()).collect(Collectors.toList());
+            hospitalizedPatients = lists.get("hospitalized").stream().filter(p -> !p.isDeleted())
+                    .collect(Collectors.toList());
+            outpatients = lists.get("outpatients").stream().filter(p -> !p.isDeleted()).collect(Collectors.toList());
             filteredPatients = allPatients;
             message = "Patient added successfully!";
-            return navigationBean.toPatients();
-            // newPatient = new Patient();
+            newPatient = new Patient();
+            return "/patients.xhtml?faces-redirect=true";
         } catch (Exception e) {
             message = "Error adding patient: " + e.getMessage();
             return null;
@@ -105,9 +107,10 @@ public class PatientBean implements Serializable {
             patientService.updatePatient(selectedPatient);
             // Refresh lists
             Map<String, List<Patient>> lists = patientService.getPatientLists();
-            allPatients = lists.get("all");
-            hospitalizedPatients = lists.get("hospitalized");
-            outpatients = lists.get("outpatients");
+            allPatients = lists.get("all").stream().filter(p -> !p.isDeleted()).collect(Collectors.toList());
+            hospitalizedPatients = lists.get("hospitalized").stream().filter(p -> !p.isDeleted())
+                    .collect(Collectors.toList());
+            outpatients = lists.get("outpatients").stream().filter(p -> !p.isDeleted()).collect(Collectors.toList());
             filteredPatients = allPatients;
             message = "Patient updated successfully!";
             return navigationBean.toPatients();
@@ -125,12 +128,14 @@ public class PatientBean implements Serializable {
     // Called when delete is confirmed in modal
     public void deletePatient() {
         try {
-            patientService.deletePatient(patientToDelete);
-            // Refresh lists
+            patientToDelete.setDeleted(true);
+            patientService.updatePatient(patientToDelete); // Soft delete
+            // Refresh lists and filter out deleted patients
             Map<String, List<Patient>> lists = patientService.getPatientLists();
-            allPatients = lists.get("all");
-            hospitalizedPatients = lists.get("hospitalized");
-            outpatients = lists.get("outpatients");
+            allPatients = lists.get("all").stream().filter(p -> !p.isDeleted()).collect(Collectors.toList());
+            hospitalizedPatients = lists.get("hospitalized").stream().filter(p -> !p.isDeleted())
+                    .collect(Collectors.toList());
+            outpatients = lists.get("outpatients").stream().filter(p -> !p.isDeleted()).collect(Collectors.toList());
             filteredPatients = allPatients;
             message = "Patient deleted successfully!";
         } catch (Exception e) {
@@ -203,6 +208,8 @@ public class PatientBean implements Serializable {
     public void setPatientToDelete(Patient patientToDelete) {
         this.patientToDelete = patientToDelete;
     }
-
+    public LocalDate getNow() {
+        return java.time.LocalDate.now();
+    }
 
 }

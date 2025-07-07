@@ -1,56 +1,75 @@
 <ui:composition template="/template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
     <ui:define name="content">
-        <h:form id="editForm">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h4 class="mb-3">Edit Patient</h4>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-3">Edit Patient</h4>
+                <h:form id="editForm">
                     <p:messages id="growlMsg" widgetVar="growlWidget" autoUpdate="true" closable="true" />
-                    <p:panelGrid columns="2" columnClasses="ui-g-6,ui-g-6">
-                        <p:outputLabel for="fullName" value="Full Name:" />
-                        <p:inputText id="fullName" value="#{patientBean.selectedPatient.fullName}" required="true" />
-
-                        <p:outputLabel for="email" value="Email:" />
-                        <p:inputText id="email" value="#{patientBean.selectedPatient.email}" required="true" />
-
-                        <p:outputLabel for="phone" value="Phone Number:" />
-                        <p:inputText id="phone" value="#{patientBean.selectedPatient.phoneNumber}" required="true" />
-
-                        <p:outputLabel for="dateOfBirth" value="Date of Birth:" />
-                        <p:datePicker id="dateOfBirth" value="#{patientBean.selectedPatient.dateOfBirth}"
-                            showIcon="true" required="true" />
-
-                        <p:outputLabel for="address" value="Address:" />
-                        <p:inputText id="address" value="#{patientBean.selectedPatient.address}" required="true" />
-
-                        <p:outputLabel for="nextOfKin" value="Next of Kin:" />
-                        <p:inputText id="nextOfKin" value="#{patientBean.selectedPatient.nextOfKin}" />
-
-                        <p:outputLabel for="gender" value="Gender:" />
-                        <p:selectOneMenu id="gender" value="#{patientBean.selectedPatient.gender}" required="true">
-                            <f:selectItem itemLabel="-- Select --" itemValue="#{null}" />
-                            <f:selectItems value="#{patientBean.genders}" />
-                        </p:selectOneMenu>
-
-                        <p:outputLabel for="patientType" value="Patient Type:" />
-                        <p:selectOneMenu id="patientType" value="#{patientBean.selectedPatient.patientType}">
-                            <f:selectItem itemLabel="-- Select --" itemValue="#{null}" />
-                            <f:selectItems value="#{patientBean.patientTypes}" />
-                        </p:selectOneMenu>
-
-                        <p:outputLabel for="insuranceNumber" value="Insurance Number:" />
-                        <p:inputText id="insuranceNumber" value="#{patientBean.selectedPatient.insuranceNumber}" />
-                    </p:panelGrid>
-                    <div class="mt-3">
-                        <p:commandButton value="Update" action="#{patientBean.updatePatient}" update="growlMsg @form"
-                            oncomplete="hideGrowl()" ajax="false" />
-                        <h:link outcome="patient.xhtml" styleClass="ui-button ui-button-secondary ms-2">Cancel</h:link>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <h:inputText id="fullName" value="#{patientBean.selectedPatient.fullName}"
+                                styleClass="form-control" pt:placeholder="Enter full name" required="true" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <h:inputText id="phone" value="#{patientBean.selectedPatient.phoneNumber}"
+                                styleClass="form-control" pt:placeholder="Enter phone number" required="true" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <h:inputText id="email" value="#{patientBean.selectedPatient.email}"
+                                styleClass="form-control" pt:placeholder="Enter email" required="true" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="dateOfBirth" class="form-label">Date of Birth</label>
+                            <p:datePicker id="dateOfBirth" value="#{patientBean.selectedPatient.dateOfBirth}"
+                                showIcon="true" required="true" styleClass="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <h:inputText id="address" value="#{patientBean.selectedPatient.address}"
+                                styleClass="form-control" pt:placeholder="Enter address" required="true" />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="nextOfKin" class="form-label">Next of Kin</label>
+                            <h:inputText id="nextOfKin" value="#{patientBean.selectedPatient.nextOfKin}"
+                                styleClass="form-control" pt:placeholder="Enter next of kin" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="gender" class="form-label">Gender</label>
+                            <h:selectOneMenu id="gender" value="#{patientBean.selectedPatient.gender}"
+                                styleClass="form-select" required="true">
+                                <f:selectItem itemLabel="Select gender" itemValue="" />
+                                <f:selectItems value="#{patientBean.genders}" />
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="patientType" class="form-label">Patient Type</label>
+                            <h:selectOneMenu id="patientType" value="#{patientBean.selectedPatient.patientType}"
+                                styleClass="form-select">
+                                <f:selectItem itemLabel="Select type" itemValue="" />
+                                <f:selectItems value="#{patientBean.patientTypes}" />
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="insuranceNumber" class="form-label">Insurance Number</label>
+                            <h:inputText id="insuranceNumber" value="#{patientBean.selectedPatient.insuranceNumber}"
+                                styleClass="form-control" pt:placeholder="Enter insurance number" />
+                        </div>
                     </div>
-                </div>
+                    <div class="d-flex justify-content-end mt-3">
+                        <p:commandButton value="Update" action="#{patientBean.updatePatient}" update="growlMsg @form"
+                            oncomplete="hideGrowl()" ajax="false" styleClass="btn btn-primary btn-lg px-4" />
+                        <h:link outcome="patient.xhtml" styleClass="btn btn-secondary btn-lg px-4 ms-2">Back</h:link>
+                    </div>
+                </h:form>
             </div>
-        </h:form>
+        </div>
         <h:outputScript>
             function hideGrowl() {
             setTimeout(function() {
