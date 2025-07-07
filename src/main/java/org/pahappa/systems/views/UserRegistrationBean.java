@@ -14,6 +14,7 @@ import org.pahappa.systems.services.user.UserService;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.time.LocalDate;
 
 @Named("userRegistrationBean")
 @SessionScoped //
@@ -228,5 +229,10 @@ public class UserRegistrationBean implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    // Getter for today's date for date picker validation
+    public LocalDate getNow() {
+        return java.time.LocalDate.now();
     }
 }
