@@ -27,7 +27,10 @@ public class AppointmentsServiceImpl implements AppointmentsService {
 
     @Override
     public List<Appointment> getAllAppointments() {
-        return appointmentsDAO.findAll();
+        System.out.println("[DEBUG] AppointmentsServiceImpl.getAllAppointments() called");
+        List<Appointment> appointments = appointmentsDAO.findAll();
+        System.out.println("[DEBUG] Found " + appointments.size() + " appointments in database");
+        return appointments;
     }
 
     @Override
