@@ -31,20 +31,34 @@ public class LoginBean implements Serializable {
     private SessionManager sessionManager;
 
     public String login() {
-        User user = userService.login(email, password);
-        if (user != null) {
-            // Create session and log activity
-            sessionManager.createSession(user);
+        try {
+            //System.out.println("Login attempt for email: " + email);
 
-            // Clear sensitive data
-            this.password = null;
+            User user = userService.login(email, password);
+            if (user != null) {
+                System.out.println("Login successful for user: " + user.getFullName());
 
-            // Use NavigationBean for navigation
-            return navigationBean.toDashboard();
-        } else {
+                // Create session and log activity
+                sessionManager.createSession(user);
+
+                // Clear sensitive data
+                this.password = null;
+
+            
+                //System.out.println("Navigation outcome: " + outcome);
+                return "/dashboard.xhtml?faces-redirect=true";
+            } else {
+                System.out.println("Login failed - invalid credentials");
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid email or password.", null));
+                return null; // Stay on login page
+            }
+        } catch (Exception e) {
+            System.err.println("Login error: " + e.getMessage());
+            e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid email or password.", null));
-            return null; // Stay on login page
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login error: " + e.getMessage(), null));
+            return null;
         }
     }
 

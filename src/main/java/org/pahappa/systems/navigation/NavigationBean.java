@@ -48,4 +48,9 @@ public class NavigationBean {
     public String toRegisterEmployee() {
         return "/register-employee.xhtml?faces-redirect=true";
     }
+
+    public String toRegisterPatient() {
+        return "/register-patient.xhtml?faces-redirect=true";
+    }
+
 }
