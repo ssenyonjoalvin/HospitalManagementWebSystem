@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -82,17 +83,32 @@ public class AppointmentBean implements Serializable {
      */
     @PostConstruct
     public void init() {
-        // Load the main list of appointments
-        this.appointments = appointmentsService.getAllAppointments();
+        System.out.println("[DEBUG] AppointmentBean init() called");
+        try {
+            // Load the main list of appointments
+            this.appointments = appointmentsService.getAllAppointments();
+            System.out.println("[DEBUG] Loaded " + this.appointments.size() + " appointments");
 
-        // Load the list of all patients once for the autocomplete feature
-        this.allPatients = userDAO.getAllRecords().stream()
-                .filter(user -> user.getRole() == Rolename.PATIENT && user instanceof Patient)
-                .map(user -> (Patient) user)
-                .collect(Collectors.toList());
+            // Load the list of all patients once for the autocomplete feature
+            this.allPatients = userDAO.getAllRecords().stream()
+                    .filter(user -> user.getRole() == Rolename.PATIENT && user instanceof Patient)
+                    .map(user -> (Patient) user)
+                    .collect(Collectors.toList());
+            System.out.println("[DEBUG] Loaded " + this.allPatients.size() + " patients");
 
-        if (newAppointment == null) {
-            newAppointment = new Appointment();
+            // Load the list of all doctors for the filter dropdown
+            this.doctors = userDAO.getAllRecords().stream()
+                    .filter(user -> user.getRole() == Rolename.DOCTOR && user instanceof Doctor)
+                    .map(user -> (Doctor) user)
+                    .collect(Collectors.toList());
+            System.out.println("[DEBUG] Loaded " + this.doctors.size() + " doctors");
+
+            if (newAppointment == null) {
+                newAppointment = new Appointment();
+            }
+        } catch (Exception e) {
+            System.err.println("[ERROR] Error in AppointmentBean init(): " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -406,5 +422,62 @@ public class AppointmentBean implements Serializable {
 
     public void setAppointmentToEdit(Appointment appointmentToEdit) {
         this.appointmentToEdit = appointmentToEdit;
+    }
+
+    // --- View and Filter Methods ---
+
+    public String view(Appointment appt) {
+        // For now, just return to the same page
+        // In a real application, you might navigate to a detailed view page
+        addMessage(FacesMessage.SEVERITY_INFO, "View Appointment",
+                "Viewing appointment for " + appt.getPatient().getFullName());
+        return null;
+    }
+
+    public void filter() {
+        try {
+            System.out.println("[DEBUG] Filter method called");
+            System.out.println("[DEBUG] selectedDoctor: " + selectedDoctor);
+            System.out.println("[DEBUG] selectedStatus: " + selectedStatus);
+            System.out.println("[DEBUG] selectedDate: " + selectedDate);
+
+            // Apply filters based on selected criteria
+            this.appointments = appointmentsService.getAllAppointments();
+            System.out.println("[DEBUG] Total appointments loaded: " + this.appointments.size());
+
+            // Filter by doctor if selected
+            if (selectedDoctor != null) {
+                this.appointments = this.appointments.stream()
+                        .filter(appt -> appt.getDoctor() != null &&
+                                Objects.equals(appt.getDoctor().getId(), selectedDoctor.getId()))
+                        .collect(Collectors.toList());
+                System.out.println("[DEBUG] After doctor filter: " + this.appointments.size());
+            }
+
+            // Filter by status if selected
+            if (selectedStatus != null) {
+                this.appointments = this.appointments.stream()
+                        .filter(appt -> appt.getStatus() == selectedStatus)
+                        .collect(Collectors.toList());
+                System.out.println("[DEBUG] After status filter: " + this.appointments.size());
+            }
+
+            // Filter by date if selected
+            if (selectedDate != null) {
+                this.appointments = this.appointments.stream()
+                        .filter(appt -> appt.getAppointmentDate() != null &&
+                                appt.getAppointmentDate().equals(selectedDate))
+                        .collect(Collectors.toList());
+                System.out.println("[DEBUG] After date filter: " + this.appointments.size());
+            }
+
+            addMessage(FacesMessage.SEVERITY_INFO, "Filter Applied",
+                    "Found " + this.appointments.size() + " appointments matching your criteria.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            addMessage(FacesMessage.SEVERITY_ERROR, "Filter Error",
+                    "Error applying filters: " + e.getMessage());
+        }
     }
 }
