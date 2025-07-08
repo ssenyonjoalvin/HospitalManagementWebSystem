@@ -75,3 +75,35 @@ body {
     display: block !important;
     margin-bottom: 8px;
 }
+
+.badge {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.9em;
+    font-weight: 600;
+    border-radius: 0.5em;
+    background: #fff !important;
+    border-width: 2px;
+    border-style: solid;
+    margin: 0 2px;
+}
+
+.badge-canceled {
+    border-color: #dc3545 !important;
+    color: #dc3545 !important;
+}
+
+.badge-completed {
+    border-color: #28a745 !important;
+    color: #28a745 !important;
+}
+
+.badge-rescheduled {
+    border-color: #ffc107 !important;
+    color: #ffc107 !important;
+}
+
+.badge-scheduled {
+    border-color: #0d6efd !important;
+    color: #0d6efd !important;
+}

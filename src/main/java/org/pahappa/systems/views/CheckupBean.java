@@ -14,6 +14,8 @@ import org.pahappa.systems.repository.AppointmentsDAO;
 import org.pahappa.systems.services.billing.BillingAndReportingService;
 import org.pahappa.systems.services.session.SessionManager;
 import org.primefaces.PrimeFaces;
+import org.pahappa.systems.services.appointment.AppointmentsService;
+import org.pahappa.systems.enums.AppointmentStatus;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,6 +33,9 @@ public class CheckupBean implements Serializable {
 
     @Inject
     private SessionManager sessionManager;
+
+    @Inject
+    private AppointmentsService appointmentsService;
 
     // Form data
     private Patient selectedPatient;
@@ -96,6 +101,11 @@ public class CheckupBean implements Serializable {
                                 "Medical report and invoice created successfully. " +
                                         "Report ID: " + result.getMedicalReportId() +
                                         ", Invoice ID: " + result.getInvoiceId()));
+                // Update appointment status to COMPLETED and persist
+                if (selectedAppointment != null) {
+                    selectedAppointment.setStatus(AppointmentStatus.COMPLETED);
+                    appointmentsService.updateAppointment(selectedAppointment);
+                }
                 closeDialog();
                 PrimeFaces.current().ajax().update("checkupForm:growlMsg");
             } else {
@@ -106,11 +116,10 @@ public class CheckupBean implements Serializable {
                 PrimeFaces.current().ajax().update("checkupForm:growlMsg");
             }
         } catch (Exception e) {
-            e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "System Error",
-                            "An unexpected error occurred: " + e.getMessage()));
+                            "Error",
+                            "An error occurred while processing the checkup: " + e.getMessage()));
             PrimeFaces.current().ajax().update("checkupForm:growlMsg");
         }
     }

@@ -106,6 +106,10 @@ public class AppointmentBean implements Serializable {
             if (newAppointment == null) {
                 newAppointment = new Appointment();
             }
+            // Ensure appointmentToCreate is initialized
+            if (appointmentToCreate == null) {
+                appointmentToCreate = new Appointment();
+            }
         } catch (Exception e) {
             System.err.println("[ERROR] Error in AppointmentBean init(): " + e.getMessage());
             e.printStackTrace();
@@ -117,7 +121,7 @@ public class AppointmentBean implements Serializable {
     /**
      * Prepares the bean for navigating to the new appointment page.
      * This method is called when the "New Appointment" button is clicked.
-     * 
+     *
      * @return The navigation outcome to redirect to the new appointment page.
      */
     public String goToNewAppointment() {
@@ -196,7 +200,7 @@ public class AppointmentBean implements Serializable {
 
     /**
      * Provides a filtered list of patients for the p:autoComplete component.
-     * 
+     *
      * @param query The text typed by the user.
      * @return A list of matching patients.
      */
@@ -255,8 +259,9 @@ public class AppointmentBean implements Serializable {
         if ((availableDoctors == null || availableDoctors.isEmpty()) && selectedSpecialty != null) {
             availableDoctors = appointmentsService.getDoctorsBySpecialty(selectedSpecialty);
         }
-        System.out.println("[DEBUG] getAvailableDoctors called. selectedSpecialty: " + selectedSpecialty
-                + ", availableDoctors: " + availableDoctors);
+        // System.out.println("[DEBUG] getAvailableDoctors called. selectedSpecialty: "
+        // + selectedSpecialty
+        // + ", availableDoctors: " + availableDoctors);
         return availableDoctors;
     }
 
@@ -371,19 +376,18 @@ public class AppointmentBean implements Serializable {
     }
 
     public void confirmCancel() {
-        System.out.println("am at cancel apponit");
-        if (appointmentToCancel != null && appointmentToCancel.getId() != null && cancelReason != null
-                && !cancelReason.trim().isEmpty()) {
+        if (appointmentToCancel != null && cancelReason != null && !cancelReason.trim().isEmpty()) {
             try {
-                Appointment appt = appointmentsService.findById(appointmentToCancel.getId());
-                appt.setReason(cancelReason);
-                appt.setStatus(AppointmentStatus.CANCELED);
-                appointmentsService.updateAppointment(appt);
+                // Set the new values
+                appointmentToCancel.setReason(cancelReason);
+                appointmentToCancel.setStatus(AppointmentStatus.CANCELED);
+
+                // Persist the changes to the database
+                appointmentsService.updateAppointment(appointmentToCancel);
+
+                // Feedback and refresh
                 addMessage(FacesMessage.SEVERITY_INFO, "Appointment canceled", "Reason: " + cancelReason);
                 this.appointments = appointmentsService.getAllAppointments();
-                // Clear dialog state
-                this.cancelReason = "";
-                this.appointmentToCancel = null;
             } catch (Exception e) {
                 addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Could not cancel appointment: " + e.getMessage());
             }
@@ -437,10 +441,10 @@ public class AppointmentBean implements Serializable {
 
     public void filter() {
         try {
-            System.out.println("[DEBUG] Filter method called");
-            System.out.println("[DEBUG] selectedDoctor: " + selectedDoctor);
-            System.out.println("[DEBUG] selectedStatus: " + selectedStatus);
-            System.out.println("[DEBUG] selectedDate: " + selectedDate);
+            // System.out.println("[DEBUG] Filter method called");
+            // System.out.println("[DEBUG] selectedDoctor: " + selectedDoctor);
+            // System.out.println("[DEBUG] selectedStatus: " + selectedStatus);
+            // System.out.println("[DEBUG] selectedDate: " + selectedDate);
 
             // Apply filters based on selected criteria
             this.appointments = appointmentsService.getAllAppointments();
@@ -479,6 +483,18 @@ public class AppointmentBean implements Serializable {
             e.printStackTrace();
             addMessage(FacesMessage.SEVERITY_ERROR, "Filter Error",
                     "Error applying filters: " + e.getMessage());
+        }
+    }
+
+    public String statusBadgeClass(AppointmentStatus status) {
+        if (status == AppointmentStatus.CANCELED) {
+            return "badge-canceled";
+        } else if (status == AppointmentStatus.COMPLETED) {
+            return "badge-completed";
+        } else if (status == AppointmentStatus.RESCHEDULED) {
+            return "badge-rescheduled";
+        } else {
+            return "badge-scheduled";
         }
     }
 }
