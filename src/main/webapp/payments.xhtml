@@ -1,0 +1,38 @@
+<ui:composition template="/template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <div class="container mt-4">
+            <h2>Payments</h2>
+            <h:form id="paymentsForm">
+                <p:dataTable id="invoicesTable" value="#{paymentsBean.invoices}" var="invoice" paginator="true"
+                    paginatorPosition="bottom" rows="10" responsiveLayout="scroll">
+                    <p:column headerText="ID">
+                        <h:outputText value="#{invoice.id}" />
+                    </p:column>
+                    <p:column headerText="Patient">
+                        <h:outputText value="#{invoice.patient.fullName}" />
+                    </p:column>
+                    <p:column headerText="Doctor">
+                        <h:outputText value="#{invoice.doctor.fullName}" />
+                    </p:column>
+                    <p:column headerText="Creation Date">
+                        <h:outputText value="#{invoice.creationDate}" />
+                    </p:column>
+                    <p:column headerText="Status">
+                        <span class="badge bg-secondary">#{invoice.status}</span>
+                    </p:column>
+                    <p:column headerText="Actions">
+                        <h:panelGroup layout="block" styleClass="d-flex gap-1 align-items-center">
+                            <h:commandButton value="View" styleClass="btn btn-outline-info btn-sm me-1"
+                                action="#{paymentsBean.viewInvoice(invoice)}" />
+                            <h:commandButton value="Delete" styleClass="btn btn-outline-danger btn-sm"
+                                action="#{paymentsBean.deleteInvoice(invoice)}" />
+                        </h:panelGroup>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

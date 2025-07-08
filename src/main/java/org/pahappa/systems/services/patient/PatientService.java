@@ -31,4 +31,6 @@ public interface PatientService {
     void updatePatient(Patient patient);
 
     void deletePatient(Patient patient);
+
+    int countAll();
 }

@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import org.pahappa.systems.models.*;
 import org.pahappa.systems.repository.MedicineDAO;
 import org.pahappa.systems.repository.ServiceDAO;
+import org.pahappa.systems.repository.InvoiceDAO;
 import org.pahappa.systems.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -19,6 +20,9 @@ public class BillingAndReportingService {
 
     @Inject
     private ServiceDAO serviceDAO;
+
+    @Inject
+    private InvoiceDAO invoiceDAO;
 
     /**
      * Core transactional method to process a patient checkup.
@@ -142,5 +146,13 @@ public class BillingAndReportingService {
         public Long getInvoiceId() {
             return invoiceId;
         }
+    }
+
+    public List<Invoice> findAllInvoices() {
+        return invoiceDAO.findAll();
+    }
+
+    public void deleteInvoice(Invoice invoice) {
+        invoiceDAO.delete(invoice);
     }
 }

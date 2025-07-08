@@ -39,7 +39,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void savePatient(Patient patient) {
-        //System.out.println("savePatient called");
+        // System.out.println("savePatient called");
         patient.setRole(Rolename.PATIENT);
         if (patient.getPassword() != null && !patient.getPassword().isEmpty()) {
             patient.setPassword(hashPassword(patient.getPassword()));
@@ -89,5 +89,10 @@ public class PatientServiceImpl implements PatientService {
     public void deletePatient(Patient patient) {
         // Soft-delete: you could set a status, or for now, remove from DAO
         userDAO.deleteRecord(patient.getId());
+    }
+
+    @Override
+    public int countAll() {
+        return getAllPatients().size();
     }
 }

@@ -183,4 +183,9 @@ public class AppointmentsServiceImpl implements AppointmentsService {
         }
         appointmentsDAO.update(appointment);
     }
+
+    @Override
+    public int countAll() {
+        return getAllAppointments().size();
+    }
 }
