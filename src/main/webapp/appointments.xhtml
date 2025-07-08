@@ -97,13 +97,17 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <h:form id="cancelDialogForm">
+                            <h:panelGroup rendered="#{not empty appointmentBean.appointmentToCancel}">
+                                <h:inputHidden value="#{appointmentBean.appointmentToCancel.id}" />
+                            </h:panelGroup>
                             <div class="modal-body">
                                 <h:outputText value="Please enter a reason for cancellation:" />
                                 <h:inputTextarea value="#{appointmentBean.cancelReason}" required="true"
                                     style="width:100%" />
                             </div>
                             <div class="modal-footer">
-                                <h:commandButton value="Save" actionListener="#{appointmentBean.confirmCancel}"
+                                <p:commandButton value="Save" action="#{appointmentBean.confirmCancel}"
+                                    update=":appointmentsForm" oncomplete="$('#cancelDialog').modal('hide');"
                                     styleClass="btn btn-success" />
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
                             </div>

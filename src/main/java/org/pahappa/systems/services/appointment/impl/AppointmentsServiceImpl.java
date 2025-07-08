@@ -188,4 +188,9 @@ public class AppointmentsServiceImpl implements AppointmentsService {
     public int countAll() {
         return getAllAppointments().size();
     }
+
+    @Override
+    public Appointment findById(long id) {
+        return appointmentsDAO.findById(id);
+    }
 }

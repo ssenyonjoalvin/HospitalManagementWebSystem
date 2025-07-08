@@ -54,4 +54,6 @@ public interface AppointmentsService {
         void updateAppointment(Appointment appointment) throws ValidationException;
 
         int countAll();
+
+        Appointment findById(long id);
 }

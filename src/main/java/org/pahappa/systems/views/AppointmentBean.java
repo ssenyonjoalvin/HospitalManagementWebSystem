@@ -1,9 +1,9 @@
 package org.pahappa.systems.views;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.pahappa.systems.core.services.exceptions.ValidationException;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * and the creation/editing of a single appointment across multiple pages.
  */
 @Named("appointmentBean")
-@SessionScoped
+@ViewScoped
 public class AppointmentBean implements Serializable {
 
     // --- Injected Dependencies ---
@@ -367,22 +367,23 @@ public class AppointmentBean implements Serializable {
     // --- Cancel with Reason Methods ---
     public void openCancelDialog(Appointment appt) {
         this.appointmentToCancel = appt;
-        this.cancelReason = null;
+        this.cancelReason = "";
     }
 
     public void confirmCancel() {
-        if (appointmentToCancel != null && cancelReason != null && !cancelReason.trim().isEmpty()) {
+        System.out.println("am at cancel apponit");
+        if (appointmentToCancel != null && appointmentToCancel.getId() != null && cancelReason != null
+                && !cancelReason.trim().isEmpty()) {
             try {
-                // Set the new values
-                appointmentToCancel.setReason(cancelReason);
-                appointmentToCancel.setStatus(AppointmentStatus.CANCELED);
-
-                // Persist the changes to the database
-                appointmentsService.updateAppointment(appointmentToCancel);
-
-                // Feedback and refresh
+                Appointment appt = appointmentsService.findById(appointmentToCancel.getId());
+                appt.setReason(cancelReason);
+                appt.setStatus(AppointmentStatus.CANCELED);
+                appointmentsService.updateAppointment(appt);
                 addMessage(FacesMessage.SEVERITY_INFO, "Appointment canceled", "Reason: " + cancelReason);
                 this.appointments = appointmentsService.getAllAppointments();
+                // Clear dialog state
+                this.cancelReason = "";
+                this.appointmentToCancel = null;
             } catch (Exception e) {
                 addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Could not cancel appointment: " + e.getMessage());
             }
