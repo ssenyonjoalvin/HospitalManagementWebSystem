@@ -1,130 +1,128 @@
-<ui:composition template="template/template.xhtml"
-                xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="/template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
-        <h:form>
-            <!-- Stat Cards Row (Pure Bootstrap + Custom CSS for circles) -->
+        <div class="container mt-4">
             <div class="row g-4 mb-4">
                 <div class="col-md-3">
-                    <div class="card stat-card-bs">
+                    <div class="card text-center shadow-sm rounded-3">
                         <div class="card-body">
-                            <div class="stat-info">
-                                <h6 class="text-muted">Today's Appointments</h6>
-                                <span class="stat-number">#{dashboardBean.todaysAppointments}</span>
-                            </div>
-                            <div class="circular-progress blue">
-                                <span class="progress-value">#{dashboardBean.todaysAppointments}</span>
-                            </div>
+                            <h6 class="card-title text-muted">Patients</h6>
+                            <span class="display-4 fw-bold text-primary">#{dashboardBean.totalPatients}</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card stat-card-bs">
+                    <div class="card text-center shadow-sm rounded-3">
                         <div class="card-body">
-                            <div class="stat-info">
-                                <h6 class="text-muted">Completed</h6>
-                                <span class="stat-number">#{dashboardBean.completed}</span>
-                            </div>
-                            <div class="circular-progress green">
-                                <span class="progress-value">#{dashboardBean.completed}</span>
-                            </div>
+                            <h6 class="card-title text-muted">Appointments</h6>
+                            <span class="display-4 fw-bold text-info">#{dashboardBean.totalAppointments}</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card stat-card-bs">
+                    <div class="card text-center shadow-sm rounded-3">
                         <div class="card-body">
-                            <div class="stat-info">
-                                <h6 class="text-muted">Canceled</h6>
-                                <span class="stat-number">#{dashboardBean.canceled}</span>
-                            </div>
-                            <div class="circular-progress red">
-                                <span class="progress-value">#{dashboardBean.canceled}</span>
-                            </div>
+                            <h6 class="card-title text-muted">Pending Appointments</h6>
+                            <span class="display-4 fw-bold text-warning">#{dashboardBean.pendingAppointments}</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card stat-card-bs">
+                    <div class="card text-center shadow-sm rounded-3">
                         <div class="card-body">
-                            <div class="stat-info">
-                                <h6 class="text-muted">Confirmed</h6>
-                                <span class="stat-number">#{dashboardBean.confirmed}</span>
-                            </div>
-                            <div class="circular-progress orange">
-                                <span class="progress-value">#{dashboardBean.confirmed}</span>
-                            </div>
+                            <h6 class="card-title text-muted">Invoices</h6>
+                            <span class="display-4 fw-bold text-success">#{dashboardBean.totalInvoices}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm rounded-3">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted">Paid Invoices</h6>
+                            <span class="display-4 fw-bold text-success">#{dashboardBean.paidInvoices}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm rounded-3">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted">Medicines</h6>
+                            <span class="display-4 fw-bold text-secondary">#{dashboardBean.totalMedicines}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center shadow-sm rounded-3">
+                        <div class="card-body">
+                            <h6 class="card-title text-muted">Services</h6>
+                            <span class="display-4 fw-bold text-secondary">#{dashboardBean.totalServices}</span>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Charts Row -->
             <div class="row g-4 mb-4">
-                <div class="col-md-8">
-                    <div class="card h-100">
+                <div class="col-md-6">
+                    <div class="card shadow-sm rounded-3 h-100">
                         <div class="card-body">
-                            <h5 class="card-title">Patient Visit</h5>
-                            <!-- Canvas for Chart.js -->
-                            <canvas id="patientVisitChart"></canvas>
+                            <h5 class="card-title mb-3">Patient Visits</h5>
+                            <p:lineChart model="#{dashboardBean.lineModel}" style="width:100%;height:300px;" />
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Gender</h5>
-                            <!-- Canvas for Chart.js -->
-                            <canvas id="genderChart"></canvas>
+                <div class="col-md-6">
+                    <div class="card shadow-sm rounded-3 h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Gender Distribution</h5>
+                            <p:donutChart model="#{dashboardBean.donutModel}" style="width:100%;height:300px;" />
                         </div>
                     </div>
                 </div>
             </div>
-
-          
-        </h:form>
-
-        <!-- SCRIPT to initialize the charts. Ensure Chart.js is included in your template.xhtml -->
-        <h:outputScript>
-            document.addEventListener('DOMContentLoaded', function () {
-            // Patient Visit Line Chart
-            const visitData =#{dashboardBean.patientVisitDataJson};
-            const ctxVisit = document.getElementById('patientVisitChart').getContext('2d');
-            new Chart(ctxVisit, {
-            type: 'line',
-            data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [{
-            label: 'Patient Visits',
-            data: visitData,
-            fill: true,
-            backgroundColor: 'rgba(93, 135, 255, 0.2)',
-            borderColor: 'rgba(93, 135, 255, 1)',
-            tension: 0.4
-            }]
-            },
-            options: { responsive: true, plugins: { legend: { display: false } } }
-            });
-
-            // Gender Donut Chart
-            const genderData =#{dashboardBean.genderDataJson};
-            const ctxGender = document.getElementById('genderChart').getContext('2d');
-            new Chart(ctxGender, {
-            type: 'doughnut',
-            data: {
-            labels: ['Female', 'Male', 'Child'],
-            datasets: [{
-            data: genderData,
-            backgroundColor: ['rgb(32, 201, 151)', 'rgb(255, 159, 64)', 'rgb(93, 135, 255)'],
-            hoverOffset: 4
-            }]
-            },
-            options: { responsive: true, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
-            });
-            });
-        </h:outputScript>
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm rounded-3 h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Recent Appointments</h5>
+                            <p:dataTable value="#{dashboardBean.recentAppointments}" var="appt" rows="5"
+                                styleClass="table table-striped table-hover">
+                                <p:column headerText="Patient">
+                                    <h:outputText value="#{appt.patient.fullName}" />
+                                </p:column>
+                                <p:column headerText="Doctor">
+                                    <h:outputText value="#{appt.doctor.fullName}" />
+                                </p:column>
+                                <p:column headerText="Date">
+                                    <h:outputText value="#{appt.appointmentDate}" />
+                                </p:column>
+                                <p:column headerText="Status">
+                                    <h:outputText value="#{appt.status}" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm rounded-3 h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Recent Invoices</h5>
+                            <p:dataTable value="#{dashboardBean.recentInvoices}" var="inv" rows="5"
+                                styleClass="table table-striped table-hover">
+                                <p:column headerText="Patient">
+                                    <h:outputText value="#{inv.patient.fullName}" />
+                                </p:column>
+                                <p:column headerText="Amount">
+                                    <h:outputText value="#{inv.totalAmount}" />
+                                </p:column>
+                                <p:column headerText="Status">
+                                    <h:outputText value="#{inv.status}" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </ui:define>
 </ui:composition>
