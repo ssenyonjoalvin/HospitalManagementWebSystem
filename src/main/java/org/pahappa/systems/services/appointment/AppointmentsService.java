@@ -52,4 +52,6 @@ public interface AppointmentsService {
         void createAppointmentFromObject(Appointment appointment) throws ValidationException;
 
         void updateAppointment(Appointment appointment) throws ValidationException;
+
+        int countAll();
 }
