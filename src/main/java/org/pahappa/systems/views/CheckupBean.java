@@ -18,6 +18,7 @@ import org.pahappa.systems.services.appointment.AppointmentsService;
 import org.pahappa.systems.enums.AppointmentStatus;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +44,7 @@ public class CheckupBean implements Serializable {
     private String conclusion;
     private String diagnosis;
     private String treatmentPlan;
+    private LocalDate followUpDate;
 
     // Selected items
     private List<Medicine> selectedMedicines = new ArrayList<>();
@@ -84,6 +86,15 @@ public class CheckupBean implements Serializable {
     public void submitCheckup() {
         System.out.println("submitCheckup called"); // Debug print
         try {
+            // Validate followUpDate is in the future if provided
+            if (followUpDate != null && !followUpDate.isAfter(java.time.LocalDate.now())) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Validation Error",
+                                "Follow Up Date must be in the future."));
+                PrimeFaces.current().ajax().update("checkupForm:growlMsg");
+                return;
+            }
             Long doctorId = selectedDoctor != null ? selectedDoctor.getId() : sessionManager.getCurrentUser().getId();
             List<Long> medicineIds = selectedMedicines.stream().map(Medicine::getId).toList();
             List<Long> serviceIds = selectedServices.stream().map(Service::getId).toList();
@@ -92,6 +103,9 @@ public class CheckupBean implements Serializable {
                     doctorId,
                     signsAndSymptoms,
                     conclusion,
+                    diagnosis,
+                    treatmentPlan,
+                    followUpDate,
                     medicineIds,
                     serviceIds);
             if (result.isSuccess()) {
@@ -180,6 +194,14 @@ public class CheckupBean implements Serializable {
         this.treatmentPlan = treatmentPlan;
     }
 
+    public LocalDate getFollowUpDate() {
+        return followUpDate;
+    }
+
+    public void setFollowUpDate(LocalDate followUpDate) {
+        this.followUpDate = followUpDate;
+    }
+
     public List<Medicine> getSelectedMedicines() {
         return selectedMedicines;
     }
@@ -247,10 +269,7 @@ public class CheckupBean implements Serializable {
     public void loadAppointmentData() {
         if (selectedAppointmentId != null
                 && (selectedAppointment == null || !selectedAppointment.getId().equals(selectedAppointmentId))) {
-            // Load appointment from DB using selectedAppointmentId
-            // You may need to inject AppointmentsDAO or similar here
-            AppointmentsDAO appointmentsDAO = new AppointmentsDAO(); // Or inject if possible
-            this.selectedAppointment = appointmentsDAO.findById(selectedAppointmentId);
+            this.selectedAppointment = appointmentsService.findById(selectedAppointmentId);
             if (this.selectedAppointment != null) {
                 this.selectedPatient = selectedAppointment.getPatient();
                 this.selectedDoctor = selectedAppointment.getDoctor();

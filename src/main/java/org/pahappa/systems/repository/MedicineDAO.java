@@ -74,4 +74,10 @@ public class MedicineDAO {
             e.printStackTrace();
         }
     }
+
+    public Medicine findById(Long id) {
+        try (org.hibernate.Session session = org.pahappa.systems.util.HibernateUtil.getSessionFactory().openSession()) {
+            return session.get(org.pahappa.systems.models.Medicine.class, id);
+        }
+    }
 }

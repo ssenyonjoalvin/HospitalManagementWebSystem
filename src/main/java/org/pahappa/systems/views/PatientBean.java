@@ -5,6 +5,7 @@ import jakarta.inject.Named;
 import org.pahappa.systems.enums.PatientType;
 import org.pahappa.systems.models.Patient;
 import org.pahappa.systems.navigation.NavigationBean;
+import org.pahappa.systems.services.medical.Impl.MedicalReportServiceImpl;
 import org.pahappa.systems.services.patient.PatientService;
 import jakarta.inject.Inject;
 import org.pahappa.systems.enums.Gender;
@@ -15,6 +16,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
 import java.time.LocalDate;
+import org.pahappa.systems.models.MedicalReport;
+
+import java.util.Collections;
 
 @Named("patientBean")
 @SessionScoped // Use SessionScoped for reliable state across dialogs and AJAX
@@ -39,6 +43,12 @@ public class PatientBean implements Serializable {
 
     @Inject
     private NavigationBean navigationBean;
+
+    @Inject
+    private MedicalReportServiceImpl medicalReportService;
+
+    private List<MedicalReport> selectedPatientReports = Collections.emptyList();
+    private MedicalReport currentMedicalReport;
 
     @PostConstruct
     public void init() {
@@ -143,6 +153,24 @@ public class PatientBean implements Serializable {
         }
     }
 
+    // Call this when the medical form icon is clicked
+    public void loadMedicalReportsForPatient(Patient patient) {
+        this.selectedPatient = patient;
+        this.selectedPatientReports = medicalReportService.getReportsByPatient(patient);
+    }
+
+    public List<MedicalReport> getSelectedPatientReports() {
+        return selectedPatientReports;
+    }
+
+    public MedicalReport getCurrentMedicalReport() {
+        return currentMedicalReport;
+    }
+
+    public void setCurrentMedicalReport(MedicalReport report) {
+        this.currentMedicalReport = report;
+    }
+
     // --- Getters and Setters ---
 
     public List<Patient> getAllPatients() {
@@ -208,6 +236,7 @@ public class PatientBean implements Serializable {
     public void setPatientToDelete(Patient patientToDelete) {
         this.patientToDelete = patientToDelete;
     }
+
     public LocalDate getNow() {
         return java.time.LocalDate.now();
     }
