@@ -65,22 +65,26 @@
                                 <td>#{appt.doctor.fullName}</td>
                                 <td>#{appt.appointmentDate}</td>
                                 <td>
-                                    <span class="badge bg-secondary">#{appt.status}</span>
+                                    <span
+                                        class="badge #{appointmentBean.statusBadgeClass(appt.status)}">#{appt.status}</span>
                                 </td>
                                 <td>
                                     <h:outputText value="#{appt.reason}" rendered="#{appt.status eq 'CANCELED'}" />
                                 </td>
                                 <td>
-                                    <h:panelGroup rendered="#{appt.status ne 'CANCELED'}" layout="block"
-                                        styleClass="d-flex gap-1 align-items-center">
-                                        <h:commandButton value="Edit" styleClass="btn btn-outline-info btn-sm me-1"
-                                            action="#{appointmentBean.edit(appt)}" />
-                                        <h:commandButton value="Cancel" styleClass="btn btn-outline-danger btn-sm"
+                                    <h:panelGroup rendered="#{appt.status ne 'CANCELED' and appt.status ne 'COMPLETED'}"
+                                        layout="block" styleClass="d-flex gap-1 align-items-center">
+                                        <p:commandButton value="Edit"
+                                            styleClass="ui-button-outlined ui-button-info me-1"
+                                            action="#{appointmentBean.edit(appt)}" ajax="false" />
+                                        <p:commandButton value="Cancel"
+                                            styleClass="ui-button-outlined ui-button-warning"
                                             actionListener="#{appointmentBean.openCancelDialog(appt)}"
-                                            onclick="new bootstrap.Modal(document.getElementById('cancelDialog')).show();return false;" />
-                                        <h:commandButton value="Checkup"
-                                            styleClass="btn btn-outline-success btn-sm ms-2"
-                                            action="#{checkupBean.goToCheckupPage(appt)}" />
+                                            oncomplete="PF('cancelDialog').show();" update=":cancelDialogForm"
+                                            process="@this" />
+                                        <p:commandButton value="Checkup"
+                                            styleClass="ui-button-outlined ui-button-success ms-2"
+                                            action="#{checkupBean.goToCheckupPage(appt)}" ajax="false" />
                                     </h:panelGroup>
                                 </td>
                             </tr>
@@ -89,28 +93,20 @@
                 </table>
             </h:form>
             <!-- Cancel Reason Dialog -->
-            <div id="cancelDialog" class="modal fade" tabindex="-1" role="dialog">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Cancel Appointment</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <h:form id="cancelDialogForm">
-                            <div class="modal-body">
-                                <h:outputText value="Please enter a reason for cancellation:" />
-                                <h:inputTextarea value="#{appointmentBean.cancelReason}" required="true"
-                                    style="width:100%" />
-                            </div>
-                            <div class="modal-footer">
-                                <h:commandButton value="Save" actionListener="#{appointmentBean.confirmCancel}"
-                                    styleClass="btn btn-success" />
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                            </div>
-                        </h:form>
+            <p:dialog header="Cancel Appointment" widgetVar="cancelDialog" modal="true" id="cancelDialog"
+                resizable="false">
+                <h:form id="cancelDialogForm">
+                    <h:outputText value="Please enter a reason for cancellation:" />
+                    <h:inputTextarea value="#{appointmentBean.cancelReason}" required="true" style="width:100%" />
+                    <div class="mt-3 d-flex flex-column gap-2">
+                        <p:commandButton value="Save" actionListener="#{appointmentBean.confirmCancel}"
+                            oncomplete="PF('cancelDialog').hide()" update=":appointmentsForm :cancelDialogForm"
+                            styleClass="ui-button-success w-100" />
+                        <p:commandButton value="Back" onclick="PF('cancelDialog').hide();return false;" type="button"
+                            styleClass="ui-button-secondary w-100" />
                     </div>
-                </div>
-            </div>
+                </h:form>
+            </p:dialog>
             <!-- Checkup Dialog -->
             <p:dialog id="checkupDialog" header="Patient Checkup" widgetVar="checkupDialogWV" modal="true"
                 resizable="false" width="800">

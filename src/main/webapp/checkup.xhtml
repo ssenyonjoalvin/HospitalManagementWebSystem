@@ -42,6 +42,27 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
+                            <p:outputLabel for="diagnosis" value="Diagnosis" />
+                            <p:inputTextarea id="diagnosis" value="#{checkupBean.diagnosis}" rows="3"
+                                styleClass="form-control" placeholder="Enter diagnosis..." />
+                        </div>
+                        <div class="col-md-6">
+                            <p:outputLabel for="treatmentPlan" value="Treatment Plan" />
+                            <p:inputTextarea id="treatmentPlan" value="#{checkupBean.treatmentPlan}" rows="3"
+                                styleClass="form-control" placeholder="Enter treatment plan..." />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p:outputLabel for="followUpDate" value="Follow Up Date" />
+                            <p:datePicker id="followUpDate" value="#{checkupBean.followUpDate}" showIcon="true"
+                                pattern="yyyy-MM-dd" styleClass="form-control" placeholder="Select follow up date..."
+                                minDate="#{checkupBean.selectedAppointment.appointmentDate.plusDays(1)}" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
                             <p:outputLabel for="medicines" value="Prescribed Medications" />
                             <p:autoComplete id="medicines" value="#{checkupBean.selectedMedicines}"
                                 completeMethod="#{checkupBean.completeMedicine}" var="medicine"
@@ -60,6 +81,7 @@
                             <small class="form-text text-muted">Select one or more services</small>
                         </div>
                     </div>
+                   
                     <div class="d-flex justify-content-end">
                         <p:commandButton value="Submit &amp; Generate" action="#{checkupBean.submitCheckup}"
                             update="checkupForm growlMsg" styleClass="btn btn-primary me-2" />

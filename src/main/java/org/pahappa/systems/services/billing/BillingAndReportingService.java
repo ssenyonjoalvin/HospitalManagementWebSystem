@@ -6,6 +6,8 @@ import org.pahappa.systems.models.*;
 import org.pahappa.systems.repository.MedicineDAO;
 import org.pahappa.systems.repository.ServiceDAO;
 import org.pahappa.systems.repository.InvoiceDAO;
+import org.pahappa.systems.repository.PatientDAO;
+import org.pahappa.systems.repository.DoctorDAO;
 import org.pahappa.systems.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -24,79 +26,37 @@ public class BillingAndReportingService {
     @Inject
     private InvoiceDAO invoiceDAO;
 
+    @Inject
+    private PatientDAO patientDAO;
+
+    @Inject
+    private DoctorDAO doctorDAO;
+
     /**
      * Core transactional method to process a patient checkup.
      * Creates both MedicalReport and Invoice in a single atomic transaction.
      */
     public CheckupResult processCheckup(Long patientId, Long doctorId,
             String signsAndSymptoms, String conclusion,
+            String diagnosis, String treatmentPlan, java.time.LocalDate followUpDate,
             List<Long> medicineIds, List<Long> serviceIds) {
-
-        Transaction transaction = null;
-        Session session = null;
-
         try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            transaction = session.beginTransaction();
-
-            // 1. Fetch Patient and Doctor
-            Patient patient = session.get(Patient.class, patientId);
-            Doctor doctor = session.get(Doctor.class, doctorId);
-
-            if (patient == null) {
+            // Fetch Patient and Doctor using DAOs
+            Patient patient = patientDAO.findById(patientId);
+            Doctor doctor = doctorDAO.findById(doctorId);
+            if (patient == null)
                 throw new IllegalArgumentException("Patient not found with ID: " + patientId);
-            }
-            if (doctor == null) {
+            if (doctor == null)
                 throw new IllegalArgumentException("Doctor not found with ID: " + doctorId);
-            }
 
-            // 2. Create Medical Report
-            MedicalReport medicalReport = new MedicalReport(patient, doctor, signsAndSymptoms, conclusion);
-            session.persist(medicalReport);
-
-            // 3. Create Invoice
-            Invoice invoice = new Invoice(patient, doctor);
-
-            // 4. Add selected medicines to invoice
-            if (medicineIds != null && !medicineIds.isEmpty()) {
-                for (Long medicineId : medicineIds) {
-                    Medicine medicine = session.get(Medicine.class, medicineId);
-                    if (medicine != null) {
-                        invoice.addMedicine(medicine);
-                    }
-                }
-            }
-
-            // 5. Add selected services to invoice
-            if (serviceIds != null && !serviceIds.isEmpty()) {
-                for (Long serviceId : serviceIds) {
-                    Service service = session.get(Service.class, serviceId);
-                    if (service != null) {
-                        invoice.addService(service);
-                    }
-                }
-            }
-
-            // 6. Persist the invoice
-            session.persist(invoice);
-
-            // 7. Commit transaction
-            transaction.commit();
-
-            // 8. Return success result
-            return new CheckupResult(true, "Checkup processed successfully", medicalReport.getId(), invoice.getId());
-
+            // Pass only IDs to the DAO
+            InvoiceDAO.SaveCheckupResult result = invoiceDAO.saveCheckupAndInvoice(
+                    patient, doctor, signsAndSymptoms, conclusion, diagnosis, treatmentPlan, followUpDate, medicineIds,
+                    serviceIds);
+            return new CheckupResult(true, "Checkup processed successfully", result.medicalReportId, result.invoiceId);
         } catch (Exception e) {
-            // Rollback transaction on any error
-            if (transaction != null) {
-                transaction.rollback();
-            }
             e.printStackTrace();
             return new CheckupResult(false, "Error processing checkup: " + e.getMessage(), null, null);
-        } finally {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
         }
     }
 

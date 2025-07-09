@@ -16,8 +16,9 @@
                             <small class="text-muted">Dashboard &gt; Patients</small>
                         </div>
                         <div>
-                            <p:commandButton value="Add Patients" icon="fa fa-plus" styleClass="ui-button-info rounded-pill"
-                                             action="#{navigationBean.toRegisterPatient()}" ajax="false" />
+                            <p:commandButton value="Add Patients" icon="fa fa-plus"
+                                styleClass="ui-button-info rounded-pill" action="#{navigationBean.toRegisterPatient()}"
+                                ajax="false" />
                         </div>
                     </div>
 
@@ -72,7 +73,10 @@
 
                                     <p:commandButton icon="fa fa-file-medical"
                                         styleClass="ui-button-info ui-button-flat rounded-circle ms-2"
-                                        title="View Medical Form" />
+                                        title="View Medical Form"
+                                        actionListener="#{patientBean.loadMedicalReportsForPatient(patient)}"
+                                        oncomplete="PF('medicalReportDialog').show();"
+                                        update=":medicalReportDialogForm" />
                                 </p:column>
                             </p:dataTable>
                         </p:tab>
@@ -124,9 +128,45 @@
                 </div>
             </p:dialog>
 
-            <!-- Patient Checkup Dialog -->
-
         </h:form>
+
+        <!-- Medical Report Dialog moved outside main form -->
+        <p:dialog header="Medical Reports" widgetVar="medicalReportDialog" modal="true" id="medicalReportDialog"
+            resizable="false" width="900">
+            <h:form id="medicalReportDialogForm">
+                <h:panelGroup rendered="#{empty patientBean.selectedPatientReports}">
+                    <h:outputText value="No medical reports found for this patient." />
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not empty patientBean.selectedPatientReports}">
+                    <h:outputText value="Select a report to view details."
+                        style="color: #888; font-size: 0.95em; margin-bottom: 8px; display: block;" />
+                    <p:dataTable var="report" value="#{patientBean.selectedPatientReports}" rowKey="#{report.id}"
+                        selectionMode="single" selection="#{patientBean.currentMedicalReport}" paginator="true" rows="5"
+                        paginatorPosition="bottom" rowSelectListener="#{patientBean.setCurrentMedicalReport(report)}"
+                        update=":medicalReportDialogForm:reportDetails">
+                        <p:column headerText="Date">
+                            <h:outputText value="#{report.reportDate}" />
+                        </p:column>
+                        <p:column headerText="Doctor">
+                            <h:outputText value="#{report.doctor.fullName}" />
+                        </p:column>
+                        <p:column headerText="Diagnosis">
+                            <h:outputText value="#{report.diagnosis}" />
+                        </p:column>
+                    </p:dataTable>
+                    <h:panelGroup id="reportDetails" rendered="#{not empty patientBean.currentMedicalReport}">
+                        <h4>Report Details</h4>
+                        <p><b>Doctor:</b> #{patientBean.currentMedicalReport.doctor.fullName}</p>
+                        <p><b>Date:</b> #{patientBean.currentMedicalReport.reportDate}</p>
+                        <p><b>Signs &amp; Symptoms:</b> #{patientBean.currentMedicalReport.signsAndSymptoms}</p>
+                        <p><b>Conclusion:</b> #{patientBean.currentMedicalReport.conclusion}</p>
+                        <p><b>Diagnosis:</b> #{patientBean.currentMedicalReport.diagnosis}</p>
+                        <p><b>Treatment Plan:</b> #{patientBean.currentMedicalReport.treatmentPlan}</p>
+                        <p><b>Follow Up Date:</b> #{patientBean.currentMedicalReport.followUpDate}</p>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
 
         <h:outputScript>
             function hideGrowl() {
