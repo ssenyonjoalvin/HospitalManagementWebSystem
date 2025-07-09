@@ -74,4 +74,10 @@ public class ServiceDAO {
             e.printStackTrace();
         }
     }
+
+    public Service findById(Long id) {
+        try (org.hibernate.Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.get(org.pahappa.systems.models.Service.class, id);
+        }
+    }
 }

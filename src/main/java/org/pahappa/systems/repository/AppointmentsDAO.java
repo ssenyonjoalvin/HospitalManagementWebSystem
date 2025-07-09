@@ -49,12 +49,14 @@ public class AppointmentsDAO {
     }
 
     /**
-     * Retrieves all appointments from the database.
+     * Retrieves all appointments from the database, ordered by id descending (most
+     * recent first).
      */
     public List<Appointment> findAll() {
         System.out.println("[DEBUG] AppointmentsDAO.findAll() called");
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            List<Appointment> appointments = session.createQuery("from Appointment", Appointment.class).list();
+            List<Appointment> appointments = session
+                    .createQuery("from Appointment a order by a.id desc", Appointment.class).list();
             System.out.println("[DEBUG] Found " + appointments.size() + " appointments in database");
             for (Appointment appt : appointments) {
                 System.out.println("[DEBUG] Appointment: ID=" + appt.getId() +
