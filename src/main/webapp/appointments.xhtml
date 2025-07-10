@@ -8,7 +8,8 @@
                 <h2>Appointments</h2>
                 <h:form>
                     <h:commandButton value="New Appointment" action="#{appointmentBean.goToNewAppointment}"
-                        styleClass="btn btn-primary" />
+                        styleClass="btn btn-primary"
+                        rendered="#{sessionManager.currentUserRole ne 'DOCTOR'}" />
                 </h:form>
             </div>
             <!-- Filters -->
@@ -76,15 +77,18 @@
                                         layout="block" styleClass="d-flex gap-1 align-items-center">
                                         <p:commandButton value="Edit"
                                             styleClass="ui-button-outlined ui-button-info me-1"
-                                            action="#{appointmentBean.edit(appt)}" ajax="false" />
+                                            action="#{appointmentBean.edit(appt)}" ajax="false"
+                                            rendered="#{sessionManager.currentUserRole ne 'DOCTOR'}" />
                                         <p:commandButton value="Cancel"
                                             styleClass="ui-button-outlined ui-button-warning"
                                             actionListener="#{appointmentBean.openCancelDialog(appt)}"
                                             oncomplete="PF('cancelDialog').show();" update=":cancelDialogForm"
-                                            process="@this" />
+                                            process="@this"
+                                            rendered="#{sessionManager.currentUserRole ne 'DOCTOR'}" />
                                         <p:commandButton value="Checkup"
                                             styleClass="ui-button-outlined ui-button-success ms-2"
-                                            action="#{checkupBean.goToCheckupPage(appt)}" ajax="false" />
+                                            action="#{checkupBean.goToCheckupPage(appt)}" ajax="false"
+                                            rendered="#{sessionManager.currentUserRole eq 'DOCTOR'}" />
                                     </h:panelGroup>
                                 </td>
                             </tr>

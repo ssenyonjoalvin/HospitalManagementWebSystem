@@ -18,7 +18,8 @@
                         <div>
                             <p:commandButton value="Add Patients" icon="fa fa-plus"
                                 styleClass="ui-button-info rounded-pill" action="#{navigationBean.toRegisterPatient()}"
-                                ajax="false" />
+                                ajax="false"
+                                rendered="#{sessionManager.currentUserRole ne 'DOCTOR'}" />
                         </div>
                     </div>
 
@@ -64,19 +65,22 @@
                                 <p:column headerText="ACTION">
                                     <p:commandButton icon="fa fa-pencil"
                                         styleClass="ui-button-secondary ui-button-flat rounded-circle" title="Edit"
-                                        action="#{patientBean.editPatient(patient)}" oncomplete="hideGrowl()" />
+                                        action="#{patientBean.editPatient(patient)}" oncomplete="hideGrowl()"
+                                        rendered="#{sessionManager.currentUserRole ne 'DOCTOR'}" />
 
                                     <p:commandButton icon="fa fa-trash"
                                         styleClass="ui-button-danger ui-button-flat rounded-circle ms-2" title="Delete"
                                         actionListener="#{patientBean.confirmDelete(patient)}"
-                                        oncomplete="PF('deletePatientDialog').show()" update="@form" />
+                                        oncomplete="PF('deletePatientDialog').show()" update="@form"
+                                        rendered="#{sessionManager.currentUserRole ne 'DOCTOR'}" />
 
                                     <p:commandButton icon="fa fa-file-medical"
                                         styleClass="ui-button-info ui-button-flat rounded-circle ms-2"
                                         title="View Medical Form"
                                         actionListener="#{patientBean.loadMedicalReportsForPatient(patient)}"
                                         oncomplete="PF('medicalReportDialog').show();"
-                                        update=":medicalReportDialogForm" />
+                                        update=":medicalReportDialogForm"
+                                        rendered="#{sessionManager.currentUserRole eq 'DOCTOR'}" />
                                 </p:column>
                             </p:dataTable>
                         </p:tab>
