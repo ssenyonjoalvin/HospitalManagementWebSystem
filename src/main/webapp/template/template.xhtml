@@ -25,29 +25,43 @@
                 <i class="fa-solid fa-filter"> </i> Citycare General Hospital
             </div>
             <div class="list-group list-group-flush">
-                <!-- Dynamic navigation with active state -->
+                <!-- Dashboard: All roles -->
                 <h:link outcome="dashboard"
                     styleClass="list-group-item list-group-item-action #{view.viewId == '/dashboard.xhtml' ? 'active' : ''}">
                     <i class="fa-solid fa-table-columns"> </i> Dashboard
                 </h:link>
-                <h:link outcome="appointments"
-                    styleClass="list-group-item list-group-item-action #{view.viewId == '/appointments.xhtml' ? 'active' : ''}">
-                    <i class="fa-solid fa-file-medical"> </i> Appointments
-                </h:link>
-                <h:link outcome="patient"
-                    styleClass="list-group-item list-group-item-action #{view.viewId == '/patient.xhtml' ? 'active' : ''}">
-                    <i class="fa-solid fa-hospital-user"> </i> Patients
-                </h:link>
-                <h:link outcome="employee"
-                    styleClass="list-group-item list-group-item-action #{view.viewId == '/employee.xhtml' ? 'active' : ''}">
-                    <i class="fa-solid fa-users"> </i> Employees
-                </h:link>
-                <a href="#" class="list-group-item list-group-item-action">
-                    <i class="fa-solid fa-calendar-days"> </i> Calendar
-                </a>
-                <a href="payments.xhtml" class="list-group-item list-group-item-action #{view.viewId == '/payments.xhtml' ? 'active' : ''}">
-                    <i class="fa-solid fa-credit-card"> </i> Payments
-                </a>
+                <!-- Appointments: Admin, Receptionist, Doctor -->
+                <ui:fragment rendered="#{sessionManager.currentUserRole eq 'ADMINISTRATOR' or sessionManager.currentUserRole eq 'RECEPTIONIST' or sessionManager.currentUserRole eq 'DOCTOR'}">
+                    <h:link outcome="appointments"
+                        styleClass="list-group-item list-group-item-action #{view.viewId == '/appointments.xhtml' ? 'active' : ''}">
+                        <i class="fa-solid fa-file-medical"> </i> Appointments
+                    </h:link>
+                </ui:fragment>
+                <!-- Patients: Admin, Receptionist, Doctor -->
+                <ui:fragment rendered="#{sessionManager.currentUserRole eq 'ADMINISTRATOR' or sessionManager.currentUserRole eq 'RECEPTIONIST' or sessionManager.currentUserRole eq 'DOCTOR'}">
+                    <h:link outcome="patient"
+                        styleClass="list-group-item list-group-item-action #{view.viewId == '/patient.xhtml' ? 'active' : ''}">
+                        <i class="fa-solid fa-hospital-user"> </i> Patients
+                    </h:link>
+                </ui:fragment>
+                <!-- Employees: Admin only -->
+                <ui:fragment rendered="#{sessionManager.currentUserRole eq 'ADMINISTRATOR'}">
+                    <h:link outcome="employee"
+                        styleClass="list-group-item list-group-item-action #{view.viewId == '/employee.xhtml' ? 'active' : ''}">
+                        <i class="fa-solid fa-users"> </i> Employees
+                    </h:link>
+                    <!-- Calendar: Admin only -->
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fa-solid fa-calendar-days"> </i> Calendar
+                    </a>
+                </ui:fragment>
+                <!-- Payments: Admin, Receptionist -->
+                <ui:fragment rendered="#{sessionManager.currentUserRole eq 'ADMINISTRATOR' or sessionManager.currentUserRole eq 'RECEPTIONIST'}">
+                    <a href="payments.xhtml" class="list-group-item list-group-item-action #{view.viewId == '/payments.xhtml' ? 'active' : ''}">
+                        <i class="fa-solid fa-credit-card"> </i> Payments
+                    </a>
+                </ui:fragment>
+                <!-- Session Info: All roles -->
                 <h:link outcome="session-info"
                     styleClass="list-group-item list-group-item-action #{view.viewId == '/session-info.xhtml' ? 'active' : ''}">
                     <i class="fa-solid fa-user-clock"> </i> Session Info

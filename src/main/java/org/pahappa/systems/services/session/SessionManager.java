@@ -239,4 +239,13 @@ public class SessionManager implements Serializable {
 
         return request.getRemoteAddr();
     }
+
+    public String getCurrentUserRole() {
+        User user = getCurrentUser();
+        return user != null && user.getRole() != null ? user.getRole().name() : null;
+    }
+    public org.pahappa.systems.enums.Rolename getCurrentUserRoleEnum() {
+        User user = getCurrentUser();
+        return user != null ? user.getRole() : null;
+    }
 }
