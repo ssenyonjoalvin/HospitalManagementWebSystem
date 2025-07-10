@@ -115,4 +115,12 @@ public class BillingAndReportingService {
     public void deleteInvoice(Invoice invoice) {
         invoiceDAO.delete(invoice);
     }
+
+    public Invoice findInvoiceById(Long id) {
+        return invoiceDAO.findById(id);
+    }
+
+    public void cancelInvoice(Invoice invoice) {
+        invoiceDAO.saveOrUpdate(invoice);
+    }
 }

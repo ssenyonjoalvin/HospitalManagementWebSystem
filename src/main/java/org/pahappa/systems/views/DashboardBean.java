@@ -68,7 +68,7 @@ public class DashboardBean implements Serializable {
         totalPatients = patientService.countAll();
         totalAppointments = appointmentsService.countAll();
         pendingAppointments = appointmentsService.getAllAppointments().stream()
-                .filter(appt -> appt.getStatus().toString().equals("PENDING"))
+                .filter(appt -> appt.getStatus().toString().equals("UNPAID"))
                 .count();
         List<Invoice> allInvoices = billingService.findAllInvoices();
         totalInvoices = allInvoices.size();

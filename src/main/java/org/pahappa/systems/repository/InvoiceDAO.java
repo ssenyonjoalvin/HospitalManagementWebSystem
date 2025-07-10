@@ -11,17 +11,65 @@ import java.util.List;
 
 @ApplicationScoped
 public class InvoiceDAO {
+
+    /**
+     * CORRECTED findAll() METHOD
+     * This query now fetches all related data needed for display pages
+     * in a single, efficient database call. This will resolve all
+     * LazyInitializationExceptions for invoices, patients, doctors, medicines, and services.
+     */
     public List<Invoice> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from Invoice", Invoice.class).list();
+            return session.createQuery(
+                    "SELECT DISTINCT i FROM Invoice i " +
+                            "LEFT JOIN FETCH i.patient " +
+                            "LEFT JOIN FETCH i.doctor " +
+                            "LEFT JOIN FETCH i.medicines " +
+                            "LEFT JOIN FETCH i.services",
+                    Invoice.class
+            ).list();
         }
     }
+
+    /**
+     * CORRECTED findById() METHOD
+     * This query fetches a single invoice and all its related data,
+     * resolving LazyInitializationExceptions for detail pages.
+     */
+    public Invoice findById(Long id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery(
+                    "SELECT i FROM Invoice i " +
+                            "LEFT JOIN FETCH i.patient " +
+                            "LEFT JOIN FETCH i.doctor " +
+                            "LEFT JOIN FETCH i.medicines " +
+                            "LEFT JOIN FETCH i.services " +
+                            "WHERE i.id = :id",
+                    Invoice.class
+            ).setParameter("id", id).uniqueResult();
+        }
+    }
+
+    // --- The methods below are for writing/deleting data and do NOT need changes ---
 
     public void delete(Invoice invoice) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.remove(session.contains(invoice) ? invoice : session.merge(invoice));
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null)
+                transaction.rollback();
+            throw e;
+        }
+    }
+
+    public void saveOrUpdate(Invoice invoice) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.merge(invoice);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null)
@@ -84,36 +132,8 @@ public class InvoiceDAO {
                         invoice.addService(serv);
                 }
             }
-            // Debug: Print list sizes and contents before persisting
-            System.out.println("[DEBUG] Medicines to persist: " + invoice.getMedicines().size());
-            for (org.pahappa.systems.models.Medicine med : invoice.getMedicines()) {
-                System.out.println("[DEBUG] Medicine: " + med.getId() + " - " + med.getName() + " - " + med.getPrice());
-            }
-            System.out.println("[DEBUG] Services to persist: " + invoice.getServices().size());
-            for (org.pahappa.systems.models.Service serv : invoice.getServices()) {
-                System.out
-                        .println("[DEBUG] Service: " + serv.getId() + " - " + serv.getName() + " - " + serv.getPrice());
-            }
 
             session.persist(invoice);
-            session.flush(); // Force Hibernate to write join table entries
-
-            // Debug: Print after persist/flush
-            System.out.println("[DEBUG] After persist/flush - Medicines: " + invoice.getMedicines().size());
-            System.out.println("[DEBUG] After persist/flush - Services: " + invoice.getServices().size());
-
-            // Debug: Print medicines and their prices
-            System.out.println("Medicines in invoice:");
-            for (org.pahappa.systems.models.Medicine med : invoice.getMedicines()) {
-                System.out.println(med.getName() + " - " + med.getPrice());
-            }
-            // Debug: Print services and their prices
-            System.out.println("Services in invoice:");
-            for (org.pahappa.systems.models.Service serv : invoice.getServices()) {
-                System.out.println(serv.getName() + " - " + serv.getPrice());
-            }
-            // Debug: Print calculated total
-            System.out.println("Calculated total: " + invoice.getTotalAmount());
 
             transaction.commit();
             return new SaveCheckupResult(medicalReport.getId(), invoice.getId());
