@@ -21,18 +21,40 @@
                         <h:outputText value="#{invoice.creationDate}" />
                     </p:column>
                     <p:column headerText="Status">
-                        <span class="badge bg-secondary">#{invoice.status}</span>
+                        <h:outputText styleClass="#{invoice.status eq 'PAID' ? 'badge bg-success' 
+                                : invoice.status eq 'UNPAID' ? 'badge bg-danger'
+                                : invoice.status eq 'CANCELLED' ? 'badge bg-secondary'
+                                : 'badge bg-warning'}">
+                            #{invoice.status eq 'PAID' ? 'Paid'
+                             : invoice.status eq 'UNPAID' ? 'Unpaid'
+                             : invoice.status eq 'CANCELLED' ? 'Cancelled'
+                             : invoice.status}
+                        </h:outputText>
                     </p:column>
                     <p:column headerText="Actions">
                         <h:panelGroup layout="block" styleClass="d-flex gap-1 align-items-center">
                             <h:commandButton value="View" styleClass="btn btn-outline-info btn-sm me-1"
-                                action="#{paymentsBean.viewInvoice(invoice)}" />
-                            <h:commandButton value="Delete" styleClass="btn btn-outline-danger btn-sm"
-                                action="#{paymentsBean.deleteInvoice(invoice)}" />
+                                action="#{paymentsBean.goToInvoiceDetails(invoice)}" />
+                            <h:commandButton value="Cancel" styleClass="btn btn-outline-danger btn-sm"
+                                onclick="PF('cancelDialog').show();" 
+                                action="#{paymentsBean.showCancelDialog(invoice)}"
+                                process="@this"
+                                type="button" />
                         </h:panelGroup>
                     </p:column>
                 </p:dataTable>
             </h:form>
         </div>
+        <p:dialog header="Cancel Invoice" widgetVar="cancelDialog" modal="true" closable="false" resizable="false">
+            <h:outputText value="Are you sure you want to cancel this invoice?" />
+            <div class="mt-3 d-flex gap-2">
+                <p:commandButton value="Yes" action="#{paymentsBean.cancelInvoice}" 
+                                 oncomplete="PF('cancelDialog').hide()" 
+                                 update="paymentsForm" process="@this"
+                                 styleClass="ui-button-danger" />
+                <p:commandButton value="No" onclick="PF('cancelDialog').hide();return false;" 
+                                 type="button" styleClass="ui-button-secondary" />
+            </div>
+        </p:dialog>
     </ui:define>
 </ui:composition>

@@ -1,0 +1,135 @@
+<ui:composition template="/template/template.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <f:viewParam name="invoiceId" value="#{invoiceDetailsBean.invoiceId}" />
+        <f:event type="preRenderView" listener="#{invoiceDetailsBean.loadInvoice}" />
+    </f:metadata>
+
+    <ui:define name="content">
+
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <p:button icon="pi pi-times" outcome="payments.xhtml" ajax="false" styleClass="rounded-button ui-button-danger" />
+
+                <div class="col-lg-8">
+                    <div id="invoice-content">
+                        <div class="card p-4 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h4 class="mb-0 text-primary">Citycare General Hopital</h4>
+                                    <small>Hospital address<br/>Uganda,Kampala, Lummu Street<br/>TAX ID: 0XXX0XX01234XXX<br/>+320 789123564<br/>Citycare@gmail.com</small>
+                                </div>
+                                <div class="text-end">
+                                    <h5 class="text-danger mb-1">
+                                        <strong>Ush: #{invoiceDetailsBean.invoice.totalAmount}</strong>
+                                    </h5>
+                                    <span class="badge #{invoiceDetailsBean.invoice.status eq 'PAID' ? 'bg-success' 
+                                : invoiceDetailsBean.invoice.status eq 'UNPAID' ? 'bg-danger'
+                                : invoiceDetailsBean.invoice.status eq 'CANCELLED' ? 'bg-secondary'
+                                : 'bg-warning'}">
+    #{invoiceDetailsBean.invoice.status eq 'PAID' ? 'Paid'
+     : invoiceDetailsBean.invoice.status eq 'UNPAID' ? 'Unpaid'
+     : invoiceDetailsBean.invoice.status eq 'CANCELLED' ? 'Cancelled'
+     : invoiceDetailsBean.invoice.status}
+</span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Billed to</strong><br/>
+                                    #{invoiceDetailsBean.invoice.patient.fullName}<br/>
+                                    #{invoiceDetailsBean.invoice.patient.email}<br/>
+                                    #{invoiceDetailsBean.invoice.patient.address}<br/>
+                                    #{invoiceDetailsBean.invoice.patient.phoneNumber}
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <strong>Invoice number:</strong> #{invoiceDetailsBean.invoice.id}<br/>
+                                    <strong>Invoice status:</strong> #{invoiceDetailsBean.invoice.status}<br/>
+                                    <strong>Invoice date:</strong> #{invoiceDetailsBean.invoice.creationDate}<br/>
+                                </div>
+                            </div>
+
+                            <!-- Medicines Table -->
+                            <h5>Medicines</h5>
+                            <p:dataTable value="#{invoiceDetailsBean.invoice.medicines}" var="medicine" styleClass="table table-bordered mb-3">
+                                <p:column headerText="Name">
+                                    <h:outputText value="#{medicine.name}" />
+                                </p:column>
+                                <p:column headerText="Price">
+                                    <h:outputText value="Ug shs #{medicine.price}" />
+                                </p:column>
+                            </p:dataTable>
+
+                            <!-- Services Table -->
+                            <h5>Services</h5>
+                            <p:dataTable value="#{invoiceDetailsBean.invoice.services}" var="service" styleClass="table table-bordered mb-3">
+                                <p:column headerText="Name">
+                                    <h:outputText value="#{service.name}" />
+                                </p:column>
+                                <p:column headerText="Price">
+                                    <h:outputText value="Ug shs #{service.price}" />
+                                </p:column>
+                            </p:dataTable>
+                            <div class="row mb-2">
+<!--                                <div class="col-6"></div>-->
+                                <div class="col-6">
+<!--                                    <div class="d-flex justify-content-between">-->
+<!--                                    </div>-->
+
+                                    <div class="d-flex justify-content-between fw-bold">
+                                        <span>Total:</span>
+                                        <span>Ush #{invoiceDetailsBean.invoice.totalAmount}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <small>Thanks for choosing us and quick recovery.</small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <p:commandButton value="Print" onclick="printInvoiceSection()" type="button" styleClass="btn btn-primary" />
+                                <p:commandButton value="Make Payment" action="#{invoiceDetailsBean.makePayment}" styleClass="btn btn-success" rendered="#{invoiceDetailsBean.invoice.status eq 'UNPAID'}" />
+                            </div>
+                    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+    <style>
+        @media print {
+            .btn, .ui-button, .rounded-button, .ui-button-danger, .d-flex.gap-2, .ui-button, .ui-button-danger, .ui-button-success {
+                display: none !important;
+            }
+            body * {
+                visibility: hidden;
+            }
+            #invoice-content, #invoice-content * {
+                visibility: visible;
+            }
+            #invoice-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100vw;
+            }
+        }
+    </style>
+
+    <h:outputScript>
+        function printInvoiceSection() {
+            var printContents = document.getElementById('invoice-content').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload(); // reload to restore JSF state
+        }
+    </h:outputScript>
+</ui:composition> 

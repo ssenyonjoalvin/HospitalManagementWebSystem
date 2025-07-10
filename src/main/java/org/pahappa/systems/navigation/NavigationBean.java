@@ -52,5 +52,5 @@ public class NavigationBean {
     public String toRegisterPatient() {
         return "/register-patient.xhtml?faces-redirect=true";
     }
-
+  
 }
