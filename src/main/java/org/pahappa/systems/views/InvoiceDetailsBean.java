@@ -1,7 +1,7 @@
 package org.pahappa.systems.views;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.view.ViewScoped;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.pahappa.systems.models.Invoice;
@@ -9,7 +9,7 @@ import org.pahappa.systems.services.billing.BillingAndReportingService;
 import java.io.Serializable;
 
 @Named("invoiceDetailsBean")
-@ViewScoped
+@SessionScoped
 public class InvoiceDetailsBean implements Serializable {
     private Long invoiceId;
     private Invoice invoice;
@@ -33,5 +33,10 @@ public class InvoiceDetailsBean implements Serializable {
 
     public Invoice getInvoice() {
         return invoice;
+    }
+
+    public String goToCustomPayment() {
+        System.out.println("[DEBUG] goToCustomPayment called. invoiceId=" + invoiceId);
+        return "/custom-payment.xhtml?faces-redirect=true&invoiceId=" + invoiceId;
     }
 } 
