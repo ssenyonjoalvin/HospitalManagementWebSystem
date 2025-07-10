@@ -66,7 +66,7 @@ public class UserDAO {
 
     public List<User> getAllRecords() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from User", User.class).list();
+            return session.createQuery("from User u order by u.id desc", User.class).list();
         }
     }
 

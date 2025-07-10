@@ -39,6 +39,7 @@ public class UserServiceImpl implements UserService {
                 .filter(u -> u.getRole() != null && (u.getRole().equals(Rolename.DOCTOR) ||
                         u.getRole().equals(Rolename.PHARMACIST) ||
                         u.getRole().equals(Rolename.RECEPTIONIST)))
+                .sorted((u1, u2) -> Long.compare(u2.getId(), u1.getId())) // Sort by id descending
                 .collect(Collectors.toList());
     }
 

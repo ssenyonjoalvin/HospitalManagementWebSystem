@@ -13,17 +13,29 @@
                         <div class="col-md-6 mb-3">
                             <label for="fullName" class="form-label">Full Name</label>
                             <h:inputText id="fullName" value="#{userRegistrationBean.user.fullName}"
-                                styleClass="form-control" pt:placeholder="Enter full name" required="true" />
+                                styleClass="form-control" pt:placeholder="Enter full name" required="true"
+                                requiredMessage="Full Name is required."
+                                validatorMessage="Full Name must be at least 5 letters, only letters, and not just spaces.">
+                                <f:validateRegex pattern="^[A-Za-z]{5,}(?: [A-Za-z]+)*$" />
+                            </h:inputText>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="phoneNumber" class="form-label">Phone Number</label>
                             <h:inputText id="phoneNumber" value="#{userRegistrationBean.user.phoneNumber}"
-                                styleClass="form-control" pt:placeholder="Enter phone number" required="true" />
+                                styleClass="form-control" pt:placeholder="Enter phone number" required="true"
+                                requiredMessage="Phone number is required."
+                                validatorMessage="Phone number must be 10 digits if it starts with 07, or 13 characters if it starts with +256.">
+                                <f:validateRegex pattern="^(07\d{8}|\+256\d{9})$" />
+                            </h:inputText>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="email" class="form-label">Email</label>
                             <h:inputText id="email" value="#{userRegistrationBean.user.email}" styleClass="form-control"
-                                pt:placeholder="Enter email" required="true" />
+                                pt:placeholder="Enter email" required="true"
+                                requiredMessage="Email is required."
+                                validatorMessage="Email must contain @ and end with .com.">
+                                <f:validateRegex pattern="^[^@\s]+@[^@\s]+\.com$" />
+                            </h:inputText>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="dateOfBirth" class="form-label">Date of Birth</label>
@@ -34,17 +46,29 @@
                         <div class="col-md-6 mb-3">
                             <label for="address" class="form-label">Address</label>
                             <h:inputText id="address" value="#{userRegistrationBean.user.address}"
-                                styleClass="form-control" pt:placeholder="Enter address" required="true" />
+                                styleClass="form-control" pt:placeholder="Enter address" required="true"
+                                requiredMessage="Address is required."
+                                validatorMessage="Address must contain only letters and spaces.">
+                                <f:validateRegex pattern="^[A-Za-z ]+$" />
+                            </h:inputText>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="nextOfKin" class="form-label">Next of Kin</label>
                             <h:inputText id="nextOfKin" value="#{userRegistrationBean.user.nextOfKin}"
-                                styleClass="form-control" pt:placeholder="Enter next of kin" required="true" />
+                                styleClass="form-control" pt:placeholder="Enter next of kin" required="true"
+                                requiredMessage="Next of Kin is required."
+                                validatorMessage="Next of Kin must contain only letters and spaces.">
+                                <f:validateRegex pattern="^[A-Za-z ]+$" />
+                            </h:inputText>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="password" class="form-label">Password</label>
                             <h:inputSecret id="password" value="#{userRegistrationBean.user.password}"
-                                styleClass="form-control" pt:placeholder="Enter password" required="true" />
+                                styleClass="form-control" pt:placeholder="Enter password" required="true"
+                                requiredMessage="Password is required."
+                                validatorMessage="Password must be at least 8 characters and include letters, numbers, and symbols.">
+                                <f:validateRegex pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$" />
+                            </h:inputSecret>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="role" class="form-label">Role</label>
