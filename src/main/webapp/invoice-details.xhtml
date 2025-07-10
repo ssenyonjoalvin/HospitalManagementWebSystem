@@ -90,10 +90,14 @@
                             <div class="mb-3">
                                 <small>Thanks for choosing us and quick recovery.</small>
                             </div>
-                            <div class="d-flex gap-2">
-                                <p:commandButton value="Print" onclick="printInvoiceSection()" type="button" styleClass="btn btn-primary" />
-                                <p:commandButton value="Make Payment" action="#{invoiceDetailsBean.makePayment}" styleClass="btn btn-success" rendered="#{invoiceDetailsBean.invoice.status eq 'UNPAID'}" />
-                            </div>
+                                <h:form>
+                                
+                                <div class="d-flex gap-2">
+                                    <p:commandButton value="Print" onclick="printInvoiceSection()" type="button" styleClass="btn btn-primary" />
+                                    <p:commandButton value="Make Payment" action="#{invoiceDetailsBean.goToCustomPayment}" ajax="false" styleClass="btn btn-success" rendered="#{invoiceDetailsBean.invoice.status eq 'UNPAID'}" />
+                                </div>
+                                </h:form>
+                            
                     
                         </div>
                     </div>

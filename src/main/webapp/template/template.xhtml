@@ -45,7 +45,7 @@
                 <a href="#" class="list-group-item list-group-item-action">
                     <i class="fa-solid fa-calendar-days"> </i> Calendar
                 </a>
-                <a href="payments.xhtml" class="list-group-item list-group-item-action">
+                <a href="payments.xhtml" class="list-group-item list-group-item-action #{view.viewId == '/payments.xhtml' ? 'active' : ''}">
                     <i class="fa-solid fa-credit-card"> </i> Payments
                 </a>
                 <h:link outcome="session-info"

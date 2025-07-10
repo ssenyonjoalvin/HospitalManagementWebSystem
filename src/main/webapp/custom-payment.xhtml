@@ -1,0 +1,66 @@
+<ui:composition template="/template/template.xhtml"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <f:viewParam name="invoiceId" value="#{customPaymentBean.invoiceId}" />
+    </f:metadata>
+
+    <ui:define name="content">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card shadow p-4">
+                        <h4 class="mb-4 text-center">TOTAL TO PAY <span class="text-primary float-end">UGX #{customPaymentBean.totalAmountDisplay}</span></h4>
+                        <h6 class="mb-3">NEW PAYMENT METHOD</h6>
+                        <h:form id="paymentForm">
+                            <p:selectOneRadio id="method" value="#{customPaymentBean.paymentMethod}" layout="responsive" columns="2">
+                                <f:selectItem itemLabel="Mobile Money" itemValue="mobilemoney" />
+                                <f:selectItem itemLabel="Bank Cards" itemValue="card" />
+                            </p:selectOneRadio>
+
+                            <p:outputPanel rendered="#{customPaymentBean.paymentMethod eq 'mobilemoney'}">
+                                <div class="mt-3 mb-2">
+                                    <b>Select your operator</b>
+                                    <p:selectOneMenu value="#{customPaymentBean.operator}" styleClass="form-select mt-1">
+                                        <f:selectItem itemLabel="Airtel" itemValue="Airtel" />
+                                        <f:selectItem itemLabel="MTN" itemValue="MTN" />
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="mb-3">
+                                    <b>Insert mobile number without 0</b>
+                                    <div class="input-group mt-1">
+                                        <span class="input-group-text">+256</span>
+                                        <p:inputText value="#{customPaymentBean.mobileNumber}" maxlength="9" styleClass="form-control" placeholder="701358137" />
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+
+                            <p:outputPanel rendered="#{customPaymentBean.paymentMethod eq 'card'}">
+                                <div class="mt-3 mb-2">
+                                    <b>Card Number</b>
+                                    <p:inputText value="#{customPaymentBean.cardNumber}" maxlength="16" styleClass="form-control mt-1" placeholder="1234 5678 9012 3456" />
+                                </div>
+                                <div class="mb-2">
+                                    <b>Expiry</b>
+                                    <p:inputText value="#{customPaymentBean.cardExpiry}" maxlength="5" styleClass="form-control mt-1" placeholder="MM/YY" />
+                                </div>
+                                <div class="mb-3">
+                                    <b>CVV</b>
+                                    <p:inputText value="#{customPaymentBean.cardCvv}" maxlength="4" styleClass="form-control mt-1" placeholder="123" />
+                                </div>
+                            </p:outputPanel>
+
+                            <p:commandButton value="PAY NOW: UGX #{customPaymentBean.totalAmountDisplay}" actionListener="#{customPaymentBean.pay}" update=":paymentForm :msg" styleClass="btn btn-primary w-100 mt-3" />
+                        </h:form>
+                        <p:messages id="msg" for="@form" showDetail="true" autoUpdate="true" />
+                        <h:outputText value="#{customPaymentBean.message}" style="display:block; margin-top:1em; color:green; text-align:center;" rendered="#{not empty customPaymentBean.message}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition> 
