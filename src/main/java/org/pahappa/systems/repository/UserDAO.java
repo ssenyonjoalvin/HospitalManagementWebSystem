@@ -58,7 +58,7 @@ public class UserDAO {
     public User getRecordByEmail(String email) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // return session.get(User.class, email);
-            return session.createQuery("FROM User WHERE email = :email", User.class)
+            return session.createQuery("FROM User WHERE email = :email  AND  deleted = false ", User.class)
                     .setParameter("email", email)
                     .uniqueResult();
         }
