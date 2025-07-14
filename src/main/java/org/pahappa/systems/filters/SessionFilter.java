@@ -5,12 +5,11 @@ import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.pahappa.systems.services.session.SessionManager;
 
 import java.io.IOException;
 
-//@WebFilter("*.xhtml")
+@WebFilter("*.xhtml")
 public class SessionFilter implements Filter {
 
     @Inject
@@ -25,6 +24,8 @@ public class SessionFilter implements Filter {
 
         String requestURI = httpRequest.getRequestURI();
 
+        System.out.println("SessionFilter: requestURI = " + requestURI + ", isPublic = " + isPublicResource(requestURI) + ", isUserLoggedIn = " + sessionManager.isUserLoggedIn());
+
         // Allow access to login page and resources
         if (isPublicResource(requestURI)) {
             chain.doFilter(request, response);
@@ -37,6 +38,11 @@ public class SessionFilter implements Filter {
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/login.xhtml");
             return;
         }
+
+        // Prevent caching of protected pages
+        httpResponse.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+        httpResponse.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        httpResponse.setDateHeader("Expires", 0); // Proxies
 
         // Update session activity
         sessionManager.updateSessionActivity();

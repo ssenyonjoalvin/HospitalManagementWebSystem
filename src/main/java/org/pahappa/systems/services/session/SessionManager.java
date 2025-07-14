@@ -18,13 +18,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Named
-@ApplicationScoped
+@SessionScoped
 public class SessionManager implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // Store active sessions
-    private final Map<String, SessionInfo> activeSessions = new ConcurrentHashMap<>();
+    private User currentUser;
+    private LocalDateTime loginTime;
+    private LocalDateTime lastActivity;
+    private String ipAddress;
+    private String userAgent;
+    private int requestCount;
 
     @Inject
     private UserService userService;
@@ -32,91 +36,24 @@ public class SessionManager implements Serializable {
     @Inject
     private ActivityLogger activityLogger;
 
-    public static class SessionInfo {
-        private User user;
-        private LocalDateTime loginTime;
-        private LocalDateTime lastActivity;
-        private String ipAddress;
-        private String userAgent;
-        private int requestCount;
-
-        public SessionInfo(User user, String ipAddress, String userAgent) {
-            this.user = user;
-            this.loginTime = LocalDateTime.now();
-            this.lastActivity = LocalDateTime.now();
-            this.ipAddress = ipAddress;
-            this.userAgent = userAgent;
-            this.requestCount = 0;
-        }
-
-        // Getters and Setters
-        public User getUser() {
-            return user;
-        }
-
-        public void setUser(User user) {
-            this.user = user;
-        }
-
-        public LocalDateTime getLoginTime() {
-            return loginTime;
-        }
-
-        public void setLoginTime(LocalDateTime loginTime) {
-            this.loginTime = loginTime;
-        }
-
-        public LocalDateTime getLastActivity() {
-            return lastActivity;
-        }
-
-        public void setLastActivity(LocalDateTime lastActivity) {
-            this.lastActivity = lastActivity;
-        }
-
-        public String getIpAddress() {
-            return ipAddress;
-        }
-
-        public void setIpAddress(String ipAddress) {
-            this.ipAddress = ipAddress;
-        }
-
-        public String getUserAgent() {
-            return userAgent;
-        }
-
-        public void setUserAgent(String userAgent) {
-            this.userAgent = userAgent;
-        }
-
-        public int getRequestCount() {
-            return requestCount;
-        }
-
-        public void setRequestCount(int requestCount) {
-            this.requestCount = requestCount;
-        }
-    }
-
     public void createSession(User user) {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (facesContext != null) {
             HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
             HttpSession session = request.getSession();
 
-            String sessionId = session.getId();
-            String ipAddress = getClientIpAddress(request);
-            String userAgent = request.getHeader("User-Agent");
-
-            SessionInfo sessionInfo = new SessionInfo(user, ipAddress, userAgent);
-            activeSessions.put(sessionId, sessionInfo);
+            this.currentUser = user;
+            this.loginTime = LocalDateTime.now();
+            this.lastActivity = LocalDateTime.now();
+            this.ipAddress = getClientIpAddress(request);
+            this.userAgent = request.getHeader("User-Agent");
+            this.requestCount = 0;
 
             // Log login activity
             activityLogger.logActivity(user, "LOGIN",
                     "User logged in from " + ipAddress,
                     UserActivity.ActivityType.LOGIN,
-                    sessionId,
+                    session.getId(),
                     ipAddress,
                     userAgent,
                     request.getRequestURI());
@@ -124,21 +61,8 @@ public class SessionManager implements Serializable {
     }
 
     public void updateSessionActivity() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (facesContext != null) {
-            HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-            HttpSession session = request.getSession(false);
-
-            if (session != null) {
-                String sessionId = session.getId();
-                SessionInfo sessionInfo = activeSessions.get(sessionId);
-
-                if (sessionInfo != null) {
-                    sessionInfo.setLastActivity(LocalDateTime.now());
-                    sessionInfo.setRequestCount(sessionInfo.getRequestCount() + 1);
-                }
-            }
-        }
+        this.lastActivity = LocalDateTime.now();
+        this.requestCount++;
     }
 
     public void destroySession() {
@@ -148,95 +72,79 @@ public class SessionManager implements Serializable {
             HttpSession session = request.getSession(false);
 
             if (session != null) {
-                String sessionId = session.getId();
-                SessionInfo sessionInfo = activeSessions.remove(sessionId);
-
-                if (sessionInfo != null) {
-                    // Log logout activity
-                    activityLogger.logActivity(sessionInfo.getUser(), "LOGOUT",
-                            "User logged out",
-                            UserActivity.ActivityType.LOGOUT,
-                            sessionId,
-                            sessionInfo.getIpAddress(),
-                            sessionInfo.getUserAgent(),
-                            request.getRequestURI());
-                }
-
+                // Log logout activity
+                activityLogger.logActivity(currentUser, "LOGOUT",
+                        "User logged out",
+                        UserActivity.ActivityType.LOGOUT,
+                        session.getId(),
+                        ipAddress,
+                        userAgent,
+                        request.getRequestURI());
                 session.invalidate();
             }
         }
+        this.currentUser = null;
+        this.loginTime = null;
+        this.lastActivity = null;
+        this.ipAddress = null;
+        this.userAgent = null;
+        this.requestCount = 0;
     }
 
     public User getCurrentUser() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (facesContext != null) {
-            HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-            HttpSession session = request.getSession(false);
-
-            if (session != null) {
-                String sessionId = session.getId();
-                SessionInfo sessionInfo = activeSessions.get(sessionId);
-                return sessionInfo != null ? sessionInfo.getUser() : null;
-            }
-        }
-        return null;
+        return currentUser;
     }
 
     public boolean isUserLoggedIn() {
-        return getCurrentUser() != null;
+        return currentUser != null;
     }
 
     public boolean hasRole(String role) {
-        User user = getCurrentUser();
-        return user != null && user.getRole().name().equals(role);
+        return currentUser != null && currentUser.getRole().name().equals(role);
     }
 
     public void logUserActivity(String action, String description, UserActivity.ActivityType activityType) {
-        User user = getCurrentUser();
-        if (user != null) {
+        if (currentUser != null) {
             FacesContext facesContext = FacesContext.getCurrentInstance();
             if (facesContext != null) {
                 HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
                 HttpSession session = request.getSession(false);
-
-                String sessionId = session != null ? session.getId() : null;
-                String ipAddress = getClientIpAddress(request);
-                String userAgent = request.getHeader("User-Agent");
-
-                activityLogger.logActivity(user, action, description, activityType,
-                        sessionId, ipAddress, userAgent, request.getRequestURI());
+                activityLogger.logActivity(currentUser, action, description, activityType,
+                        session != null ? session.getId() : null,
+                        ipAddress,
+                        userAgent,
+                        request.getRequestURI());
             }
         }
     }
 
-    public Map<String, SessionInfo> getActiveSessions() {
-        return new HashMap<>(activeSessions);
-    }
-
-    public int getActiveSessionCount() {
-        return activeSessions.size();
-    }
-
-    public void cleanupExpiredSessions() {
-        LocalDateTime now = LocalDateTime.now();
-        activeSessions.entrySet().removeIf(entry -> {
-            SessionInfo sessionInfo = entry.getValue();
-            // Remove sessions inactive for more than 30 minutes
-            return sessionInfo.getLastActivity().plusMinutes(30).isBefore(now);
-        });
-    }
-
     private String getClientIpAddress(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unknown".equalsIgnoreCase(xForwardedFor)) {
-            return xForwardedFor.split(",")[0];
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
         }
+        return ip;
+    }
 
-        String xRealIp = request.getHeader("X-Real-IP");
-        if (xRealIp != null && !xRealIp.isEmpty() && !"unknown".equalsIgnoreCase(xRealIp)) {
-            return xRealIp;
-        }
+    public String getCurrentUserRole() {
+        User user = getCurrentUser();
+        return user != null && user.getRole() != null ? user.getRole().name() : null;
+    }
+    public org.pahappa.systems.enums.Rolename getCurrentUserRoleEnum() {
+        User user = getCurrentUser();
+        return user != null ? user.getRole() : null;
+    }
 
-        return request.getRemoteAddr();
+    public LocalDateTime getLoginTime() {
+        return loginTime;
+    }
+    public LocalDateTime getLastActivity() {
+        return lastActivity;
+    }
+    public String getIpAddress() {
+        return ipAddress;
+    }
+    public int getRequestCount() {
+        return requestCount;
     }
 }

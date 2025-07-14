@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import org.pahappa.systems.enums.PatientType;
 
 @Entity
-
+//use compositions
 public class Patient extends User {
     private PatientType patientType;
     private String insuranceNumber;
