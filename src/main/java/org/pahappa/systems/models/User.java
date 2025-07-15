@@ -19,18 +19,17 @@ public class User {
     private String address;
     private String nextOfKin;
 
-    private String password;
+//    private String password;
     @Enumerated(EnumType.STRING)
     private Rolename role;
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private boolean deleted = false;
 
-    public User(Rolename role, String password, String nextOfKin, String address, Gender gender, LocalDate dateOfBirth,
+    public User(Rolename role,  String nextOfKin, String address, Gender gender, LocalDate dateOfBirth,
             String email, String phoneNumber, String fullName) {
         this.role = role;
         this.gender = gender;
-        this.password = password;
         this.nextOfKin = nextOfKin;
         this.address = address;
         this.dateOfBirth = dateOfBirth;
@@ -116,13 +115,6 @@ public class User {
         this.nextOfKin = nextOfKin;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public boolean isDeleted() {
         return deleted;
@@ -142,7 +134,6 @@ public class User {
                 ", dateOfBirth=" + dateOfBirth +
                 ", address='" + address + '\'' +
                 ", nextOfKin='" + nextOfKin + '\'' +
-                ", password='" + password + '\'' +
                 ", role=" + role +
                 ", gender=" + gender +
                 ", deleted=" + deleted +

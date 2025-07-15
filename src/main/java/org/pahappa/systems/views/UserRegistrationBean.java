@@ -44,6 +44,8 @@ public class UserRegistrationBean implements Serializable {
     private List<Status> statuses;
     private List<Shift> shifts;
     private String message;
+    private String userName;
+    private String password;
 
     @Inject
     private UserService userService;
@@ -61,20 +63,27 @@ public class UserRegistrationBean implements Serializable {
 
     public String register() {
         try {
+            // Create UserAccount for the new employee
+            org.pahappa.systems.models.UserAccount userAccount = new org.pahappa.systems.models.UserAccount();
+            userAccount.setUserName(userName);
+            userAccount.setPassword(password);
+
             userService.registerEmployee(
-                    user,
-                    selectedRole,
-                    specialization,
-                    qualification,
-                    department,
-                    staffStatus,
-                    yearsOfExperience,
-                    deskNumber,
-                    receptionistShift,
-                    licenseNumber,
-                    pharmacistShift);
+                user,
+                selectedRole,
+                specialization,
+                qualification,
+                department,
+                staffStatus,
+                yearsOfExperience,
+                deskNumber,
+                receptionistShift,
+                licenseNumber,
+                pharmacistShift,
+                userAccount // pass the UserAccount
+            );
             // Reset form fields
-            user = new User();
+            user = new org.pahappa.systems.models.User();
             selectedRole = null;
             specialization = null;
             qualification = null;
@@ -85,10 +94,11 @@ public class UserRegistrationBean implements Serializable {
             receptionistShift = null;
             licenseNumber = null;
             pharmacistShift = null;
+            userName = null;
+            password = null;
             message = "Employee registered successfully!";
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, message, null));
-            // Redirect to employee list page
             return "employee.xhtml?faces-redirect=true";
         } catch (Exception e) {
             message = "Error registering employee: " + e.getMessage();
@@ -229,6 +239,19 @@ public class UserRegistrationBean implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     // Getter for today's date for date picker validation
