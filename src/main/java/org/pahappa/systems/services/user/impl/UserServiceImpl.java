@@ -7,11 +7,8 @@ import org.pahappa.systems.enums.Qualification;
 import org.pahappa.systems.enums.Department;
 import org.pahappa.systems.enums.Status;
 import org.pahappa.systems.enums.Shift;
-import org.pahappa.systems.models.User;
-import org.pahappa.systems.models.Doctor;
-import org.pahappa.systems.models.Pharmacist;
-import org.pahappa.systems.models.Receptionist;
-import org.pahappa.systems.repository.UserDAO;
+import org.pahappa.systems.models.*;
+import org.pahappa.systems.repository.*;
 import org.pahappa.systems.services.user.UserService;
 
 import java.util.List;
@@ -22,12 +19,27 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class UserServiceImpl implements UserService {
     private final UserDAO userDAO = new UserDAO();
+    private final UserAccountDAO userAccountDAO = new UserAccountDAO();
+    private final DoctorDAO doctorDAO = new DoctorDAO();
+    private final ReceptionistDAO receptionistDAO = new ReceptionistDAO();
+    private final PharmacistDAO pharmacistDAO = new PharmacistDAO();
+    private final AdministratorDAO administratorDAO = new AdministratorDAO();
 
     @Override
-    public User login(String email, String password) {
-        User user = userDAO.getRecordByEmail(email);
-        if (user != null && user.getPassword().equals(password) ) {
-            return user;
+    public User login(String userName, String password) {
+        System.out.println("[DEBUG]: Am here at the !!!!!"+password );
+
+        UserAccount userAccount = userAccountDAO.getByUserName(userName);
+
+        if (userAccount != null && userAccount.getPassword().equals(password)) {
+            // Try to find the user by UserAccount in each user type
+            Doctor doctor = doctorDAO.getByUserAccount(userAccount);
+            if (doctor != null) return doctor;
+            Receptionist receptionist = receptionistDAO.getByUserAccount(userAccount);
+            if (receptionist != null) return receptionist;
+            Pharmacist pharmacist = pharmacistDAO.getByUserAccount(userAccount);
+            if (pharmacist != null) return pharmacist;
+            return administratorDAO. getByUserAccount(userAccount);
         }
         return null;
     }
@@ -55,13 +67,13 @@ public class UserServiceImpl implements UserService {
             String deskNumber,
             Shift receptionistShift,
             String licenseNumber,
-            Shift pharmacistShift) {
+            Shift pharmacistShift,
+            UserAccount userAccount) {
         User employee = null;
         switch (selectedRole) {
             case DOCTOR:
                 employee = new Doctor(
                         selectedRole,
-                        user.getPassword(),
                         user.getNextOfKin(),
                         user.getAddress(),
                         user.getGender(),
@@ -73,12 +85,12 @@ public class UserServiceImpl implements UserService {
                         qualification,
                         department,
                         yearsOfExperience != null ? yearsOfExperience : 0,
-                        staffStatus);
+                        staffStatus,
+                        userAccount);
                 break;
             case PHARMACIST:
                 employee = new Pharmacist(
                         selectedRole,
-                        user.getPassword(),
                         user.getNextOfKin(),
                         user.getAddress(),
                         user.getGender(),
@@ -87,12 +99,12 @@ public class UserServiceImpl implements UserService {
                         user.getPhoneNumber(),
                         user.getFullName(),
                         licenseNumber,
-                        pharmacistShift);
+                        pharmacistShift,
+                        userAccount);
                 break;
             case RECEPTIONIST:
                 employee = new Receptionist(
                         selectedRole,
-                        user.getPassword(),
                         user.getNextOfKin(),
                         user.getAddress(),
                         user.getGender(),
@@ -101,7 +113,8 @@ public class UserServiceImpl implements UserService {
                         user.getPhoneNumber(),
                         user.getFullName(),
                         deskNumber,
-                        receptionistShift);
+                        receptionistShift,
+                        userAccount);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid role");

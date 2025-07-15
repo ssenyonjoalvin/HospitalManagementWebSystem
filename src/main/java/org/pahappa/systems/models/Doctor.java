@@ -1,12 +1,18 @@
 package org.pahappa.systems.models;
 
 import org.pahappa.systems.enums.*;
+import org.pahappa.systems.models.UserAccount;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
+@Table(name="doctors")
 public class Doctor extends User {
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_account_id", referencedColumnName = "id")
+    private UserAccount userAccount;
 
     @Enumerated(EnumType.STRING)
     private Specialty specialization;
@@ -23,16 +29,17 @@ public class Doctor extends User {
     private int yearsOfExperience;
 
     // Constructor must include staffStatus too if you use it
-    public Doctor(Rolename role, String password, String nextOfKin, String address, Gender gender,
+    public Doctor(Rolename role, String nextOfKin, String address, Gender gender,
             LocalDate dateOfBirth,
             String email, String phoneNumber, String fullName, Specialty specialization,
-            Qualification qualification, Department department, int yearsOfExperience, Status staffStatus) {
-        super(role, password, nextOfKin, address, gender, dateOfBirth, email, phoneNumber, fullName);
+            Qualification qualification, Department department, int yearsOfExperience, Status staffStatus, UserAccount userAccount) {
+        super(role, nextOfKin, address, gender, dateOfBirth, email, phoneNumber, fullName);
         this.specialization = specialization;
         this.qualification = qualification;
         this.department = department;
         this.yearsOfExperience = yearsOfExperience;
         this.staffStatus = staffStatus;
+        this.userAccount = userAccount;
     }
 
     public Doctor() {
@@ -40,7 +47,15 @@ public class Doctor extends User {
     }
 
     // getters and setters
+    // ... existing constructors
 
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
     public Specialty getSpecialization() {
         return specialization;
     }
