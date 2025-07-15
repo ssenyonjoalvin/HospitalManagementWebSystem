@@ -6,11 +6,16 @@ import org.pahappa.systems.enums.Rolename;
 import org.pahappa.systems.enums.Shift;
 
 import java.time.LocalDate;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 public class Pharmacist extends User {
     private String licenseNumber;
     private Shift shift;
+    @OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
+    @JoinColumn(name = "user_account_id", referencedColumnName = "id")
+    private UserAccount userAccount;
 
 
     public Pharmacist() {
@@ -33,12 +38,20 @@ public class Pharmacist extends User {
         this.shift = shift;
     }
 
-    public Pharmacist(Rolename role, String password, String nextOfKin, String address, Gender gender,
-                      LocalDate dateOfBirth,
-                      String email, String phoneNumber, String fullName, String licenseNumber, Shift shift) {
-        super(role, password, nextOfKin, address, gender, dateOfBirth, email, phoneNumber, fullName);
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
+
+    public Pharmacist(Rolename role, String nextOfKin, String address, Gender gender,
+                      LocalDate dateOfBirth, String email, String phoneNumber, String fullName, String licenseNumber, Shift shift, UserAccount userAccount) {
+        super(role, nextOfKin, address, gender, dateOfBirth, email, phoneNumber, fullName);
         this.licenseNumber = licenseNumber;
         this.shift = shift;
+        this.userAccount = userAccount;
     }
 
     @Override

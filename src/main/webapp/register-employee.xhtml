@@ -62,8 +62,14 @@
                             </h:inputText>
                         </div>
                         <div class="col-md-6 mb-3">
+                            <label for="userName" class="form-label">Username</label>
+                            <h:inputText id="userName" value="#{userRegistrationBean.userName}"
+                                styleClass="form-control" pt:placeholder="Enter username" required="true"
+                                requiredMessage="Username is required."/>
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <h:inputSecret id="password" value="#{userRegistrationBean.user.password}"
+                            <h:inputSecret id="password" value="#{userRegistrationBean.password}"
                                 styleClass="form-control" pt:placeholder="Enter password" required="true"
                                 requiredMessage="Password is required."
                                 validatorMessage="Password must be at least 8 characters and include letters, numbers, and symbols.">

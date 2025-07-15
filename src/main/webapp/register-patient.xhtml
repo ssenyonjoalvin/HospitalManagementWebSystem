@@ -60,16 +60,7 @@
                                 <f:validateRegex pattern="^[A-Za-z ]+$" />
                             </h:inputText>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <p:password id="password" value="#{patientBean.newPatient.password}"
-                                styleClass="form-control" pt:placeholder="Enter password" required="true"
-                                feedback="true" toggleMask="true"
-                                requiredMessage="Password is required."
-                                validatorMessage="Password must be at least 8 characters and include letters, numbers, and symbols.">
-                                <f:validateRegex pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$" />
-                            </p:password>
-                        </div>
+                  
                         <div class="col-md-3 mb-3">
                             <label for="gender" class="form-label">Gender</label>
                             <h:selectOneMenu id="gender" value="#{patientBean.newPatient.gender}"

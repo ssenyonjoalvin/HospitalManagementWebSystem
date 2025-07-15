@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class LoginBean implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    private String email;
+    private String userName;
     private String password;
 
     @Inject
@@ -32,26 +32,17 @@ public class LoginBean implements Serializable {
 
     public String login() {
         try {
-            //System.out.println("Login attempt for email: " + email);
-
-            User user = userService.login(email, password);
+            User user = userService.login(userName, password);
             if (user != null) {
                 System.out.println("Login successful for user: " + user.getFullName());
-
-                // Create session and log activity
                 sessionManager.createSession(user);
-
-                // Clear sensitive data
                 this.password = null;
-
-            
-                //System.out.println("Navigation outcome: " + outcome);
                 return "/dashboard.xhtml?faces-redirect=true";
             } else {
                 System.out.println("Login failed - invalid credentials");
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid email or password.", null));
-                return null; // Stay on login page
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid username or password.", null));
+                return null;
             }
         } catch (Exception e) {
             System.err.println("Login error: " + e.getMessage());
@@ -69,7 +60,7 @@ public class LoginBean implements Serializable {
         sessionManager.destroySession();
 
         // Clear form data
-        this.email = null;
+        this.userName = null;
         this.password = null;
 
         return "/login.xhtml?faces-redirect=true";
@@ -79,12 +70,11 @@ public class LoginBean implements Serializable {
         return sessionManager.getCurrentUser();
     }
 
-    public String getEmail() {
-        return email;
+    public String getUserName() {
+        return userName;
     }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPassword() {

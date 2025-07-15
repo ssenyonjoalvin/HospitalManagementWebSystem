@@ -7,15 +7,14 @@ import org.pahappa.systems.enums.Qualification;
 import org.pahappa.systems.enums.Department;
 import org.pahappa.systems.enums.Status;
 import org.pahappa.systems.enums.Shift;
+import org.pahappa.systems.models.UserAccount;
 
 import java.util.List;
 
 public interface UserService {
     User user = null;
 
-    default User login(String email, String password) {
-        return user;
-    };
+    User login(String userName, String password);
 
     default void register(User user) {
     };
@@ -33,7 +32,8 @@ public interface UserService {
             String deskNumber,
             Shift receptionistShift,
             String licenseNumber,
-            Shift pharmacistShift);
+            Shift pharmacistShift,
+            UserAccount userAccount);
 
     void updateEmployee(User user);
 

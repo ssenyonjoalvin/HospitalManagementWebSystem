@@ -68,18 +68,18 @@ public class PatientBean implements Serializable {
 
     // --- Action Methods ---
 
-    public void filterPatients() {
-        if (globalFilter == null || globalFilter.trim().isEmpty()) {
-            filteredPatients = allPatients; // If search is empty, show all
-        } else {
-            String lowerCaseFilter = globalFilter.toLowerCase();
-            filteredPatients = allPatients.stream()
-                    .filter(p -> p.getFullName().toLowerCase().contains(lowerCaseFilter) ||
-                            (p.getEmail() != null && p.getEmail().toLowerCase().contains(lowerCaseFilter)) ||
-                            (p.getInsuranceNumber() != null && p.getInsuranceNumber().contains(lowerCaseFilter)))
-                    .collect(Collectors.toList());
-        }
-    }
+//    public void filterPatients() {
+//        if (globalFilter == null || globalFilter.trim().isEmpty()) {
+//            filteredPatients = allPatients; // If search is empty, show all
+//        } else {
+//            String lowerCaseFilter = globalFilter.toLowerCase();
+//            filteredPatients = allPatients.stream()
+//                    .filter(p -> p.getFullName().toLowerCase().contains(lowerCaseFilter) ||
+//                            (p.getEmail() != null && p.getEmail().toLowerCase().contains(lowerCaseFilter)) ||
+//                            (p.getInsuranceNumber() != null && p.getInsuranceNumber().contains(lowerCaseFilter)))
+//                    .collect(Collectors.toList());
+//        }
+//    }
 
     public String savePatient() {
         try {
