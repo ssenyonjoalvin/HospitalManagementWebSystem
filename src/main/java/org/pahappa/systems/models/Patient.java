@@ -39,7 +39,6 @@ public class Patient extends User {
         this.setDateOfBirth(user.getDateOfBirth());
         this.setAddress(user.getAddress());
         this.setNextOfKin(user.getNextOfKin());
-        this.setPassword(user.getPassword());
         this.setRole(user.getRole());
         this.setGender(user.getGender());
         this.setDeleted(user.isDeleted());

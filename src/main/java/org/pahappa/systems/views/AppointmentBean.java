@@ -3,7 +3,7 @@ package org.pahappa.systems.views;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.view.ViewScoped;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.pahappa.systems.core.services.exceptions.ValidationException;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * and the creation/editing of a single appointment across multiple pages.
  */
 @Named("appointmentBean")
-@ViewScoped
+@SessionScoped
 public class AppointmentBean implements Serializable {
 
     // --- Injected Dependencies ---
@@ -87,21 +87,21 @@ public class AppointmentBean implements Serializable {
         try {
             // Load the main list of appointments
             this.appointments = appointmentsService.getAllAppointments();
-            System.out.println("[DEBUG] Loaded " + this.appointments.size() + " appointments");
+            //System.out.println("[DEBUG] Loaded " + this.appointments.size() + " appointments");
 
             // Load the list of all patients once for the autocomplete feature
             this.allPatients = userDAO.getAllRecords().stream()
                     .filter(user -> user.getRole() == Rolename.PATIENT && user instanceof Patient)
                     .map(user -> (Patient) user)
                     .collect(Collectors.toList());
-            System.out.println("[DEBUG] Loaded " + this.allPatients.size() + " patients");
+           // System.out.println("[DEBUG] Loaded " + this.allPatients.size() + " patients");
 
             // Load the list of all doctors for the filter dropdown
             this.doctors = userDAO.getAllRecords().stream()
                     .filter(user -> user.getRole() == Rolename.DOCTOR && user instanceof Doctor)
                     .map(user -> (Doctor) user)
                     .collect(Collectors.toList());
-            System.out.println("[DEBUG] Loaded " + this.doctors.size() + " doctors");
+          //  System.out.println("[DEBUG] Loaded " + this.doctors.size() + " doctors");
 
             if (newAppointment == null) {
                 newAppointment = new Appointment();
@@ -111,7 +111,7 @@ public class AppointmentBean implements Serializable {
                 appointmentToCreate = new Appointment();
             }
         } catch (Exception e) {
-            System.err.println("[ERROR] Error in AppointmentBean init(): " + e.getMessage());
+            //System.err.println("[ERROR] Error in AppointmentBean init(): " + e.getMessage());
             e.printStackTrace();
         }
     }

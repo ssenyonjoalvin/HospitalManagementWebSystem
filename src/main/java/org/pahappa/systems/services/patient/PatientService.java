@@ -26,7 +26,7 @@ public interface PatientService {
 
     // You can add more methods here later, like:
     // Patient getPatientById(long id);
-    void savePatient(Patient patient);
+   void savePatient(Patient patient);
 
     void updatePatient(Patient patient);
 
