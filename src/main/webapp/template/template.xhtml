@@ -62,10 +62,15 @@
                     </h:link>
                     <!-- Calendar: Admin only -->
 
-                    <h:link outcome="add-service"
-                    styleClass="list-group-item list-group-item-action #{view.viewId == '/add-service.xhtml' ? 'active' : ''}">
-                    <i class="fa-solid fa-calendar-days"> </i>Add Services
+                    <h:link outcome="service-display"
+                    styleClass="list-group-item list-group-item-action #{view.viewId == '/service-display.xhtml' ? 'active' : ''}">
+                    <i class="fa fa-briefcase-medical"> </i>Add Services
                 </h:link>
+
+                    <h:link outcome="add-medicine"
+                            styleClass="list-group-item list-group-item-action #{view.viewId == '/add-medicine.xhtml' ? 'active' : ''}">
+                        <i class="fa fa-pills"> </i>Add Medicine
+                    </h:link>
                 </ui:fragment>
                 <!-- Payments: Admin, Receptionist -->
                 <ui:fragment rendered="#{sessionManager.currentUserRole eq 'ADMINISTRATOR' or sessionManager.currentUserRole eq 'RECEPTIONIST'}">

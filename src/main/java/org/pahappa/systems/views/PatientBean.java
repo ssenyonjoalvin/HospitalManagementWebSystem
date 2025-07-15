@@ -139,7 +139,9 @@ public class PatientBean implements Serializable {
     public void deletePatient() {
         try {
             patientToDelete.setDeleted(true);
-            patientService.updatePatient(patientToDelete); // Soft delete
+            patientService.updatePatient(patientToDelete); // Soft
+
+            
             // Refresh lists and filter out deleted patients
             Map<String, List<Patient>> lists = patientService.getPatientLists();
             allPatients = lists.get("all").stream().filter(p -> !p.isDeleted()).collect(Collectors.toList());
