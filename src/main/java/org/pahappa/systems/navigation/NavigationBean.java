@@ -52,5 +52,12 @@ public class NavigationBean {
     public String toRegisterPatient() {
         return "/register-patient.xhtml?faces-redirect=true";
     }
-  
+//for the  hospital services
+    public String toNewService(){
+        return "/add-service.xhtml?faces-redirect=true";
+    }
+    public String toServiceTable(){
+        return "/service-display.xhtml?faces-redirect=true";
+    }
+
 }

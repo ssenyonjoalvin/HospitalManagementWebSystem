@@ -60,10 +60,16 @@
                         styleClass="list-group-item list-group-item-action #{view.viewId == '/employee.xhtml' ? 'active' : ''}">
                         <i class="fa-solid fa-users"> </i> Employees
                     </h:link>
-                    <!-- Calendar: Admin only -->
-                    <a href="#" class="list-group-item list-group-item-action">
-                        <i class="fa-solid fa-calendar-days"> </i> Calendar
-                    </a>
+
+                    <h:link outcome="service-display"
+                    styleClass="list-group-item list-group-item-action #{view.viewId == '/service-display.xhtml' ? 'active' : ''}">
+                    <i class="fa fa-briefcase-medical"> </i>Add Services
+                </h:link>
+
+                    <h:link outcome="add-medicine"
+                            styleClass="list-group-item list-group-item-action #{view.viewId == '/add-medicine.xhtml' ? 'active' : ''}">
+                        <i class="fa fa-pills"> </i>Add Medicine
+                    </h:link>
                 </ui:fragment>
                 <!-- Payments: Admin, Receptionist -->
                 <ui:fragment rendered="#{sessionManager.currentUserRole eq 'ADMINISTRATOR' or sessionManager.currentUserRole eq 'RECEPTIONIST'}">
