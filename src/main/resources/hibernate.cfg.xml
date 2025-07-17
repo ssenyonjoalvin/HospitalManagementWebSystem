@@ -41,6 +41,13 @@
         <mapping class="org.pahappa.systems.models.Invoice"/>
         <mapping class="org.pahappa.systems.models.Administrator"/>
         <mapping class="org.pahappa.systems.models.UserAccount"/>
+        <mapping class="org.pahappa.systems.models.Role"/>
+        <mapping class="org.pahappa.systems.models.SpecialtyEntity"/>
+        <mapping class="org.pahappa.systems.models.QualificationEntity"/>
+        <mapping class="org.pahappa.systems.models.DepartmentEntity"/>
+        <mapping class="org.pahappa.systems.models.StatusEntity"/>
+        <mapping class="org.pahappa.systems.models.ShiftEntity"/>
+        <mapping class="org.pahappa.systems.models.PatientTypeEntity"/>
 
  
     </session-factory>

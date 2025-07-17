@@ -9,7 +9,19 @@ import jakarta.faces.context.FacesContext;
 
 import org.pahappa.systems.enums.*;
 import org.pahappa.systems.models.User;
+import org.pahappa.systems.models.Role;
+import org.pahappa.systems.models.SpecialtyEntity;
+import org.pahappa.systems.models.QualificationEntity;
+import org.pahappa.systems.models.DepartmentEntity;
+import org.pahappa.systems.models.StatusEntity;
+import org.pahappa.systems.models.ShiftEntity;
 import org.pahappa.systems.services.user.UserService;
+import org.pahappa.systems.services.RoleService;
+import org.pahappa.systems.services.SpecialtyEntityService;
+import org.pahappa.systems.services.QualificationEntityService;
+import org.pahappa.systems.services.DepartmentEntityService;
+import org.pahappa.systems.services.StatusEntityService;
+import org.pahappa.systems.services.ShiftEntityService;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -21,44 +33,57 @@ import java.time.LocalDate;
 
 public class UserRegistrationBean implements Serializable {
     private User user = new User();
-    private Rolename selectedRole;
+    private Role selectedRole;
     private Gender selectedGender;
-    private List<Rolename> roles;
+    private List<Role> roles;
     private List<Gender> genders;
     // Doctor fields
-    private Specialty specialization;
-    private Qualification qualification;
-    private Department department;
-    private Status staffStatus;
+    private SpecialtyEntity specialization;
+    private QualificationEntity qualification;
+    private DepartmentEntity department;
+    private StatusEntity staffStatus;
     private Integer yearsOfExperience;
     // Receptionist fields
     private String deskNumber;
-    private Shift receptionistShift;
+    private ShiftEntity receptionistShift;
     // Pharmacist fields
     private String licenseNumber;
-    private Shift pharmacistShift;
+    private ShiftEntity pharmacistShift;
     // Dropdowns
-    private List<Specialty> specialties;
-    private List<Qualification> qualifications;
-    private List<Department> departments;
-    private List<Status> statuses;
-    private List<Shift> shifts;
+    private List<SpecialtyEntity> specialties;
+    private List<QualificationEntity> qualifications;
+    private List<DepartmentEntity> departments;
+    private List<StatusEntity> statuses;
+    private List<ShiftEntity> shifts;
     private String message;
     private String userName;
     private String password;
 
     @Inject
     private UserService userService;
+    @Inject
+    private RoleService roleService;
+    @Inject
+    private SpecialtyEntityService specialtyEntityService;
+    @Inject
+    private QualificationEntityService qualificationEntityService;
+    @Inject
+    private DepartmentEntityService departmentEntityService;
+    @Inject
+    private StatusEntityService statusEntityService;
+    @Inject
+    private ShiftEntityService shiftEntityService;
 
     @PostConstruct
     public void init() {
-        roles = Arrays.asList(Rolename.DOCTOR, Rolename.PHARMACIST, Rolename.RECEPTIONIST);
+        roles = roleService.getAll();
+        specialties = specialtyEntityService.getAll();
+        qualifications = qualificationEntityService.getAll();
+        departments = departmentEntityService.getAll();
+        statuses = statusEntityService.getAll();
+        shifts = shiftEntityService.getAll();
+        // genders can remain as enum
         genders = Arrays.asList(Gender.values());
-        specialties = Arrays.asList(Specialty.values());
-        qualifications = Arrays.asList(Qualification.values());
-        departments = Arrays.asList(Department.values());
-        statuses = Arrays.asList(Status.values());
-        shifts = Arrays.asList(Shift.values());
     }
 
     public String register() {
@@ -117,14 +142,9 @@ public class UserRegistrationBean implements Serializable {
         this.user = user;
     }
 
-    public Rolename getSelectedRole() {
-        return selectedRole;
-    }
-
-    public void setSelectedRole(Rolename selectedRole) {
-        this.selectedRole = selectedRole;
-    }
-
+    public Role getSelectedRole() { return selectedRole; }
+    public void setSelectedRole(Role selectedRole) { this.selectedRole = selectedRole; }
+    public List<Role> getRoles() { return roles; }
     public Gender getSelectedGender() {
         return selectedGender;
     }
@@ -133,45 +153,27 @@ public class UserRegistrationBean implements Serializable {
         this.selectedGender = selectedGender;
     }
 
-    public List<Rolename> getRoles() {
-        return roles;
-    }
-
     public List<Gender> getGenders() {
         return genders;
     }
 
-    public Specialty getSpecialization() {
-        return specialization;
-    }
-
-    public void setSpecialization(Specialty specialization) {
-        this.specialization = specialization;
-    }
-
-    public Qualification getQualification() {
-        return qualification;
-    }
-
-    public void setQualification(Qualification qualification) {
-        this.qualification = qualification;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    public Status getStaffStatus() {
-        return staffStatus;
-    }
-
-    public void setStaffStatus(Status staffStatus) {
-        this.staffStatus = staffStatus;
-    }
+    public SpecialtyEntity getSpecialization() { return specialization; }
+    public void setSpecialization(SpecialtyEntity specialization) { this.specialization = specialization; }
+    public List<SpecialtyEntity> getSpecialties() { return specialties; }
+    public QualificationEntity getQualification() { return qualification; }
+    public void setQualification(QualificationEntity qualification) { this.qualification = qualification; }
+    public List<QualificationEntity> getQualifications() { return qualifications; }
+    public DepartmentEntity getDepartment() { return department; }
+    public void setDepartment(DepartmentEntity department) { this.department = department; }
+    public List<DepartmentEntity> getDepartments() { return departments; }
+    public StatusEntity getStaffStatus() { return staffStatus; }
+    public void setStaffStatus(StatusEntity staffStatus) { this.staffStatus = staffStatus; }
+    public List<StatusEntity> getStatuses() { return statuses; }
+    public ShiftEntity getReceptionistShift() { return receptionistShift; }
+    public void setReceptionistShift(ShiftEntity receptionistShift) { this.receptionistShift = receptionistShift; }
+    public ShiftEntity getPharmacistShift() { return pharmacistShift; }
+    public void setPharmacistShift(ShiftEntity pharmacistShift) { this.pharmacistShift = pharmacistShift; }
+    public List<ShiftEntity> getShifts() { return shifts; }
 
     public Integer getYearsOfExperience() {
         return yearsOfExperience;
@@ -189,48 +191,12 @@ public class UserRegistrationBean implements Serializable {
         this.deskNumber = deskNumber;
     }
 
-    public Shift getReceptionistShift() {
-        return receptionistShift;
-    }
-
-    public void setReceptionistShift(Shift receptionistShift) {
-        this.receptionistShift = receptionistShift;
-    }
-
     public String getLicenseNumber() {
         return licenseNumber;
     }
 
     public void setLicenseNumber(String licenseNumber) {
         this.licenseNumber = licenseNumber;
-    }
-
-    public Shift getPharmacistShift() {
-        return pharmacistShift;
-    }
-
-    public void setPharmacistShift(Shift pharmacistShift) {
-        this.pharmacistShift = pharmacistShift;
-    }
-
-    public List<Specialty> getSpecialties() {
-        return specialties;
-    }
-
-    public List<Qualification> getQualifications() {
-        return qualifications;
-    }
-
-    public List<Department> getDepartments() {
-        return departments;
-    }
-
-    public List<Status> getStatuses() {
-        return statuses;
-    }
-
-    public List<Shift> getShifts() {
-        return shifts;
     }
 
     public String getMessage() {

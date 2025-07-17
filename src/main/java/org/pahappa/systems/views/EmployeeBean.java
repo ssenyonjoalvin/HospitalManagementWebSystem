@@ -4,7 +4,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.pahappa.systems.enums.Rolename;
+import org.pahappa.systems.models.Role;
 import org.pahappa.systems.models.User;
 import org.pahappa.systems.services.user.UserService;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class EmployeeBean implements Serializable {
     private List<User> allEmployees;
     private List<User> filteredEmployees;
-    private Rolename roleFilter;
+    private Role roleFilter;
     private User newEmployee = new User();
     private User selectedEmployee;
     private String message;
@@ -45,7 +45,7 @@ public class EmployeeBean implements Serializable {
             filteredEmployees = allEmployees;
         } else {
             filteredEmployees = allEmployees.stream()
-                    .filter(e -> e.getRole() == roleFilter)
+                    .filter(e -> e.getRole() != null && roleFilter != null && e.getRole().getName().equals(roleFilter.getName()))
                     .collect(Collectors.toList());
         }
     }
@@ -106,11 +106,11 @@ public class EmployeeBean implements Serializable {
         return filteredEmployees;
     }
 
-    public Rolename getRoleFilter() {
+    public Role getRoleFilter() {
         return roleFilter;
     }
 
-    public void setRoleFilter(Rolename roleFilter) {
+    public void setRoleFilter(Role roleFilter) {
         this.roleFilter = roleFilter;
     }
 

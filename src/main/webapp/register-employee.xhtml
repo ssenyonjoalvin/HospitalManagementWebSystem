@@ -78,11 +78,10 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="role" class="form-label">Role</label>
-                            <h:selectOneMenu id="role" value="#{userRegistrationBean.selectedRole}"
-                                styleClass="form-select" required="true">
-                                <f:selectItem itemLabel="Select role" itemValue="" />
-                                <f:selectItems value="#{userRegistrationBean.roles}" var="role" itemLabel="#{role}"
-                                    itemValue="#{role}" />
+                            <h:selectOneMenu id="role" value="#{userRegistrationBean.selectedRole}" converter="roleConverter" styleClass="form-select" required="true">
+                                <f:selectItem itemLabel="Select role" itemValue="#{null}" />
+                                <f:selectItems value="#{userRegistrationBean.roles}" var="role"
+                                    itemLabel="#{role.name}" itemValue="#{role}" />
                                 <f:ajax render="roleFields" execute="@this" />
                             </h:selectOneMenu>
                         </div>
@@ -97,12 +96,11 @@
                         </div>
                     </div>
                     <h:panelGroup id="roleFields">
-                        <h:panelGroup rendered="#{userRegistrationBean.selectedRole eq 'DOCTOR'}">
+                        <h:panelGroup rendered="#{userRegistrationBean.selectedRole != null and userRegistrationBean.selectedRole.name eq 'DOCTOR'}">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="specialization" class="form-label">Specialization</label>
-                                    <h:selectOneMenu id="specialization" value="#{userRegistrationBean.specialization}"
-                                        styleClass="form-select" required="true">
+                                    <h:selectOneMenu id="specialization" value="#{userRegistrationBean.specialization}" converter="specialtyConverter" styleClass="form-select" required="true">
                                         <f:selectItem itemLabel="Select specialization" itemValue="" />
                                         <f:selectItems value="#{userRegistrationBean.specialties}" var="spec"
                                             itemLabel="#{spec}" itemValue="#{spec}" />
@@ -110,8 +108,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="qualification" class="form-label">Qualification</label>
-                                    <h:selectOneMenu id="qualification" value="#{userRegistrationBean.qualification}"
-                                        styleClass="form-select" required="true">
+                                    <h:selectOneMenu id="qualification" value="#{userRegistrationBean.qualification}" converter="qualificationConverter" styleClass="form-select" required="true">
                                         <f:selectItem itemLabel="Select qualification" itemValue="" />
                                         <f:selectItems value="#{userRegistrationBean.qualifications}" var="qual"
                                             itemLabel="#{qual}" itemValue="#{qual}" />
@@ -119,8 +116,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="department" class="form-label">Department</label>
-                                    <h:selectOneMenu id="department" value="#{userRegistrationBean.department}"
-                                        styleClass="form-select" required="true">
+                                    <h:selectOneMenu id="department" value="#{userRegistrationBean.department}" converter="departmentConverter" styleClass="form-select" required="true">
                                         <f:selectItem itemLabel="Select department" itemValue="" />
                                         <f:selectItems value="#{userRegistrationBean.departments}" var="dept"
                                             itemLabel="#{dept}" itemValue="#{dept}" />
@@ -128,8 +124,7 @@
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label for="staffStatus" class="form-label">Staff Status</label>
-                                    <h:selectOneMenu id="staffStatus" value="#{userRegistrationBean.staffStatus}"
-                                        styleClass="form-select" required="true">
+                                    <h:selectOneMenu id="staffStatus" value="#{userRegistrationBean.staffStatus}" converter="statusConverter" styleClass="form-select" required="true">
                                         <f:selectItem itemLabel="Select status" itemValue="" />
                                         <f:selectItems value="#{userRegistrationBean.statuses}" var="stat"
                                             itemLabel="#{stat}" itemValue="#{stat}" />
@@ -143,7 +138,7 @@
                                 </div>
                             </div>
                         </h:panelGroup>
-                        <h:panelGroup rendered="#{userRegistrationBean.selectedRole eq 'RECEPTIONIST'}">
+                        <h:panelGroup rendered="#{userRegistrationBean.selectedRole != null and userRegistrationBean.selectedRole.name eq 'RECEPTIONIST'}">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="deskNumber" class="form-label">Desk Number</label>
@@ -152,9 +147,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="receptionistShift" class="form-label">Shift</label>
-                                    <h:selectOneMenu id="receptionistShift"
-                                        value="#{userRegistrationBean.receptionistShift}" styleClass="form-select"
-                                        required="true">
+                                    <h:selectOneMenu id="receptionistShift" value="#{userRegistrationBean.receptionistShift}" converter="shiftConverter" styleClass="form-select" required="true">
                                         <f:selectItem itemLabel="Select shift" itemValue="" />
                                         <f:selectItems value="#{userRegistrationBean.shifts}" var="shift"
                                             itemLabel="#{shift}" itemValue="#{shift}" />
@@ -162,7 +155,7 @@
                                 </div>
                             </div>
                         </h:panelGroup>
-                        <h:panelGroup rendered="#{userRegistrationBean.selectedRole eq 'PHARMACIST'}">
+                        <h:panelGroup rendered="#{userRegistrationBean.selectedRole != null and userRegistrationBean.selectedRole.name eq 'PHARMACIST'}">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="licenseNumber" class="form-label">License Number</label>
@@ -172,9 +165,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="pharmacistShift" class="form-label">Shift</label>
-                                    <h:selectOneMenu id="pharmacistShift"
-                                        value="#{userRegistrationBean.pharmacistShift}" styleClass="form-select"
-                                        required="true">
+                                    <h:selectOneMenu id="pharmacistShift" value="#{userRegistrationBean.pharmacistShift}" converter="shiftConverter" styleClass="form-select" required="true">
                                         <f:selectItem itemLabel="Select shift" itemValue="" />
                                         <f:selectItems value="#{userRegistrationBean.shifts}" var="shift"
                                             itemLabel="#{shift}" itemValue="#{shift}" />

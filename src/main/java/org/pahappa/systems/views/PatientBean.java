@@ -2,7 +2,6 @@ package org.pahappa.systems.views;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Named;
-import org.pahappa.systems.enums.PatientType;
 import org.pahappa.systems.models.Patient;
 import org.pahappa.systems.navigation.NavigationBean;
 import org.pahappa.systems.services.medical.Impl.MedicalReportServiceImpl;
@@ -17,6 +16,8 @@ import java.util.stream.Collectors;
 import java.util.Map;
 import java.time.LocalDate;
 import org.pahappa.systems.models.MedicalReport;
+import org.pahappa.systems.models.PatientTypeEntity;
+import org.pahappa.systems.repository.PatientTypeEntityDAO;
 
 import java.util.Collections;
 
@@ -47,6 +48,11 @@ public class PatientBean implements Serializable {
     @Inject
     private MedicalReportServiceImpl medicalReportService;
 
+    @Inject
+    private PatientTypeEntityDAO patientTypeEntityDAO;
+    private List<PatientTypeEntity> patientTypes;
+    private PatientTypeEntity selectedPatientType;
+
     private List<MedicalReport> selectedPatientReports = Collections.emptyList();
     private MedicalReport currentMedicalReport;
 
@@ -57,13 +63,14 @@ public class PatientBean implements Serializable {
         allPatients = patientService.getAllPatients().stream().filter(p -> !p.isDeleted()).collect(Collectors.toList());
         // Pre-filter the lists for the tabs
         hospitalizedPatients = allPatients.stream()
-                .filter(p -> p.getPatientType() == PatientType.INPATIENT)
+                .filter(p -> p.getPatientType() != null && "INPATIENT".equals(p.getPatientType().getName()))
                 .collect(Collectors.toList());
         outpatients = allPatients.stream()
-                .filter(p -> p.getPatientType() == PatientType.OUTPATIENT)
+                .filter(p -> p.getPatientType() != null && "OUTPATIENT".equals(p.getPatientType().getName()))
                 .collect(Collectors.toList());
         // Initially, the filtered list is the same as the full list
         filteredPatients = allPatients;
+        patientTypes = patientTypeEntityDAO.getAll();
     }
 
     // --- Action Methods ---
@@ -215,8 +222,16 @@ public class PatientBean implements Serializable {
         this.message = message;
     }
 
-    public PatientType[] getPatientTypes() {
-        return PatientType.values();
+    public List<PatientTypeEntity> getPatientTypes() {
+        return patientTypes;
+    }
+
+    public PatientTypeEntity getSelectedPatientType() {
+        return selectedPatientType;
+    }
+
+    public void setSelectedPatientType(PatientTypeEntity selectedPatientType) {
+        this.selectedPatientType = selectedPatientType;
     }
 
     public Gender[] getGenders() {

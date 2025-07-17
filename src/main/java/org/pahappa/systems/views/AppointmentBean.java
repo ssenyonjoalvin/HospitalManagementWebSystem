@@ -8,15 +8,16 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.pahappa.systems.core.services.exceptions.ValidationException;
 import org.pahappa.systems.enums.AppointmentStatus;
-import org.pahappa.systems.enums.Rolename;
-import org.pahappa.systems.enums.Specialty;
 import org.pahappa.systems.enums.TimeSlot;
 import org.pahappa.systems.models.Appointment;
 import org.pahappa.systems.models.Doctor;
 import org.pahappa.systems.models.Patient;
+import org.pahappa.systems.models.Role;
+import org.pahappa.systems.models.SpecialtyEntity;
 import org.pahappa.systems.navigation.NavigationBean;
 import org.pahappa.systems.repository.UserDAO;
 import org.pahappa.systems.services.appointment.AppointmentsService;
+import org.pahappa.systems.services.SpecialtyEntityService;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -42,6 +43,8 @@ public class AppointmentBean implements Serializable {
     private UserDAO userDAO; // Used only to get the initial list of patients
     @Inject
     private NavigationBean navigationBean;
+    @Inject
+    private SpecialtyEntityService specialtyEntityService;
 
     // --- Data for the Main Appointments List Page ---
     private List<Appointment> appointments;
@@ -49,13 +52,13 @@ public class AppointmentBean implements Serializable {
     // --- State for the New/Edit Appointment Page ---
     private Appointment appointmentToCreate; // The object bound to the 'new-appointment' form
     private Patient selectedPatient;
-    private Specialty selectedSpecialty;
+    private SpecialtyEntity selectedSpecialty;
     private List<Doctor> availableDoctors; // For the cascading dropdown
     private Doctor selectedDoctor;
 
     // --- Shared Data for Dropdowns ---
     private List<Patient> allPatients;
-    private final List<Specialty> allSpecialties = Arrays.asList(Specialty.values());
+    private List<SpecialtyEntity> allSpecialties;
     private final List<TimeSlot> allTimeSlots = Arrays.asList(TimeSlot.values());
 
     // --- Properties used in appointments.xhtml and new-appointment.xhtml ---
@@ -63,7 +66,7 @@ public class AppointmentBean implements Serializable {
     private List<AppointmentStatus> statuses = Arrays.asList(AppointmentStatus.values());
     private AppointmentStatus selectedStatus;
     private List<Patient> patients;
-    private List<Specialty> specialties;
+    private List<SpecialtyEntity> specialties;
     private List<TimeSlot> availableTimeSlots;
     private Appointment newAppointment;
     private LocalDate selectedDate;
@@ -91,14 +94,14 @@ public class AppointmentBean implements Serializable {
 
             // Load the list of all patients once for the autocomplete feature
             this.allPatients = userDAO.getAllRecords().stream()
-                    .filter(user -> user.getRole() == Rolename.PATIENT && user instanceof Patient)
+                    .filter(user -> user.getRole() != null && "PATIENT".equals(user.getRole().getName()) && user instanceof Patient)
                     .map(user -> (Patient) user)
                     .collect(Collectors.toList());
            // System.out.println("[DEBUG] Loaded " + this.allPatients.size() + " patients");
 
             // Load the list of all doctors for the filter dropdown
             this.doctors = userDAO.getAllRecords().stream()
-                    .filter(user -> user.getRole() == Rolename.DOCTOR && user instanceof Doctor)
+                    .filter(user -> user.getRole() != null && "DOCTOR".equals(user.getRole().getName()) && user instanceof Doctor)
                     .map(user -> (Doctor) user)
                     .collect(Collectors.toList());
           //  System.out.println("[DEBUG] Loaded " + this.doctors.size() + " doctors");
@@ -110,6 +113,8 @@ public class AppointmentBean implements Serializable {
             if (appointmentToCreate == null) {
                 appointmentToCreate = new Appointment();
             }
+            // Load all specialties from the database
+            this.allSpecialties = specialtyEntityService.getAll();
         } catch (Exception e) {
             //System.err.println("[ERROR] Error in AppointmentBean init(): " + e.getMessage());
             e.printStackTrace();
@@ -247,12 +252,16 @@ public class AppointmentBean implements Serializable {
         this.selectedPatient = selectedPatient;
     }
 
-    public Specialty getSelectedSpecialty() {
+    public SpecialtyEntity getSelectedSpecialty() {
         return selectedSpecialty;
     }
 
-    public void setSelectedSpecialty(Specialty selectedSpecialty) {
+    public void setSelectedSpecialty(SpecialtyEntity selectedSpecialty) {
         this.selectedSpecialty = selectedSpecialty;
+    }
+
+    public List<SpecialtyEntity> getAllSpecialties() {
+        return allSpecialties;
     }
 
     public List<Doctor> getAvailableDoctors() {
@@ -271,10 +280,6 @@ public class AppointmentBean implements Serializable {
 
     public List<Patient> getAllPatients() {
         return allPatients;
-    }
-
-    public List<Specialty> getAllSpecialties() {
-        return allSpecialties;
     }
 
     public List<TimeSlot> getAllTimeSlots() {
@@ -321,11 +326,11 @@ public class AppointmentBean implements Serializable {
         this.patients = patients;
     }
 
-    public List<Specialty> getSpecialties() {
+    public List<SpecialtyEntity> getSpecialties() {
         return specialties;
     }
 
-    public void setSpecialties(List<Specialty> specialties) {
+    public void setSpecialties(List<SpecialtyEntity> specialties) {
         this.specialties = specialties;
     }
 

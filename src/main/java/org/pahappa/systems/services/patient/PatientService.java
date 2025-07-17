@@ -1,7 +1,7 @@
 package org.pahappa.systems.services.patient;
 
-import org.pahappa.systems.enums.PatientType;
 import org.pahappa.systems.models.Patient;
+import org.pahappa.systems.models.PatientTypeEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,7 @@ public interface PatientService {
      * @param patientType The type of patient to filter by.
      * @return A list of matching Patient objects.
      */
-    List<Patient> getPatientsByType(PatientType patientType);
+    List<Patient> getPatientsByType(PatientTypeEntity patientType);
 
     Map<String, List<Patient>> getPatientLists();
 

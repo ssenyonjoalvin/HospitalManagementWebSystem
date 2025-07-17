@@ -3,7 +3,6 @@ package org.pahappa.systems.services.appointment.impl;
 import org.pahappa.systems.core.services.exceptions.ValidationException;
 import org.pahappa.systems.enums.AppointmentStatus;
 import org.pahappa.systems.enums.TimeSlot;
-import org.pahappa.systems.enums.Specialty;
 import org.pahappa.systems.models.Appointment;
 import org.pahappa.systems.models.Doctor;
 import org.pahappa.systems.repository.AppointmentsDAO;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.Arrays;
+import org.pahappa.systems.models.SpecialtyEntity;
 
 @ApplicationScoped
 @Named
@@ -111,7 +111,7 @@ public class AppointmentsServiceImpl implements AppointmentsService {
     }
 
     @Override
-    public List<Doctor> getDoctorsBySpecialty(Specialty specialty) {
+    public List<Doctor> getDoctorsBySpecialty(SpecialtyEntity specialty) {
         return userDAO.findDoctorsBySpecialty(specialty);
     }
 

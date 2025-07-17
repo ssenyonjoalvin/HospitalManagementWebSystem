@@ -1,10 +1,12 @@
 package org.pahappa.systems.services.patient.impl;
 
-import org.pahappa.systems.enums.PatientType;
-import org.pahappa.systems.enums.Rolename;
 import org.pahappa.systems.models.Patient;
+import org.pahappa.systems.models.Role;
+import org.pahappa.systems.models.PatientTypeEntity;
 import org.pahappa.systems.repository.UserDAO;
 import org.pahappa.systems.services.patient.PatientService;
+import org.pahappa.systems.services.RoleService;
+import jakarta.inject.Inject;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,27 +22,29 @@ public class PatientServiceImpl implements PatientService {
     // The service is the only layer that should interact with the DAO
     private final UserDAO userDAO = new UserDAO();
 
+    @Inject
+    private RoleService roleService;
+
     @Override
     public List<Patient> getAllPatients() {
-        // This logic correctly filters Users to find only Patients
         return userDAO.getAllRecords().stream()
-                .filter(user -> user.getRole() == Rolename.PATIENT && user instanceof Patient)
+                .filter(user -> user.getRole() != null && "PATIENT".equals(user.getRole().getName()) && user instanceof Patient)
                 .map(user -> (Patient) user)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Patient> getPatientsByType(PatientType patientType) {
-        // Start with all patients and then filter by the type
+    public List<Patient> getPatientsByType(PatientTypeEntity patientType) {
         return getAllPatients().stream()
-                .filter(patient -> patient.getPatientType() == patientType)
+                .filter(patient -> patient.getPatientType() != null && patient.getPatientType().equals(patientType))
                 .collect(Collectors.toList());
     }
 
     @Override
     public void savePatient(Patient patient) {
-        // System.out.println("savePatient called");
-        patient.setRole(Rolename.PATIENT);
+        if (patient.getRole() == null) {
+            patient.setRole(roleService.getAll().stream().filter(r -> "PATIENT".equals(r.getName())).findFirst().orElse(null));
+        }
         userDAO.saveRecord(patient);
     }
 
@@ -64,10 +68,10 @@ public class PatientServiceImpl implements PatientService {
     public Map<String, List<Patient>> getPatientLists() {
         List<Patient> all = getAllPatients();
         List<Patient> hospitalized = all.stream()
-                .filter(p -> p.getPatientType() == PatientType.INPATIENT)
+                .filter(p -> p.getPatientType() != null && "INPATIENT".equals(p.getPatientType().getName()))
                 .collect(Collectors.toList());
         List<Patient> outpatients = all.stream()
-                .filter(p -> p.getPatientType() == PatientType.OUTPATIENT)
+                .filter(p -> p.getPatientType() != null && "OUTPATIENT".equals(p.getPatientType().getName()))
                 .collect(Collectors.toList());
         Map<String, List<Patient>> result = new HashMap<>();
         result.put("all", all);

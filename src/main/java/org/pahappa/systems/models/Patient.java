@@ -2,19 +2,23 @@ package org.pahappa.systems.models;
 
 import jakarta.persistence.Entity;
 import org.pahappa.systems.enums.PatientType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 //use compositions
 public class Patient extends User {
-    private PatientType patientType;
+    @ManyToOne
+    @JoinColumn(name = "patient_type_id")
+    private PatientTypeEntity patientType;
     private String insuranceNumber;
 
     
-    public PatientType getPatientType() {
+    public PatientTypeEntity getPatientType() {
         return patientType;
     }
 
-    public void setPatientType(PatientType patientType) {
+    public void setPatientType(PatientTypeEntity patientType) {
         this.patientType = patientType;
     }
 

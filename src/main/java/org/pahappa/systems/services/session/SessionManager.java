@@ -1,6 +1,5 @@
 package org.pahappa.systems.services.session;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
@@ -10,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import org.pahappa.systems.models.User;
 import org.pahappa.systems.models.UserActivity;
 import org.pahappa.systems.services.user.UserService;
+import org.pahappa.systems.models.Role;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -100,7 +100,7 @@ public class SessionManager implements Serializable {
     }
 
     public boolean hasRole(String role) {
-        return currentUser != null && currentUser.getRole().name().equals(role);
+        return currentUser != null && currentUser.getRole() != null && currentUser.getRole().getName().equals(role);
     }
 
     public void logUserActivity(String action, String description, UserActivity.ActivityType activityType) {
@@ -128,9 +128,9 @@ public class SessionManager implements Serializable {
 
     public String getCurrentUserRole() {
         User user = getCurrentUser();
-        return user != null && user.getRole() != null ? user.getRole().name() : null;
+        return user != null && user.getRole() != null ? user.getRole().getName() : null;
     }
-    public org.pahappa.systems.enums.Rolename getCurrentUserRoleEnum() {
+    public Role getCurrentUserRoleEntity() {
         User user = getCurrentUser();
         return user != null ? user.getRole() : null;
     }

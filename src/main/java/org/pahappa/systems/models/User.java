@@ -1,7 +1,6 @@
 package org.pahappa.systems.models;
 
 import org.pahappa.systems.enums.Gender;
-import org.pahappa.systems.enums.Rolename;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -19,14 +18,15 @@ public class User {
     private String address;
     private String nextOfKin;
 
-//    private String password;
-    @Enumerated(EnumType.STRING)
-    private Rolename role;
+    // private String password;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private boolean deleted = false;
 
-    public User(Rolename role,  String nextOfKin, String address, Gender gender, LocalDate dateOfBirth,
+    public User(Role role, String nextOfKin, String address, Gender gender, LocalDate dateOfBirth,
             String email, String phoneNumber, String fullName) {
         this.role = role;
         this.gender = gender;
@@ -51,11 +51,11 @@ public class User {
         this.id = id;
     }
 
-    public Rolename getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(Rolename role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
@@ -114,7 +114,6 @@ public class User {
     public void setNextOfKin(String nextOfKin) {
         this.nextOfKin = nextOfKin;
     }
-
 
     public boolean isDeleted() {
         return deleted;

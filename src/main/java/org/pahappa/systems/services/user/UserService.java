@@ -1,13 +1,14 @@
 package org.pahappa.systems.services.user;
 
 import org.pahappa.systems.models.User;
-import org.pahappa.systems.enums.Rolename;
-import org.pahappa.systems.enums.Specialty;
-import org.pahappa.systems.enums.Qualification;
-import org.pahappa.systems.enums.Department;
-import org.pahappa.systems.enums.Status;
-import org.pahappa.systems.enums.Shift;
+
 import org.pahappa.systems.models.UserAccount;
+import org.pahappa.systems.models.Role;
+import org.pahappa.systems.models.SpecialtyEntity;
+import org.pahappa.systems.models.QualificationEntity;
+import org.pahappa.systems.models.DepartmentEntity;
+import org.pahappa.systems.models.StatusEntity;
+import org.pahappa.systems.models.ShiftEntity;
 
 import java.util.List;
 
@@ -23,16 +24,16 @@ public interface UserService {
 
     void registerEmployee(
             User user,
-            Rolename selectedRole,
-            Specialty specialization,
-            Qualification qualification,
-            Department department,
-            Status staffStatus,
+            Role selectedRole,
+            SpecialtyEntity specialization,
+            QualificationEntity qualification,
+            DepartmentEntity department,
+            StatusEntity staffStatus,
             Integer yearsOfExperience,
             String deskNumber,
-            Shift receptionistShift,
+            ShiftEntity receptionistShift,
             String licenseNumber,
-            Shift pharmacistShift,
+            ShiftEntity pharmacistShift,
             UserAccount userAccount);
 
     void updateEmployee(User user);

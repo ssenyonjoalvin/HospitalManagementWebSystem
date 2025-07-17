@@ -1,7 +1,6 @@
 package org.pahappa.systems.repository;
-
-import org.pahappa.systems.enums.Specialty;
-import org.pahappa.systems.enums.Status;
+import jakarta.inject.Inject;
+import org.pahappa.systems.models.StatusEntity;
 import org.pahappa.systems.models.Doctor;
 import org.pahappa.systems.models.User;
 import org.pahappa.systems.util.HibernateUtil;
@@ -10,9 +9,14 @@ import org.hibernate.Transaction;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
+import org.pahappa.systems.models.SpecialtyEntity;
+import org.pahappa.systems.repository.StatusEntityDAO;
 
 @ApplicationScoped
 public class UserDAO {
+
+    @Inject
+    private StatusEntityDAO statusEntityDAO;
     public void saveRecord(User user) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -105,7 +109,7 @@ public class UserDAO {
         }
     }
 
-    public List<Doctor> getDoctorsBySpecializationAndStatus(Specialty specialization, Status status) {
+    public List<Doctor> getDoctorsBySpecializationAndStatus(SpecialtyEntity specialization, StatusEntity status) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session
                     .createQuery("FROM Doctor WHERE specialization = :specialization AND staffStatus = :status",
@@ -116,8 +120,9 @@ public class UserDAO {
         }
     }
 
-    public List<Doctor> findDoctorsBySpecialty(Specialty specialty) {
-        return getDoctorsBySpecializationAndStatus(specialty, Status.ACTIVE);
+    public List<Doctor> findDoctorsBySpecialty(SpecialtyEntity specialty) {
+        StatusEntity activeDoctors = statusEntityDAO.getStatusByName("ACTIVE");
+        return getDoctorsBySpecializationAndStatus(specialty, activeDoctors);
     }
 
     public Doctor findById(long id) {

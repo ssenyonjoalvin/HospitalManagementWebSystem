@@ -33,6 +33,8 @@ public class LoginBean implements Serializable {
     public String login() {
         try {
             User user = userService.login(userName, password);
+
+            System.out.println( "am here at login but un able to make it in " +password);
             if (user != null) {
                 System.out.println("Login successful for user: " + user.getFullName());
                 sessionManager.createSession(user);
@@ -44,11 +46,16 @@ public class LoginBean implements Serializable {
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid username or password.", null));
                 return null;
             }
-        } catch (Exception e) {
-            System.err.println("Login error: " + e.getMessage());
-            e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login error: " + e.getMessage(), null));
+        } catch (RuntimeException e) {
+            if (e.getMessage() != null && e.getMessage().contains("Multiple accounts found with the same username")) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login error: Duplicate username found. Please contact the administrator.", null));
+            } else {
+                System.err.println("Login error: " + e.getMessage());
+                e.printStackTrace();
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login error: " + e.getMessage(), null));
+            }
             return null;
         }
     }

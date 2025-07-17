@@ -1,0 +1,171 @@
+<ui:composition template="/template/template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="card mt-3">
+<!--                <div class="card-header bg-primary text-white">-->
+<!--                    <h4 class="mb-0">Admin Settings</h4>-->
+<!--                </div>-->
+                <div class="card-body">
+                    <h:form>
+                        <!-- Bootstrap Nav Tabs -->
+                        <ul class="nav nav-tabs mb-3" id="adminSettingsTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="role-tab" data-bs-toggle="tab" data-bs-target="#roleTab" type="button" role="tab">Roles</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="specialty-tab" data-bs-toggle="tab" data-bs-target="#specialtyTab" type="button" role="tab">Specialties</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="qualification-tab" data-bs-toggle="tab" data-bs-target="#qualificationTab" type="button" role="tab">Qualifications</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="department-tab" data-bs-toggle="tab" data-bs-target="#departmentTab" type="button" role="tab">Departments</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="status-tab" data-bs-toggle="tab" data-bs-target="#statusTab" type="button" role="tab">Statuses</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="shift-tab" data-bs-toggle="tab" data-bs-target="#shiftTab" type="button" role="tab">Shifts</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="adminSettingsTabsContent">
+                            <!-- Roles Tab -->
+                            <div class="tab-pane fade show active" id="roleTab" role="tabpanel">
+                                <h4>Roles</h4>
+                                <h:dataTable value="#{adminSettingsBean.roles}" var="role" styleClass="table table-striped">
+                                    <h:column>
+                                        <f:facet name="header">Name</f:facet>#{role.name}
+                                    </h:column>
+                                    <h:column>
+                                        <h:commandButton value="Edit" action="#{adminSettingsBean.editRole(role)}" styleClass="btn btn-sm btn-warning me-2" />
+                                        <h:commandButton value="Delete" action="#{adminSettingsBean.deleteRole(role)}" styleClass="btn btn-sm btn-danger" />
+                                    </h:column>
+                                </h:dataTable>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Role Name</span>
+                                            <h:inputText id="roleName" value="#{adminSettingsBean.selectedRole.name}" styleClass="form-control" />
+                                            <h:commandButton value="#{adminSettingsBean.editRole ? 'Update' : 'Add'} Role" action="#{adminSettingsBean.saveRole}" styleClass="btn btn-primary ms-2" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Specialties Tab -->
+                            <div class="tab-pane fade" id="specialtyTab" role="tabpanel">
+                                <h4>Specialties</h4>
+                                <h:dataTable value="#{adminSettingsBean.specialties}" var="spec" styleClass="table table-striped">
+                                    <h:column>
+                                        <f:facet name="header">Name</f:facet>#{spec.name}
+                                    </h:column>
+                                    <h:column>
+                                        <h:commandButton value="Edit" action="#{adminSettingsBean.editSpecialty(spec)}" styleClass="btn btn-sm btn-warning me-2" />
+                                        <h:commandButton value="Delete" action="#{adminSettingsBean.deleteSpecialty(spec)}" styleClass="btn btn-sm btn-danger" />
+                                    </h:column>
+                                </h:dataTable>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Specialty Name</span>
+                                            <h:inputText id="specName" value="#{adminSettingsBean.selectedSpecialty.name}" styleClass="form-control" />
+                                            <h:commandButton value="#{adminSettingsBean.editSpecialty ? 'Update' : 'Add'} Specialty" action="#{adminSettingsBean.saveSpecialty}" styleClass="btn btn-primary ms-2" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Qualifications Tab -->
+                            <div class="tab-pane fade" id="qualificationTab" role="tabpanel">
+                                <h4>Qualifications</h4>
+                                <h:dataTable value="#{adminSettingsBean.qualifications}" var="qual" styleClass="table table-striped">
+                                    <h:column>
+                                        <f:facet name="header">Name</f:facet>#{qual.name}
+                                    </h:column>
+                                    <h:column>
+                                        <h:commandButton value="Edit" action="#{adminSettingsBean.editQualification(qual)}" styleClass="btn btn-sm btn-warning me-2" />
+                                        <h:commandButton value="Delete" action="#{adminSettingsBean.deleteQualification(qual)}" styleClass="btn btn-sm btn-danger" />
+                                    </h:column>
+                                </h:dataTable>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Qualification Name</span>
+                                            <h:inputText id="qualName" value="#{adminSettingsBean.selectedQualification.name}" styleClass="form-control" />
+                                            <h:commandButton value="#{adminSettingsBean.editQualification ? 'Update' : 'Add'} Qualification" action="#{adminSettingsBean.saveQualification}" styleClass="btn btn-primary ms-2" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Departments Tab -->
+                            <div class="tab-pane fade" id="departmentTab" role="tabpanel">
+                                <h4>Departments</h4>
+                                <h:dataTable value="#{adminSettingsBean.departments}" var="dept" styleClass="table table-striped">
+                                    <h:column>
+                                        <f:facet name="header">Name</f:facet>#{dept.name}
+                                    </h:column>
+                                    <h:column>
+                                        <h:commandButton value="Edit" action="#{adminSettingsBean.editDepartment(dept)}" styleClass="btn btn-sm btn-warning me-2" />
+                                        <h:commandButton value="Delete" action="#{adminSettingsBean.deleteDepartment(dept)}" styleClass="btn btn-sm btn-danger" />
+                                    </h:column>
+                                </h:dataTable>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Department Name</span>
+                                            <h:inputText id="deptName" value="#{adminSettingsBean.selectedDepartment.name}" styleClass="form-control" />
+                                            <h:commandButton value="#{adminSettingsBean.editDepartment ? 'Update' : 'Add'} Department" action="#{adminSettingsBean.saveDepartment}" styleClass="btn btn-primary ms-2" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Statuses Tab -->
+                            <div class="tab-pane fade" id="statusTab" role="tabpanel">
+                                <h4>Statuses</h4>
+                                <h:dataTable value="#{adminSettingsBean.statuses}" var="status" styleClass="table table-striped">
+                                    <h:column>
+                                        <f:facet name="header">Name</f:facet>#{status.name}
+                                    </h:column>
+                                    <h:column>
+                                        <h:commandButton value="Edit" action="#{adminSettingsBean.editStatus(status)}" styleClass="btn btn-sm btn-warning me-2" />
+                                        <h:commandButton value="Delete" action="#{adminSettingsBean.deleteStatus(status)}" styleClass="btn btn-sm btn-danger" />
+                                    </h:column>
+                                </h:dataTable>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Status Name</span>
+                                            <h:inputText id="statusName" value="#{adminSettingsBean.selectedStatus.name}" styleClass="form-control" />
+                                            <h:commandButton value="#{adminSettingsBean.editStatus ? 'Update' : 'Add'} Status" action="#{adminSettingsBean.saveStatus}" styleClass="btn btn-primary ms-2" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Shifts Tab -->
+                            <div class="tab-pane fade" id="shiftTab" role="tabpanel">
+                                <h4>Shifts</h4>
+                                <h:dataTable value="#{adminSettingsBean.shifts}" var="shift" styleClass="table table-striped">
+                                    <h:column>
+                                        <f:facet name="header">Name</f:facet>#{shift.name}
+                                    </h:column>
+                                    <h:column>
+                                        <h:commandButton value="Edit" action="#{adminSettingsBean.editShift(shift)}" styleClass="btn btn-sm btn-warning me-2" />
+                                        <h:commandButton value="Delete" action="#{adminSettingsBean.deleteShift(shift)}" styleClass="btn btn-sm btn-danger" />
+                                    </h:column>
+                                </h:dataTable>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">Shift Name</span>
+                                            <h:inputText id="shiftName" value="#{adminSettingsBean.selectedShift.name}" styleClass="form-control" />
+                                            <h:commandButton value="#{adminSettingsBean.editShift ? 'Update' : 'Add'} Shift" action="#{adminSettingsBean.saveShift}" styleClass="btn btn-primary ms-2" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

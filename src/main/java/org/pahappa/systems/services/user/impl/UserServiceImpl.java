@@ -1,12 +1,6 @@
 package org.pahappa.systems.services.user.impl;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import org.pahappa.systems.enums.Rolename;
-import org.pahappa.systems.enums.Specialty;
-import org.pahappa.systems.enums.Qualification;
-import org.pahappa.systems.enums.Department;
-import org.pahappa.systems.enums.Status;
-import org.pahappa.systems.enums.Shift;
 import org.pahappa.systems.models.*;
 import org.pahappa.systems.repository.*;
 import org.pahappa.systems.services.user.UserService;
@@ -48,9 +42,11 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllEmployees() {
         List<User> allUsers = userDAO.getAllRecords();
         return allUsers.stream()
-                .filter(u -> u.getRole() != null && (u.getRole().equals(Rolename.DOCTOR) ||
-                        u.getRole().equals(Rolename.PHARMACIST) ||
-                        u.getRole().equals(Rolename.RECEPTIONIST)))
+                .filter(u -> u.getRole() != null && (
+                        "DOCTOR".equals(u.getRole().getName()) ||
+                        "PHARMACIST".equals(u.getRole().getName()) ||
+                        "RECEPTIONIST".equals(u.getRole().getName())
+                ))
                 .sorted((u1, u2) -> Long.compare(u2.getId(), u1.getId())) // Sort by id descending
                 .collect(Collectors.toList());
     }
@@ -58,20 +54,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registerEmployee(
             User user,
-            Rolename selectedRole,
-            Specialty specialization,
-            Qualification qualification,
-            Department department,
-            Status staffStatus,
+            Role selectedRole,
+            SpecialtyEntity specialization,
+            QualificationEntity qualification,
+            DepartmentEntity department,
+            StatusEntity staffStatus,
             Integer yearsOfExperience,
             String deskNumber,
-            Shift receptionistShift,
+            ShiftEntity receptionistShift,
             String licenseNumber,
-            Shift pharmacistShift,
+            ShiftEntity pharmacistShift,
             UserAccount userAccount) {
         User employee = null;
-        switch (selectedRole) {
-            case DOCTOR:
+        String roleName = selectedRole != null ? selectedRole.getName() : null;
+        if (roleName == null) throw new IllegalArgumentException("Role is required");
+        switch (roleName) {
+            case "DOCTOR":
                 employee = new Doctor(
                         selectedRole,
                         user.getNextOfKin(),
@@ -88,7 +86,7 @@ public class UserServiceImpl implements UserService {
                         staffStatus,
                         userAccount);
                 break;
-            case PHARMACIST:
+            case "PHARMACIST":
                 employee = new Pharmacist(
                         selectedRole,
                         user.getNextOfKin(),
@@ -102,7 +100,7 @@ public class UserServiceImpl implements UserService {
                         pharmacistShift,
                         userAccount);
                 break;
-            case RECEPTIONIST:
+            case "RECEPTIONIST":
                 employee = new Receptionist(
                         selectedRole,
                         user.getNextOfKin(),

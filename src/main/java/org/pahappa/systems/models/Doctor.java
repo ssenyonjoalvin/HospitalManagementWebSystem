@@ -14,25 +14,28 @@ public class Doctor extends User {
     @JoinColumn(name = "user_account_id", referencedColumnName = "id")
     private UserAccount userAccount;
 
-    @Enumerated(EnumType.STRING)
-    private Specialty specialization;
+    @ManyToOne
+    @JoinColumn(name = "specialization_id")
+    private SpecialtyEntity specialization;
 
-    @Enumerated(EnumType.STRING)
-    private Qualification qualification;
+    @ManyToOne
+    @JoinColumn(name = "qualification_id")
+    private QualificationEntity qualification;
 
-    @Enumerated(EnumType.STRING)
-    private Department department;
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private DepartmentEntity department;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private Status staffStatus;
+    @ManyToOne
+    @JoinColumn(name = "staff_status_id")
+    private StatusEntity staffStatus;
     private int yearsOfExperience;
 
     // Constructor must include staffStatus too if you use it
-    public Doctor(Rolename role, String nextOfKin, String address, Gender gender,
+    public Doctor(Role role, String nextOfKin, String address, Gender gender,
             LocalDate dateOfBirth,
-            String email, String phoneNumber, String fullName, Specialty specialization,
-            Qualification qualification, Department department, int yearsOfExperience, Status staffStatus, UserAccount userAccount) {
+            String email, String phoneNumber, String fullName, SpecialtyEntity specialization,
+            QualificationEntity qualification, DepartmentEntity department, int yearsOfExperience, StatusEntity staffStatus, UserAccount userAccount) {
         super(role, nextOfKin, address, gender, dateOfBirth, email, phoneNumber, fullName);
         this.specialization = specialization;
         this.qualification = qualification;
@@ -56,35 +59,35 @@ public class Doctor extends User {
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
     }
-    public Specialty getSpecialization() {
+    public SpecialtyEntity getSpecialization() {
         return specialization;
     }
 
-    public void setSpecialization(Specialty specialization) {
+    public void setSpecialization(SpecialtyEntity specialization) {
         this.specialization = specialization;
     }
 
-    public Qualification getQualification() {
+    public QualificationEntity getQualification() {
         return qualification;
     }
 
-    public void setQualification(Qualification qualification) {
+    public void setQualification(QualificationEntity qualification) {
         this.qualification = qualification;
     }
 
-    public Department getDepartment() {
+    public DepartmentEntity getDepartment() {
         return department;
     }
 
-    public void setDepartment(Department department) {
+    public void setDepartment(DepartmentEntity department) {
         this.department = department;
     }
 
-    public Status getStaffStatus() {
+    public StatusEntity getStaffStatus() {
         return staffStatus;
     }
 
-    public void setStaffStatus(Status staffStatus) {
+    public void setStaffStatus(StatusEntity staffStatus) {
         this.staffStatus = staffStatus;
     }
 
@@ -96,9 +99,7 @@ public class Doctor extends User {
         this.yearsOfExperience = yearsOfExperience;
     }
 
-    public void setStatus(Status status) {
-        this.staffStatus = status;
-    }
+
 
     @Override
     public String toString() {

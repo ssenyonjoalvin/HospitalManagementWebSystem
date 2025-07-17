@@ -1,28 +1,32 @@
 package org.pahappa.systems.models;
 
 import org.pahappa.systems.enums.Gender;
-import org.pahappa.systems.enums.Rolename;
-import org.pahappa.systems.enums.Shift;
+// import org.pahappa.systems.enums.Rolename;
+// import org.pahappa.systems.enums.Shift;
+// import org.pahappa.systems.models.ShiftEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 import java.time.LocalDate;
 
 @Entity
 public class Receptionist extends User {
     private String deskNumber;
-    private Shift shift;
+    @ManyToOne
+    @JoinColumn(name = "shift_id")
+    private ShiftEntity shift;
     @OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
     @JoinColumn(name = "user_account_id", referencedColumnName = "id")
     private UserAccount userAccount;
 
-
     public Receptionist() {
     }
 
-    public Receptionist(Rolename role, String nextOfKin, String address, Gender gender,
-            LocalDate dateOfBirth, String email, String phoneNumber, String fullName, String deskNumber, Shift shift, UserAccount userAccount) {
+    public Receptionist(Role role, String nextOfKin, String address, Gender gender,
+            LocalDate dateOfBirth, String email, String phoneNumber, String fullName, String deskNumber, ShiftEntity shift,
+            UserAccount userAccount) {
         super(role, nextOfKin, address, gender, dateOfBirth, email, phoneNumber, fullName);
         this.deskNumber = deskNumber;
         this.shift = shift;
@@ -37,11 +41,11 @@ public class Receptionist extends User {
         this.deskNumber = deskNumber;
     }
 
-    public Shift getShift() {
+    public ShiftEntity getShift() {
         return shift;
     }
 
-    public void setShift(Shift shift) {
+    public void setShift(ShiftEntity shift) {
         this.shift = shift;
     }
 
