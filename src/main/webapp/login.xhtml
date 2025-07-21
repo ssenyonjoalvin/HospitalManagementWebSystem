@@ -34,7 +34,7 @@
 
         /* 3. Style the image side using a CSS background */
         .login-image-side {
-            background: url(#{resource['images/login_background.jpg']}) no-repeat center center;
+            background: url('resources/images/login_background.jpg') no-repeat center center;
             background-size: cover;
             min-height: 500px;
         }
@@ -57,7 +57,10 @@
 </h:head>
 
 <h:body>
+    
     <div class="card shadow-lg login-card">
+        <p:growl id="growl" showDetail="true" globalOnly="true" style="max-width: 400px; margin: 24px auto 0 auto; display: block;"/>
+        <h:messages globalOnly="true" layout="table" styleClass="alert alert-danger text-center mx-auto mb-4" style="max-width: 400px;"/>
         <div class="row g-0">
             <div class="col-lg-6 d-none d-lg-block login-image-side">
             </div>
@@ -72,7 +75,7 @@
                     </div>
 
                     <h:form>
-                        <p:growl id="growl" showDetail="true" globalOnly="true" />
+
 
                         <div class="mb-4">
                             <div class="input-group">

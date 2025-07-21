@@ -8,9 +8,10 @@ import org.pahappa.systems.enums.Shift;
 import java.time.LocalDate;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinColumn;
+import org.pahappa.systems.models.LoginCapable;
 
 @Entity
-public class Pharmacist extends User {
+public class Pharmacist extends User implements LoginCapable {
     private String licenseNumber;
     private Shift shift;
     @OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
@@ -38,10 +39,11 @@ public class Pharmacist extends User {
         this.shift = shift;
     }
 
+    @Override
     public UserAccount getUserAccount() {
         return userAccount;
     }
-
+    @Override
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
     }
@@ -69,4 +71,21 @@ public class Pharmacist extends User {
                 + "Shift: " + shift + "\n";
     }
 
+    @Override
+    public String getPassword() {
+        return userAccount != null ? userAccount.getPassword() : null;
+    }
+    @Override
+    public void setPassword(String password) {
+        if (userAccount != null) userAccount.setPassword(password);
+    }
+
+    @Override
+    public String getUsername() {
+        return userAccount != null ? userAccount.getUserName() : null;
+    }
+    @Override
+    public void setUsername(String username) {
+        if (userAccount != null) userAccount.setUserName(username);
+    }
 }
