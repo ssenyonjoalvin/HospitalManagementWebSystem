@@ -10,7 +10,7 @@ import jakarta.persistence.JoinColumn;
 import java.time.LocalDate;
 
 @Entity
-public class Receptionist extends User {
+public class Receptionist extends User implements LoginCapable {
     private String deskNumber;
     private Shift shift;
     @OneToOne(cascade = jakarta.persistence.CascadeType.ALL)
@@ -45,12 +45,31 @@ public class Receptionist extends User {
         this.shift = shift;
     }
 
+    @Override
     public UserAccount getUserAccount() {
         return userAccount;
     }
-
+    @Override
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
+    }
+
+    @Override
+    public String getPassword() {
+        return userAccount != null ? userAccount.getPassword() : null;
+    }
+    @Override
+    public void setPassword(String password) {
+        if (userAccount != null) userAccount.setPassword(password);
+    }
+
+    @Override
+    public String getUsername() {
+        return userAccount != null ? userAccount.getUserName() : null;
+    }
+    @Override
+    public void setUsername(String username) {
+        if (userAccount != null) userAccount.setUserName(username);
     }
 
     @Override

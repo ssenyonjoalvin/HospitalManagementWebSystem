@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name="doctors")
-public class Doctor extends User {
+public class Doctor extends User implements LoginCapable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_account_id", referencedColumnName = "id")
@@ -49,10 +49,12 @@ public class Doctor extends User {
     // getters and setters
     // ... existing constructors
 
+    @Override
     public UserAccount getUserAccount() {
         return userAccount;
     }
 
+    @Override
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
     }
@@ -98,6 +100,24 @@ public class Doctor extends User {
 
     public void setStatus(Status status) {
         this.staffStatus = status;
+    }
+
+    @Override
+    public String getPassword() {
+        return userAccount != null ? userAccount.getPassword() : null;
+    }
+    @Override
+    public void setPassword(String password) {
+        if (userAccount != null) userAccount.setPassword(password);
+    }
+
+    @Override
+    public String getUsername() {
+        return userAccount != null ? userAccount.getUserName() : null;
+    }
+    @Override
+    public void setUsername(String username) {
+        if (userAccount != null) userAccount.setUserName(username);
     }
 
     @Override
